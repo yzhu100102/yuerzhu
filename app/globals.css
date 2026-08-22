@@ -1,0 +1,1442 @@
+@import url('https://fonts.googleapis.com/css2?family=Cactus+Classical+Serif&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --color-bg: #ffffff;
+  --color-fg: #222222;
+  --color-accent: #1f2eff;
+  --font-serif: 'Cactus Classical Serif', Georgia, serif;
+  --font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  /* BT Grotesk is a licensed face (Blaze Type) and is not bundled here. Drop the
+     licensed web files into public/fonts, add an @font-face for them, and this
+     stack picks them up; until then it falls back to Helvetica Neue. */
+  --font-grotesk: 'BT Grotesk', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --page-padding: 32px;
+  --nav-height: 48px;
+  --hero-type-size: clamp(34px, 5vw, 66px);
+  --grid-gutter: 16px;
+  /* every image, video and panel in a case study sits at this width, a little
+     inside the text column so the media reads as one consistent band */
+  /* media fills the column now that the column itself is the measure */
+  --media-width: 100%;
+  /* the contents rail, docked to the page's left margin, and the gutter that
+     keeps the content column where it has been sitting */
+  --case-rail: 180px;
+  --case-rail-gap: 130px;
+  /* the air above a label and below the body it introduces, kept equal so a
+     block of text sits evenly between what comes before and after it */
+  --block-gap: 80px;
+  /* ≈ 1/3 of a project card's height (2-col grid, 4:3 image + text block) */
+  --projects-peek: calc(12.5vw + 22px);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html, body {
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Links that read as links: blue, highlighted on hover. */
+.link,
+.about-link,
+.case-next a {
+  color: var(--color-accent);
+}
+
+/* Padding draws the highlight; the matching negative inline margin keeps the
+   text on the same spot in the line. */
+.link,
+.about-link {
+  --hl-y: 0.22em;
+  --hl-x: 0.2em;
+  padding: var(--hl-y) var(--hl-x);
+  margin: 0 calc(var(--hl-x) * -1);
+}
+
+/* the serif is far bigger, so it needs proportionally less */
+.hero-subtitle .link,
+.about-link {
+  --hl-y: 0.1em;
+  --hl-x: 0.1em;
+}
+
+/* .about-link is a flex item, so its vertical padding does affect layout */
+.about-link {
+  margin: calc(var(--hl-y) * -1) calc(var(--hl-x) * -1);
+}
+
+/* Trim the font's leading so the highlight sits evenly above and below the
+   caps. Browsers without text-box support keep the untrimmed box. */
+@supports (text-box: trim-both cap alphabetic) {
+  .link,
+  .about-link {
+    text-box: trim-both cap alphabetic;
+  }
+
+  .about-link {
+    /* trimming drops the leading, so put the home page's 1.05 back by hand */
+    margin: 0 calc(var(--hl-x) * -1) calc(1.05em - 1cap - 2 * var(--hl-y));
+  }
+
+  .about-link:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.link:hover,
+.about-link:hover,
+.case-next a:hover,
+.project-card:hover .project-title {
+  background-color: var(--color-accent);
+  color: #ffffff;
+}
+
+.case-next a:hover,
+.project-card:hover .project-title {
+  box-shadow: 0 0 0 2px var(--color-accent);
+}
+
+/* Navigation stays black and only changes fill on hover. */
+.nav-name:hover,
+.nav-links a:hover,
+.case-nav a:hover {
+  color: var(--color-accent);
+  opacity: 1;
+}
+
+/* ── Nav ── */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--nav-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--page-padding);
+  background: var(--color-bg);
+  z-index: 100;
+}
+
+.nav-name {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  font-weight: 400;
+}
+
+.nav-links {
+  display: flex;
+  gap: 40px;
+}
+
+.nav-links a {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  font-weight: 400;
+  transition: opacity 0.2s;
+}
+
+
+/* ── Main ── */
+.main {
+  padding-top: var(--nav-height);
+}
+
+/* ── Hero ── */
+.hero {
+  padding: 48px var(--page-padding);
+  /* fill the viewport except for the sliver of projects peeking below the fold */
+  min-height: calc(100vh - var(--nav-height) - var(--projects-peek));
+  /* centre the whole block between the nav and the projects grid */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* ── Entry ──
+   The hero text arrives on load: each block rises a little and fades up, one
+   after the next, so the eye is walked down the page rather than handed all of
+   it at once. */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.hero-title,
+.hero-subtitle,
+.hero-meta .meta-item {
+  animation: rise-in 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero-title {
+  animation-delay: 0.06s;
+}
+
+.hero-subtitle {
+  animation-delay: 0.2s;
+}
+
+.hero-meta .meta-item:nth-child(1) {
+  animation-delay: 0.34s;
+}
+
+.hero-meta .meta-item:nth-child(2) {
+  animation-delay: 0.42s;
+}
+
+.hero-title,
+.hero-subtitle {
+  font-family: var(--font-serif);
+  font-size: var(--hero-type-size);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  max-width: none;
+}
+
+.hero-title {
+  margin-bottom: 0.55em;
+}
+
+.hero-subtitle {
+  margin-bottom: 64px;
+}
+
+.hero-meta,
+.about-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 0.07em;
+  font-weight: 400;
+}
+
+.meta-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+/* ── Projects ── */
+.projects {
+  /* cards carry their own bottom gutter now, so the top/bottom padding here
+     reproduces the spacing the old half-gutter card padding gave */
+  padding: calc(var(--grid-gutter) / 2) var(--page-padding)
+    calc(var(--grid-gutter) / 2);
+}
+
+/* Two independent columns rather than shared rows: a row grid would line every
+   card up with its neighbour and leave a gap under the shorter one. Each column
+   stacks its own cards at one gutter apart, so they pack tight and the two
+   columns fall out of step — the stagger. Which card lands in which column is
+   decided in page.tsx. */
+.projects-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--grid-gutter);
+  align-items: start;
+}
+
+.projects-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--grid-gutter);
+}
+
+.project-card {
+  display: block;
+  cursor: pointer;
+}
+
+.project-image {
+  width: 100%;
+  /* aspect-ratio is set per card from the thumbnail's intrinsic size, so both
+     portrait and landscape thumbnails show uncropped. 16/10 is the fallback. */
+  aspect-ratio: 16 / 10;
+  margin-bottom: 16px;
+  overflow: hidden;
+  position: relative;
+}
+
+.project-image img,
+.project-image video {
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+/* Footage mastered on a white background would hide the frame's tint. Multiply
+   drops pure white to whatever is painted underneath while leaving the artwork's
+   own colours readable. Only correct for video shot on white, which is why it
+   hangs off the tinted modifier. `isolation` keeps the blend inside the card. */
+.project-image--tinted {
+  isolation: isolate;
+}
+
+.project-image--tinted video {
+  mix-blend-mode: multiply;
+}
+
+/* ── End title card ──
+   White, for contrast against the colour field, with the name typing in behind
+   a round cursor. Opacity is driven from the video clock in ProjectMedia. */
+.endcard {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* the CUI screens' blue, sampled from the app's phone frames */
+  background: #211d8f;
+  transition: opacity 0.28s ease;
+}
+
+.endcard-text {
+  display: flex;
+  align-items: center;
+  gap: 0.28em;
+  font-family: var(--font-sans);
+  font-size: clamp(15px, 2.1vw, 28px);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+  white-space: pre;
+}
+
+.endcard-caret {
+  width: 0.58em;
+  height: 0.58em;
+  border-radius: 50%;
+  background: #f98b5a;
+  flex: none;
+  animation: dot-in 0.42s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+
+@keyframes dot-in {
+  from {
+    transform: scale(0.2);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* next/image lays itself out with `fill`; a plain <video> needs it spelled out */
+.project-image video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.project-card:hover .project-image img,
+.project-card:hover .project-image video {
+  transform: scale(1.02);
+}
+
+.project-placeholder {
+  width: 100%;
+  height: 100%;
+  background-color: #555555;
+}
+
+.project-title {
+  /* hugs its text so the hover highlight doesn't span the whole column */
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+
+/* meta line under a project title — company • discipline • surface */
+.project-subheader {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  line-height: 1.5;
+  color: #777;
+}
+
+.project-desc {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #333;
+  max-width: 420px;
+}
+
+/* Marker pen, for the phrase that carries a question. */
+.hl {
+  background-color: #e1ff8c;
+  padding: 0 0.12em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* ── Password gate ── */
+.gate {
+  max-width: 56ch;
+  margin-left: calc(var(--case-rail) + var(--case-rail-gap));
+  padding: 96px 0 160px;
+}
+
+.gate-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  margin-top: 40px;
+}
+
+.gate-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gate-field-label {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 0.07em;
+  color: var(--color-accent);
+}
+
+.gate-input {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 19px;
+  color: #222222;
+  width: 260px;
+  padding: 10px 12px;
+  border: 1px solid #d8d8d8;
+  border-radius: 0;
+  background: #ffffff;
+}
+
+.gate-input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.gate-button {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 0.07em;
+  color: #ffffff;
+  padding: 11px 20px;
+  border: 0;
+  background: var(--color-accent);
+  cursor: pointer;
+}
+
+.gate-note {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 19px;
+  color: #585858;
+  margin-top: 20px;
+  max-width: 52ch;
+}
+
+.gate-note--error {
+  color: #c0392b;
+}
+
+@media (max-width: 768px) {
+  .gate {
+    margin-left: 0;
+    padding: 56px 0 96px;
+  }
+
+  .gate-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .gate-input {
+    width: 100%;
+  }
+}
+
+/* ── Case study ── */
+/* The contents rail sits on the page's left margin, level with the wordmark
+   above it, and the content column runs to the right margin. */
+.case {
+  padding: 0 var(--page-padding) 120px;
+}
+
+/* The hero and the film sit outside the two-column grid, so they take the rail
+   and its gutter as a left margin to line up with the column below them. The
+   rail itself stays empty until the reader reaches the Brief. */
+.case-hero,
+.case-video {
+  margin-left: calc(var(--case-rail) + var(--case-rail-gap));
+  max-width: calc(100% - var(--case-rail) - var(--case-rail-gap));
+}
+
+.case-hero {
+  padding: 64px 0 40px;
+}
+
+.case-title {
+  font-family: var(--font-serif);
+  /* sized to hold the whole title on one line across the column */
+  font-size: clamp(28px, 4.6vw, 52px);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin-bottom: 0.5em;
+  white-space: nowrap;
+}
+
+.case-question {
+  font-family: var(--font-serif);
+  font-size: clamp(23px, 3vw, 40px);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: #555;
+  max-width: 28ch;
+  margin-bottom: 56px;
+}
+
+.case-meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 64px;
+}
+
+.case-meta-row dt {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 0.07em;
+  color: var(--color-accent);
+  margin-bottom: 18px;
+}
+
+.case-meta-row dd {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 19px;
+  color: #585858;
+}
+
+.case-ph {
+  width: 100%;
+  background-color: #555555;
+  max-width: var(--media-width);
+  margin-top: var(--block-gap);
+}
+
+.case-ph-hero {
+  aspect-ratio: 21 / 9;
+  margin-bottom: 96px;
+}
+
+/* Hero video. Reserves its 16:9 box up front so mounting the player mid-scroll
+   never shifts the page under the reader. */
+.case-video {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin-bottom: 80px;
+  overflow: hidden;
+  background-color: #555555;
+}
+
+.case-video iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.case-video-idle {
+  width: 100%;
+  height: 100%;
+}
+
+/* ── The brief, as a panel ──
+   The question sits dead centre; the voice-interface vocabulary is scattered
+   around the edges on a faint Yummly wash, kept clear of the middle so the
+   question never has to compete with the artwork. */
+.brief-art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 460px;
+  padding: 72px clamp(24px, 8vw, 120px);
+  margin-bottom: 48px;
+  overflow: hidden;
+  background-color: #fff7dc;
+  max-width: var(--media-width);
+  margin-top: var(--block-gap);
+}
+
+.brief-art-question {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-serif);
+  font-size: clamp(24px, 3.4vw, 46px);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-align: center;
+  text-wrap: balance;
+  /* wide enough that "hands-free" never breaks across its own hyphen */
+  max-width: 23ch;
+}
+
+.brief-art-piece {
+  position: absolute;
+  display: block;
+}
+
+.brief-art-piece svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.brief-art--in {
+  top: 8%;
+  left: 3%;
+  width: clamp(78px, 11vw, 132px);
+}
+
+.brief-art--out {
+  top: 13%;
+  right: 4%;
+  width: clamp(74px, 10vw, 124px);
+}
+
+.brief-art--pasta {
+  bottom: 10%;
+  left: 8%;
+  width: clamp(64px, 9vw, 104px);
+}
+
+.brief-art--ramen {
+  bottom: 8%;
+  right: 11%;
+  width: clamp(58px, 8vw, 94px);
+}
+
+.brief-art--timer {
+  top: 47%;
+  left: 6%;
+  width: clamp(40px, 5vw, 62px);
+}
+
+.brief-art--listening {
+  top: 44%;
+  right: 6%;
+  width: clamp(42px, 5.5vw, 66px);
+}
+
+/* The clip carries a "Yara / Kinetic States" title burnt into its top-left.
+   The frame below crops it off: the title ink ends 9.3% down and the artwork
+   starts at 15.9%, so cutting at 12.5% clears the text without touching a
+   state. The video is pulled up by the same amount inside a shorter box. */
+.cui-states {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1920 / 945;
+  overflow: hidden;
+  max-width: var(--media-width);
+  margin-top: var(--block-gap);
+}
+
+.cui-states video {
+  position: absolute;
+  left: 0;
+  top: -14.29%;
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.case-body {
+  display: grid;
+  grid-template-columns: var(--case-rail) minmax(0, 1fr);
+  gap: var(--case-rail-gap);
+  align-items: start;
+}
+
+.case-nav {
+  position: sticky;
+  top: calc(var(--nav-height) + 48px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+}
+
+.case-nav a {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 0.07em;
+  opacity: 0.35;
+  transition: opacity 0.2s;
+}
+
+.case-nav a:hover,
+.case-nav a.is-active {
+  opacity: 1;
+}
+
+.case-section {
+  /* clear the fixed top nav when jumping to an anchor */
+  scroll-margin-top: calc(var(--nav-height) + 32px);
+  padding-bottom: 128px;
+}
+
+.case-section:last-child {
+  padding-bottom: 0;
+}
+
+/* Section headings match the contents rail exactly — same face, size and
+   tracking — so the rail reads as an index of the labels down the page. */
+.case-heading {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0.07em;
+  color: var(--color-accent);
+  margin-bottom: 8px;
+}
+
+/* Context and the kinetic states sit under the same anchor as the brief, so
+   each label after the first opens a fresh block and needs the air to say so. */
+.case-heading:not(:first-child) {
+  margin-top: var(--block-gap);
+}
+
+.case-text {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 19px;
+  color: #585858;
+  max-width: 62ch;
+  /* the browser reflows the last lines to avoid an orphan */
+  text-wrap: pretty;
+  /* tighter than the gap above a paragraph block, so paragraphs read as one
+     passage and the label/subheader/body stack stays the louder division */
+  margin-bottom: 6px;
+}
+
+/* A section's one-line statement — the claim the paragraphs under it argue. */
+/* Subheaders. Set on one line by intent — the measure is wide enough to hold
+   them, and breaking them weakens the statement. They wrap again on mobile,
+   where nowrap would simply run off the screen. */
+.case-lead,
+.case-insight-title {
+  font-family: var(--font-grotesk);
+  text-transform: uppercase;
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: 0;
+  color: #757575;
+  margin-bottom: 10px;
+  max-width: none;
+  white-space: nowrap;
+  text-wrap: pretty;
+}
+
+/* the standfirst under the hero question, a step up from body copy */
+.case-text--hero {
+  max-width: 52ch;
+  margin-bottom: 60px;
+}
+
+.case-caption {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 0.07em;
+  color: #888;
+  margin-top: 12px;
+  margin-bottom: 32px;
+}
+
+.case-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--grid-gutter);
+}
+
+/* Three spot illustrations for the research concerns. */
+.case-icons {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px var(--grid-gutter);
+  margin-bottom: 16px;
+}
+
+.case-icon {
+  margin: 0;
+}
+
+.case-icon svg {
+  display: block;
+  width: 100%;
+  max-width: 240px;
+  height: auto;
+  margin-bottom: 22px;
+}
+
+.case-icon-title {
+  font-family: var(--font-sans);
+  font-size: 18px;
+  font-weight: 400;
+  color: #222222;
+  margin-bottom: 6px;
+}
+
+.case-icon-label {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 19px;
+  text-wrap: pretty;
+  color: #585858;
+  max-width: 26ch;
+}
+
+/* A portrait screen recording. Held to phone width so it does not tower over
+   the column the way a full-width portrait video would. */
+/* A feature clip. Every source in the set is mounted and preloaded; only the
+   active one is opaque, so handing over between two clips does not blank the
+   frame. */
+.feature-video {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin-bottom: 16px;
+  overflow: hidden;
+  background-color: #f2f0ed;
+  max-width: var(--media-width);
+  margin-top: var(--block-gap);
+}
+
+.feature-video video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.2s ease;
+}
+
+/* Three deep dives stepping left to right, chevrons carrying you between. */
+.deep-dives {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 16px;
+}
+
+.deep-dive {
+  flex: 1;
+  margin: 0;
+  min-width: 0;
+}
+
+.deep-dive svg {
+  display: block;
+  width: 100%;
+  max-width: 190px;
+  height: auto;
+  margin-bottom: 16px;
+}
+
+.deep-dive-number {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: #999;
+  margin-bottom: 14px;
+}
+
+.deep-dive-title {
+  font-family: var(--font-sans);
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: #222222;
+  margin-bottom: 6px;
+}
+
+.deep-dive-note {
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 22px;
+  color: #585858;
+  /* these are three or four lines in a narrow column, where balancing the line
+     lengths clears the orphan that `pretty` leaves behind */
+  text-wrap: balance;
+}
+
+/* the step between one dive and the next */
+.deep-dive-step {
+  flex: none;
+  align-self: center;
+  width: 26px;
+  padding-top: 24px;
+}
+
+.deep-dive-step svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  opacity: 0.5;
+}
+
+.case-insights {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.case-insight {
+  display: flex;
+  gap: 20px;
+  padding-top: 4px;
+  margin-bottom: 88px;
+}
+
+.case-insight:last-child {
+  margin-bottom: 0;
+}
+
+/* the body beside the number: fill the column rather than shrink-wrapping,
+   so a percentage-width child (a video) gets the full width to size against */
+.case-insight > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.case-insight-number {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 0.07em;
+  color: #888;
+  /* fixed so the indent it creates is a known quantity — see below */
+  width: 28px;
+  flex-shrink: 0;
+}
+
+/* The number column indents everything beside it, which would leave a feature's
+   clip 48px right of every other piece of media on the page. Pull it back so all
+   the media shares one left edge; the number still labels the text above it. */
+.case-insight .feature-video {
+  margin-left: calc(-28px - 20px);
+  width: calc(100% + 28px + 20px);
+  /* the shared media max-width is 100%, which would clamp the calc above back
+     to the indented parent's width */
+  max-width: none;
+}
+
+
+
+.case-insight .case-text {
+  margin-bottom: 0;
+}
+
+.case-next {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 0.07em;
+  margin-top: 32px;
+}
+
+/* ── About ── */
+.about {
+  display: flex;
+  align-items: center;
+  padding: 48px var(--page-padding);
+  min-height: calc(100vh - var(--nav-height));
+}
+
+/* height comes from the text column; the portrait stretches to match it */
+.about-row {
+  display: flex;
+  align-items: stretch;
+  gap: 48px;
+  width: 100%;
+}
+
+/* width is set inline from the text column's height (2:3, the photo's ratio);
+   this is the pre-measurement fallback */
+.about-portrait {
+  flex: 0 0 auto;
+  width: 26%;
+  position: relative;
+  overflow: hidden;
+  background-color: #555555;
+}
+
+.about-text {
+  flex: 1;
+}
+
+/* sits to the right of the portrait, wide enough to keep each bullet on one line */
+.about-side {
+  flex: 0 0 250px;
+  align-self: flex-start;
+}
+
+.about-side .about-lead,
+.about-side .meta-item {
+  white-space: nowrap;
+}
+
+.about-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.about-link {
+  font-family: var(--font-serif);
+  font-size: var(--hero-type-size);
+  font-weight: 400;
+  /* no margins — the lines sit on the home page's leading */
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  transition: opacity 0.2s;
+}
+
+
+.about-extra {
+  margin-top: 64px;
+}
+
+.about-lead {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 0.07em;
+  font-weight: 400;
+  margin-bottom: 8px;
+}
+
+/* ── Play (pannable canvas) ── */
+.play {
+  position: fixed;
+  inset: var(--nav-height) 0 0 0;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+  overscroll-behavior: none;
+  user-select: none;
+}
+
+.play.is-dragging {
+  cursor: grabbing;
+}
+
+.play-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: transform;
+}
+
+.play-tile {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.play-item {
+  position: absolute;
+  /* --px/--py are eased cursor position (-1..1), --d is the item's depth */
+  transform: translate3d(
+    calc(var(--px, 0) * var(--d, 1) * 18px),
+    calc(var(--py, 0) * var(--d, 1) * 18px),
+    0
+  );
+}
+
+/* ── Grouped work on the canvas ──
+   One box per piece, cycling stills or playing a clip. */
+.play-box {
+  position: relative;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+  background: #ffffff;
+  /* the photographs are shot on white, so without an edge the box would
+     dissolve into the page */
+  box-shadow: 0 0 0 1px #ececec, 0 6px 18px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+}
+
+.play-box img,
+.play-box video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Each frame runs the same cycle offset by a negative delay, so exactly one is
+   up at a time. The keyframes come in a set per frame count, because the share
+   of the cycle a frame occupies is 1/n and CSS cannot work that out itself. */
+.play-frame {
+  opacity: 0;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+/* cross-faded */
+.play-frame--fade-3 { animation-name: frame-fade-3; }
+.play-frame--fade-5 { animation-name: frame-fade-5; }
+.play-frame--fade-6 { animation-name: frame-fade-6; }
+
+@keyframes frame-fade-3 {
+  0%, 29% { opacity: 1; }
+  33.4%, 100% { opacity: 0; }
+}
+@keyframes frame-fade-5 {
+  0%, 17% { opacity: 1; }
+  20.1%, 100% { opacity: 0; }
+}
+@keyframes frame-fade-6 {
+  0%, 14% { opacity: 1; }
+  18%, 100% { opacity: 0; }
+}
+
+/* hard cut: the swap happens between two adjacent stops, so nothing fades */
+.play-frame--cut-3 { animation-name: frame-cut-3; }
+.play-frame--cut-5 { animation-name: frame-cut-5; }
+.play-frame--cut-6 { animation-name: frame-cut-6; }
+
+@keyframes frame-cut-3 {
+  0%, 33.32% { opacity: 1; }
+  33.33%, 100% { opacity: 0; }
+}
+@keyframes frame-cut-5 {
+  0%, 19.99% { opacity: 1; }
+  20%, 100% { opacity: 0; }
+}
+@keyframes frame-cut-6 {
+  0%, 16.65% { opacity: 1; }
+  16.66%, 100% { opacity: 0; }
+}
+
+/* ── Viewer ──
+   Sits above everything, with the canvas blurred out behind it. */
+.viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 24px;
+  padding: 64px 104px 36px;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(28px) saturate(1.1);
+  -webkit-backdrop-filter: blur(28px) saturate(1.1);
+  cursor: zoom-out;
+}
+
+.viewer-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  cursor: default;
+}
+
+.viewer-image {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.14);
+}
+
+/* A hosted player, sized to the stage the same way a picture would be. */
+.viewer-embed {
+  width: min(100%, calc((100vh - 230px) * 16 / 9));
+  aspect-ratio: 16 / 9;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.14);
+}
+
+.viewer-embed iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.viewer-caption {
+  text-align: center;
+  cursor: default;
+}
+
+.viewer-title {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 0.07em;
+  color: #222222;
+}
+
+.viewer-description {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 19px;
+  color: #585858;
+  max-width: 60ch;
+  margin: 8px auto 0;
+}
+
+.viewer-count {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 0.07em;
+  color: #999;
+  margin-top: 10px;
+}
+
+/* Named rather than drawn: the words say what they do, set like every other
+   label on the site. */
+.viewer-arrow {
+  position: absolute;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #222222;
+  padding: 10px 4px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.viewer-arrow:hover {
+  color: var(--color-accent);
+}
+
+.viewer-arrow--prev {
+  left: 32px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.viewer-arrow--next {
+  right: 32px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+@media (max-width: 768px) {
+  .viewer {
+    padding: 56px 20px 28px;
+  }
+
+  .viewer-arrow--prev {
+    left: 14px;
+  }
+
+  .viewer-arrow--next {
+    right: 14px;
+  }
+}
+
+.play-caption {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 0.07em;
+  font-weight: 400;
+  margin-top: 14px;
+}
+
+.play-hint {
+  position: fixed;
+  bottom: 24px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 0.07em;
+  color: #888;
+  pointer-events: none;
+}
+
+.nav-links a.is-active {
+  opacity: 0.5;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  :root {
+    --page-padding: 20px;
+    /* single-column cards are ~2x taller, so the 1/3 sliver is bigger */
+    --projects-peek: calc(25vw + 22px);
+  }
+
+  /* one column: dissolve the column wrappers so every card becomes a direct
+     flex item again, and let each card's `order` restore the source order */
+  .projects-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--grid-gutter);
+  }
+
+  .projects-col {
+    display: contents;
+  }
+
+  .nav-links {
+    gap: 24px;
+  }
+
+  .about-row {
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .about-portrait {
+    flex: none;
+    width: 100%;
+    aspect-ratio: 2 / 3;
+  }
+
+  .about-side {
+    flex: none;
+  }
+
+  .case-meta {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .case-body {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .case-icons {
+    grid-template-columns: 1fr;
+  }
+
+  /* stack the dives and turn the chevrons downward */
+  .deep-dives {
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .deep-dive-step {
+    align-self: flex-start;
+    padding-top: 0;
+    transform: rotate(90deg);
+  }
+
+  .case-hero,
+  .case-video {
+    margin-left: 0;
+  }
+
+  .case-title {
+    white-space: normal;
+  }
+
+  .case-meta {
+    grid-template-columns: 1fr 1fr;
+    padding-top: 40px;
+  }
+
+  .case-lead,
+  .case-insight-title {
+    white-space: normal;
+    font-size: 20px;
+  }
+
+  .brief-art {
+    min-height: 340px;
+    padding: 56px 20px;
+  }
+
+  /* keep only the two turns of dialogue; the rest crowd the question */
+  .brief-art--pasta,
+  .brief-art--ramen,
+  .brief-art--timer,
+  .brief-art--listening {
+    display: none;
+  }
+
+  .case-nav {
+    position: static;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .hero-title,
+  .hero-subtitle,
+  .hero-meta .meta-item {
+    animation: none;
+  }
+
+  .project-image img,
+  .project-image video {
+    transition: none;
+  }
+
+
+  .play-item {
+    transform: none;
+  }
+}
