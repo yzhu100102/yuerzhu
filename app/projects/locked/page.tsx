@@ -1,6 +1,7 @@
 // The gate visitors land on when they open a protected project.
 
 import Link from 'next/link'
+import ScrollReveal from '../../scroll-reveal'
 
 export default async function LockedPage({
   searchParams,
@@ -14,6 +15,7 @@ export default async function LockedPage({
 
   return (
     <main className="main">
+      <ScrollReveal />
       <nav className="nav">
         <Link href="/" className="nav-name">YUER ZHU</Link>
         <div className="nav-links">

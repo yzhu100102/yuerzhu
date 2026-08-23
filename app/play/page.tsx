@@ -3,7 +3,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 
 // One tile of the canvas. It repeats in every direction, so panning never ends.
 const WORLD = { width: 2700, height: 2000 }
@@ -18,6 +18,18 @@ const TILES = [0, 1]
 const FRICTION = 0.92
 const WHEEL_IMPULSE = 1 - FRICTION
 const PARALLAX_EASE = 0.08
+
+// The collage is laid out at a size that suits a desktop window. At phone width
+// a single box is as wide as the screen, so the canvas is drawn smaller and the
+// reader sees a collage rather than one piece at a time. `.play-caption` is set
+// proportionally larger in the stylesheet so the type comes back out the size
+// it reads at everywhere else.
+const MOBILE_BREAKPOINT = 768
+const MOBILE_SCALE = 0.65
+
+// Where to open. The tile's own origin is a quiet corner — on a small screen it
+// is a blank page — so the canvas starts centred on the densest cluster of work.
+const FOCUS = { x: 1180, y: 700 }
 
 // ── Grouped work ──
 // One box per piece. A box shows a still, cycles a set of stills, or plays a
@@ -228,6 +240,23 @@ const groups: Group[] = [
 /** A drag further than this is a pan, not a click on a group. */
 const CLICK_SLOP = 8
 
+/**
+ * Whether the device points rather than hovers. Read as external state so the
+ * server renders the desktop wording and a hybrid that switches between a
+ * trackpad and a touchscreen re-reads it.
+ */
+function useTouch() {
+  return useSyncExternalStore(
+    (onChange) => {
+      const query = window.matchMedia('(hover: none)')
+      query.addEventListener('change', onChange)
+      return () => query.removeEventListener('change', onChange)
+    },
+    () => window.matchMedia('(hover: none)').matches,
+    () => false
+  )
+}
+
 // Fold an offset back into (-size, 0] so the 3x3 tiling always covers the screen.
 const wrap = (value: number, size: number) => ((value % size) - size) % size
 
@@ -246,6 +275,32 @@ export default function Play() {
   const moved = useRef(0)
   // what was under the pointer when it went down
   const downOn = useRef<string | null>(null)
+  const scale = useRef(1)
+  // there is nothing to scroll on a touchscreen, so say what the gesture is
+  const touch = useTouch()
+
+  // Fit the canvas to the screen, and open on the work rather than beside it.
+  useEffect(() => {
+    let opened = false
+    const fit = () => {
+      const small = window.innerWidth <= MOBILE_BREAKPOINT
+      scale.current = small ? MOBILE_SCALE : 1
+      // A desktop window opens on plenty of work already, so it keeps the view
+      // it has always had. Only ever on the first pass either way: mobile
+      // browsers fire resize whenever their chrome slides away, and re-centring
+      // then would yank the canvas out from under whoever was mid-pan.
+      if (opened || !small) return
+      // the frame is the canvas's visible box, nav already subtracted
+      const box = frame.current?.getBoundingClientRect()
+      if (!box) return
+      opened = true
+      pos.current.x = box.width / 2 - FOCUS.x * scale.current
+      pos.current.y = box.height / 2 - FOCUS.y * scale.current
+    }
+    fit()
+    window.addEventListener('resize', fit)
+    return () => window.removeEventListener('resize', fit)
+  }, [])
 
   // Arrow keys page through the open group; Escape closes it.
   useEffect(() => {
@@ -281,10 +336,13 @@ export default function Play() {
         parallax.current.x += (parallaxTo.current.x - parallax.current.x) * PARALLAX_EASE
         parallax.current.y += (parallaxTo.current.y - parallax.current.y) * PARALLAX_EASE
 
-        el.style.transform = `translate3d(${wrap(pos.current.x, WORLD.width)}px, ${wrap(
-          pos.current.y,
-          WORLD.height
-        )}px, 0)`
+        // `translate` is read in screen pixels and `scale` applies to the
+        // canvas's own contents, so the tiling repeats every scaled world.
+        const s = scale.current
+        el.style.transform = `translate3d(${wrap(
+          pos.current.x,
+          WORLD.width * s
+        )}px, ${wrap(pos.current.y, WORLD.height * s)}px, 0) scale(${s})`
         el.style.setProperty('--px', parallax.current.x.toFixed(3))
         el.style.setProperty('--py', parallax.current.y.toFixed(3))
       }
@@ -483,7 +541,11 @@ export default function Play() {
       </div>
 
       {/* the hint would show through the viewer's blur and collide with its caption */}
-      {!viewing && <p className="play-hint">SCROLL / DRAG TO MOVE</p>}
+      {!viewing && (
+        <p className="play-hint">
+          {touch ? 'DRAG TO EXPLORE' : 'SCROLL / DRAG TO MOVE'}
+        </p>
+      )}
 
       {viewing && (
         <div

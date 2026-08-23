@@ -4,7 +4,8 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import CaseNav from '../../case-nav'
+import ScrollReveal from '../../scroll-reveal'
 
 const sections = [
   { id: 'overview', label: 'OVERVIEW' },
@@ -29,28 +30,9 @@ const insights = [
 ]
 
 export default function ProjectTemplate() {
-  const [active, setActive] = useState(sections[0].id)
-
-  // Highlight whichever section is sitting in the upper third of the viewport.
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
-        if (visible[0]) setActive(visible[0].target.id)
-      },
-      { rootMargin: '-20% 0px -70% 0px' }
-    )
-    sections.forEach(({ id }) => {
-      const el = document.getElementById(id)
-      if (el) observer.observe(el)
-    })
-    return () => observer.disconnect()
-  }, [])
-
   return (
     <main className="main">
+      <ScrollReveal />
       {/* Nav */}
       <nav className="nav">
         <Link href="/" className="nav-name">YUER ZHU</Link>
@@ -80,18 +62,7 @@ export default function ProjectTemplate() {
         <div className="case-ph case-ph-hero" />
 
         <div className="case-body">
-          {/* Section nav — sticks alongside the content */}
-          <aside className="case-nav">
-            {sections.map((section) => (
-              <a
-                key={section.id}
-                href={`#${section.id}`}
-                className={active === section.id ? 'is-active' : undefined}
-              >
-                {section.label}
-              </a>
-            ))}
-          </aside>
+          <CaseNav sections={sections} />
 
           <div className="case-content">
             <section className="case-section" id="overview">
