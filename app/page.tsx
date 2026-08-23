@@ -53,8 +53,8 @@ const PROJECTS: Project[] = [
       'A set of in-field tools for hunters, including map-integrated weather data, map layers, compass and rangefinder.',
     meta: [
       { label: 'Role', values: ['Product Designer', 'UX research'] },
-      { label: 'Timeline', values: ['Ongoing'] },
-      { label: 'Programs', values: ['Figma', 'After Effects'] },
+      { label: 'Launching', values: ['Q3 2027', 'Ongoing'] },
+      { label: 'Programs', values: ['Figma'] },
     ],
     swatches: ['#505628', '#ac6d4b', '#757473', '#0b0b0b'],
     image: '/projects/alpha-hunt-v3.jpg',
