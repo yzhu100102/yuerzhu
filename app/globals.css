@@ -2107,75 +2107,135 @@ a {
   }
 
   /* ── Work ──
-     The composition unstacks: the making-of runs along the top, the album sits
-     in the upper half, and the index takes the lower half. */
-  .work-meta {
-    top: calc(var(--nav-height) + 14px);
-    left: var(--page-padding);
-    right: var(--page-padding);
-    width: auto;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 8px 22px;
+     The stage becomes one column. The album takes a band at the top and
+     everything that describes it runs underneath in a single left-aligned
+     block, in reading order — which project, what it is, what it took — rather
+     than being dealt out to the four corners the wide layout uses. */
+  .work-stage {
+    display: flex;
+    flex-direction: column;
+    padding: calc(var(--nav-height) + 12px) var(--page-padding) 18px;
   }
 
-  .work-meta-row dt {
-    font-size: 10px;
-    margin-bottom: 2px;
-  }
-
-  .work-meta-row dd {
-    font-size: 11px;
-    line-height: 1.35;
+  /* The album takes the space the copy underneath does not need, up to a
+     point — left uncapped it becomes a tall empty band with a small card
+     adrift in the middle of it. */
+  .work-frame {
+    position: relative;
+    inset: auto;
+    order: 1;
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: 48svh;
+    margin-bottom: 20px;
   }
 
   .work-stack {
     left: 50%;
-    top: 38%;
+    top: 50%;
   }
 
+  /* capped against the window's height as well as its width, so the album
+     still fits the band it is given on a short phone */
   .work-card {
-    width: clamp(200px, 72vw, 340px);
+    width: min(clamp(200px, 74vw, 330px), 34svh);
   }
 
-  .work-index {
-    top: 58%;
-    bottom: 176px;
-    right: var(--page-padding);
-    left: var(--page-padding);
-    width: auto;
-  }
-
-  .work-list-desc {
-    max-width: 40ch;
-  }
-
-  /* under the index rather than out at the edge, where there is no margin */
-  .work-swatches {
-    right: auto;
-    left: 50%;
-    top: auto;
-    bottom: 148px;
-    transform: translateX(-50%);
-  }
-
-  /* back to the foot of the screen: at this width the card's corner is already
-     under the making-of row */
+  /* one line at the head of the block, tying the figure to the title under it */
   .work-count {
-    left: var(--page-padding);
-    top: auto;
-    bottom: 40px;
+    position: static;
+    order: 2;
+    flex: none;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 12px;
   }
 
   .work-count-number {
-    font-size: 76px;
+    font-size: 32px;
   }
 
-  /* out of the count's way */
+  .work-swatches {
+    position: static;
+    order: 3;
+    flex: none;
+    transform: none;
+    margin-bottom: 16px;
+  }
+
+  .work-index {
+    position: static;
+    order: 4;
+    flex: none;
+    width: auto;
+    margin-bottom: 18px;
+    overflow: visible;
+    /* the run is not scrolling past a window any more, so it has no edges to
+       fade out against */
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .work-list {
+    position: static;
+    text-align: left;
+  }
+
+  /* only the project being read is in the column; the rest would be a screen's
+     worth of dead grey under it */
+  .work-list-item {
+    display: none;
+    padding: 0;
+  }
+
+  .work-list-item.is-active {
+    display: block;
+    opacity: 1;
+  }
+
+  .work-list-rule {
+    margin: 8px 0;
+  }
+
+  .work-list-desc {
+    max-width: none;
+    margin: 0;
+  }
+
+  /* label and value on one line, on a shared column, so the three read as a
+     block rather than as three loose pairs */
+  .work-meta {
+    position: static;
+    order: 5;
+    flex: none;
+    flex-direction: column;
+    width: auto;
+    gap: 5px;
+    margin-bottom: 16px;
+  }
+
+  .work-meta-row {
+    display: grid;
+    grid-template-columns: 74px 1fr;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  .work-meta-row dt {
+    font-size: 11px;
+    margin-bottom: 0;
+  }
+
+  .work-meta-row dd {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
   .work-hint {
-    left: auto;
-    right: var(--page-padding);
-    bottom: 20px;
+    position: static;
+    order: 6;
+    flex: none;
   }
 
   /* ── About, screen one ──
@@ -2474,24 +2534,30 @@ a {
   }
 }
 
-/* A short phone, where the album and the index are competing for the same few
-   hundred pixels. The card gives some back so the description still has room to
-   be read rather than being masked down to its title. */
+/* A short phone, where the album and the copy under it are competing for the
+   same few hundred pixels. The type gives some back; the album is already
+   capped against the window's height. */
 @media (max-width: 768px) and (max-height: 720px) {
-  .work-stack {
-    top: 32%;
-  }
-
+  /* the copy leaves the album a shorter band here, so the widest a near-square
+     thumbnail may be comes down with it */
   .work-card {
-    width: clamp(170px, 58vw, 260px);
-  }
-
-  .work-index {
-    top: 48%;
+    width: min(clamp(150px, 62vw, 260px), 26svh);
   }
 
   .work-count-number {
-    font-size: 64px;
+    font-size: 26px;
+  }
+
+  .work-list-title {
+    font-size: 17px;
+  }
+
+  .work-list-desc {
+    font-size: 12px;
+  }
+
+  .work-index {
+    margin-bottom: 12px;
   }
 }
 

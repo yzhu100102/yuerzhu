@@ -203,7 +203,8 @@ export default function Home() {
   const [entered, setEntered] = useState(false)
   /** the black opening is still the thing under the header */
   const [onHero, setOnHero] = useState(true)
-  const step = useNarrow() ? STEP.narrow : STEP.wide
+  const narrow = useNarrow()
+  const step = narrow ? STEP.narrow : STEP.wide
 
   // How far the page has been scrolled picks the project, so the stage can be
   // held still while the reader moves through the work at their own pace.
@@ -244,8 +245,12 @@ export default function Home() {
     const el = list.current
     const item = el?.children[active] as HTMLElement | undefined
     if (!el || !item) return
-    el.style.transform = `translateY(${-(item.offsetTop + item.offsetHeight / 2)}px)`
-  }, [active])
+    // the narrow layout puts only the project being read in the column, in the
+    // flow, so there is no run of them to slide
+    el.style.transform = narrow
+      ? ''
+      : `translateY(${-(item.offsetTop + item.offsetHeight / 2)}px)`
+  }, [active, narrow])
 
   // The cursor leans the whole stack a few degrees, so the album shifts under
   // the hand rather than sitting flat.
