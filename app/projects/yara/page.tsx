@@ -35,7 +35,9 @@ const meta = [
 export default function YaraCaseStudy() {
   return (
     <main className="main">
-      <ScrollReveal />
+      {/* Opens at the top and arrives a line at a time, quickly — and on any
+          later visit opens where it was left, with nothing animating. */}
+      <ScrollReveal step={0.045} restoreKey="case-scroll:yara" />
       {/* Nav */}
       <nav className="nav">
         <Link href="/" className="nav-name">YUER ZHU</Link>
@@ -48,7 +50,9 @@ export default function YaraCaseStudy() {
 
       <article className="case">
         <header className="case-hero">
-          <h1 className="case-title">Yara, a voice assistant for Yummly.</h1>
+          <h1 className="case-title">
+            <em>Yara,</em> a voice assistant for Yummly.
+          </h1>
           <p className="case-text case-text--hero">
             A conversational interface for cooking, shopping, and meal planning,
             built on Yummly&apos;s existing recipe platform.

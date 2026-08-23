@@ -5,7 +5,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import ScrollReveal from '../scroll-reveal'
-import { EMAIL, LINKEDIN, RESUME } from '../links'
+import Mark, { type MarkName } from '../marks'
+import { LINKEDIN, RESUME, SAY_HELLO } from '../links'
 
 // Matches --nav-height in globals.css. The header has to know where its own
 // underside is to take the colours of whichever screen has reached it.
@@ -15,69 +16,122 @@ const NAV_HEIGHT = 48
 // A picture far taller than the window, scrolling with the page and changing
 // over once as the second paragraph arrives. Swap in real photographs.
 const STAGE = [
-  { src: '/about/stage-1.png', alt: 'Yuer at her desk' },
-  { src: '/about/stage-2.png', alt: 'Sketching a layout by hand' },
+  { src: '/about/stage-01.jpg', alt: 'Yuer by the Ponte Vecchio in Florence' },
+  {
+    src: '/about/stage-02.jpg',
+    alt: 'Yuer by the Ponte Vecchio, a moment later',
+  },
 ]
 
 // ── Screen two ──
 // The story reads as one sentence; the words carrying a picture light the frame
-// beside them when pointed at, tapped or tabbed to. A plain string is just
-// text, an object is a word with a photograph behind it.
-type Part = string | { word: string; src: string; alt: string }
+// beside them when pointed at, tapped or tabbed to, and each one wears a small
+// mark of its own. A plain string is just text, an object is a word with a
+// photograph behind it.
+type Picture = {
+  word: string
+  mark: MarkName
+  src: string
+  alt: string
+  /** the photograph's own pixel size — nothing here is cropped to a frame */
+  width: number
+  height: number
+  /** where it lands in the white, as a share of the screen it sits on */
+  x: string
+  y: string
+}
+
+type Part = string | Picture
 
 const STORY: Part[] = [
   'Baker of ',
-  { word: 'sourdough', src: '/about/story-1.png', alt: 'A loaf of sourdough, scored and baked dark' },
-  ', a ',
-  { word: 'pianist', src: '/about/story-2.png', alt: 'Sheet music open on an upright piano' },
-  ' since six, keeper of forty-odd ',
-  { word: 'plants', src: '/about/story-3.png', alt: 'A window shelf crowded with houseplants' },
-  ', maker of tiny ',
-  { word: 'glass animals', src: '/about/story-4.png', alt: 'Small lampworked glass animals on a sill' },
-  ', devoted to ',
-  { word: 'long hikes', src: '/about/story-5.png', alt: 'A trail running out across open prairie' },
-  ' on the prairie, a ',
-  { word: 'matchbox', src: '/about/story-6.png', alt: 'A collection of printed matchboxes' },
-  ' collector, and still chasing the perfect ',
-  { word: 'espresso', src: '/about/story-7.png', alt: 'An espresso pulled into a small cup' },
-  '.',
+  {
+    word: 'sweets',
+    mark: 'cake',
+    src: '/about/sweets.jpg',
+    alt: 'A cake, iced and finished at home',
+    width: 1200,
+    height: 1600,
+    x: '4%',
+    y: '28%',
+  },
+  ', fell slave to the ',
+  {
+    word: 'tennis',
+    mark: 'racket',
+    src: '/about/tennis.jpg',
+    alt: 'A tennis court',
+    width: 1600,
+    height: 1066,
+    x: '24%',
+    y: '6%',
+  },
+  ' trend, a ',
+  {
+    word: 'recent hike',
+    mark: 'mountain',
+    src: '/about/hike.jpg',
+    alt: 'A hike outside Seattle',
+    width: 1200,
+    height: 1600,
+    x: '9%',
+    y: '50%',
+  },
+  ' in Seattle, ',
+  {
+    word: 'ceramics',
+    mark: 'vase',
+    src: '/about/ceramics.jpg',
+    alt: 'Ceramics brought back from a trip to Japan',
+    width: 1600,
+    height: 1066,
+    x: '21%',
+    y: '38%',
+  },
+  ' from a trip to Japan, and still hunting for a perfect ',
+  {
+    word: 'kouign-amann',
+    mark: 'spiral',
+    src: '/about/kouign-amann.jpg',
+    alt: 'A pastry, close but not a kouign-amann',
+    width: 1200,
+    height: 1600,
+    x: '2%',
+    y: '6%',
+  },
+  '\u00a0(cousin of the croissant).',
 ]
 
-const PICTURES = STORY.filter((part): part is Exclude<Part, string> => typeof part !== 'string')
+const PICTURES = STORY.filter((part): part is Picture => typeof part !== 'string')
 
+// The page signs off on these rather than on a screen of its own: set in the
+// display face, down in the bottom right corner of the last screen. The résumé
+// is a PDF served from public/, so it opens in the browser's own reader.
 const ELSEWHERE = [
-  { label: 'Résumé', href: RESUME },
+  { label: 'Contact Me', href: SAY_HELLO },
   { label: 'LinkedIn', href: LINKEDIN },
-  { label: 'Contact me', href: EMAIL },
+  { label: 'Resume', href: RESUME },
 ]
-
-// ── Screen three ──
-// A subject and an opening line, so the badge opens a draft rather than just an
-// empty window addressed to nobody in particular.
-const MAILTO =
-  `${EMAIL}?subject=${encodeURIComponent("Let's connect")}` +
-  `&body=${encodeURIComponent('Hi Yuer,\n\n')}`
-
-const RING_RADIUS = 82
-/** the circle's own length, which the words are stretched to fill exactly */
-const RING_LENGTH = 2 * Math.PI * RING_RADIUS
-const RING_PATH =
-  `M 110,110 m -${RING_RADIUS},0 ` +
-  `a ${RING_RADIUS},${RING_RADIUS} 0 1,1 ${RING_RADIUS * 2},0 ` +
-  `a ${RING_RADIUS},${RING_RADIUS} 0 1,1 -${RING_RADIUS * 2},0`
 
 /** which screen the header is currently sitting on */
-type Screen = 'stage' | 'story' | 'connect'
+type Screen = 'stage' | 'story'
 
 export default function About() {
   const stage = useRef<HTMLElement>(null)
   const story = useRef<HTMLElement>(null)
-  const outro = useRef<HTMLParagraphElement>(null)
   /** which stage frame is up */
   const [frame, setFrame] = useState(0)
   const [screen, setScreen] = useState<Screen>('stage')
-  /** which story picture is showing */
+  /**
+   * Which picture the page has settled on, and which one is being looked at.
+   *
+   * Pointing at a word is a question, not an answer: the picture comes up while
+   * the pointer is on it and the page goes back to what it was showing the
+   * moment it leaves. Only a click changes what the page has settled on — so a
+   * reader can wander down the sentence and still end up back where they were.
+   */
   const [shown, setShown] = useState(0)
+  const [asked, setAsked] = useState<number | null>(null)
 
   useEffect(() => {
     let raf = 0
@@ -86,14 +140,14 @@ export default function About() {
       raf = 0
       const reaches = (el: HTMLElement | null) =>
         !!el && el.getBoundingClientRect().bottom > NAV_HEIGHT
-      setScreen(
-        reaches(stage.current) ? 'stage' : reaches(story.current) ? 'story' : 'connect'
-      )
+      setScreen(reaches(stage.current) ? 'stage' : 'story')
 
-      const second = outro.current
-      if (!second) return
-      // the change-over happens the moment the second paragraph is on screen
-      setFrame(second.getBoundingClientRect().top < window.innerHeight ? 1 : 0)
+      // The cut waits for the white underneath to arrive: held to the second
+      // paragraph it landed while the reader was still reading it, which reads
+      // as the picture glitching rather than as a second shot.
+      const white = story.current
+      if (!white) return
+      setFrame(white.getBoundingClientRect().top < window.innerHeight ? 1 : 0)
     }
 
     const onScroll = () => {
@@ -111,6 +165,9 @@ export default function About() {
       window.removeEventListener('resize', onScroll)
     }
   }, [])
+
+  /** the picture on the page: whatever is being pointed at, or what was chosen */
+  const up = asked ?? shown
 
   return (
     <main className={`main about-page is-on-${screen}`}>
@@ -130,7 +187,7 @@ export default function About() {
 
       {/* ── Screen one ── */}
       <section className="about-stage" ref={stage}>
-        <div className="about-stage-media">
+        <div className="about-stage-media parallax-in" data-parallax="0.1">
           {STAGE.map((shot, i) => (
             <Image
               key={shot.src}
@@ -146,40 +203,44 @@ export default function About() {
         </div>
 
         <span className="about-stage-mark about-stage-mark--dot" aria-hidden="true" />
-        <p className="about-stage-intro">
-          It&apos;s Yuer, but you read it like &ldquo;yoo-were&rdquo;.{' '}
+        <p className="about-stage-intro" data-parallax="0.05">
+          It&apos;s Yuer, pronounced <em>&ldquo;yoo-er&rdquo;</em>{' '}like how
+          it&apos;s spelled!{' '}
           <span className="about-glyph" aria-hidden="true">✳</span> I&apos;m currently
-          based in Olathe, Kansas, working as a product designer at Garmin.
+          based in Olathe, Kansas, working as a <em>product designer</em> at
+          Garmin.
         </p>
 
-        <p className="about-stage-outro" ref={outro}>
-          I&apos;ve been at this for 2 years, and I&apos;m drawn to the same
-          thing I started with{' '}
-          <span className="about-glyph" aria-hidden="true">→</span> making products
-          feel <em>simple</em>, even when they&apos;re not.
+        <p className="about-stage-outro" data-parallax="0.05">
+          I&apos;ve been in the <em>design + hardware</em>{' '}intersection for 2
+          years, and I&apos;m drawn to the same thing I started with{' '}
+          <span className="about-glyph" aria-hidden="true">→</span> making products{' '}
+          <em>feel</em>{' '}simple, even when they&apos;re not.
         </p>
 
         <span className="about-stage-mark about-stage-mark--note">
-          THIS IS ME,
+          A memorable trip to Florence,
           <br />
-          DOING MY
-          <br />
-          DAILY THINGS
+          by the Ponte Vecchio bridge
         </span>
       </section>
 
       {/* ── Screen two ── */}
       <section className="about-story" ref={story}>
+        {/* Each one at its own proportions and its own place in the white —
+            no frame to crop to, and no two landing on the same spot. */}
         <div className="about-story-media">
           {PICTURES.map((picture, i) => (
             <Image
               key={picture.src}
-              className={`about-story-shot${i === shown ? ' is-up' : ''}`}
+              className={`about-story-shot${i === up ? ' is-up' : ''}`}
+              style={{ '--x': picture.x, '--y': picture.y } as React.CSSProperties}
               src={picture.src}
-              alt={i === shown ? picture.alt : ''}
-              aria-hidden={i === shown ? undefined : true}
-              fill
-              sizes="(max-width: 768px) 100vw, 40vw"
+              alt={i === up ? picture.alt : ''}
+              aria-hidden={i === up ? undefined : true}
+              width={picture.width}
+              height={picture.height}
+              sizes="(max-width: 768px) 70vw, 30vw"
             />
           ))}
         </div>
@@ -188,28 +249,35 @@ export default function About() {
           <span className="about-stage-mark about-stage-mark--dot" aria-hidden="true" />
 
           <p className="about-story-text">
-            {STORY.map((part, i) =>
-              typeof part === 'string' ? (
-                <span key={i}>{part}</span>
-              ) : (
+            {STORY.map((part, i) => {
+              if (typeof part === 'string') return <span key={i}>{part}</span>
+              const index = PICTURES.indexOf(part)
+              return (
                 <button
                   key={i}
                   type="button"
                   className={`about-story-word${
-                    PICTURES.indexOf(part) === shown ? ' is-shown' : ''
+                    index === shown ? ' is-shown' : ''
                   }`}
-                  aria-pressed={PICTURES.indexOf(part) === shown}
-                  onMouseEnter={() => setShown(PICTURES.indexOf(part))}
-                  onFocus={() => setShown(PICTURES.indexOf(part))}
-                  onClick={() => setShown(PICTURES.indexOf(part))}
+                  aria-pressed={index === shown}
+                  onMouseEnter={() => setAsked(index)}
+                  onMouseLeave={() => setAsked(null)}
+                  onFocus={() => setAsked(index)}
+                  onBlur={() => setAsked(null)}
+                  onClick={() => {
+                    setShown(index)
+                    setAsked(null)
+                  }}
                 >
+                  <Mark name={part.mark} />
                   {part.word}
                 </button>
               )
-            )}
+            })}
           </p>
 
-          <p className="about-story-links">
+          <div className="about-story-links">
+            <p className="say-hello">Say hello</p>
             {ELSEWHERE.map((where) => (
               <a
                 key={where.label}
@@ -222,41 +290,10 @@ export default function About() {
                 {where.label}
               </a>
             ))}
-          </p>
+          </div>
         </div>
       </section>
 
-      {/* ── Screen three ── */}
-      <section className="about-connect">
-        <p className="about-connect-lead">
-          <span className="about-glyph" aria-hidden="true">✳</span> Let&apos;s connect!
-        </p>
-        <p className="about-connect-name">Yuer Zhu</p>
-
-        <a className="about-connect-badge" href={MAILTO} aria-label="Email Yuer Zhu">
-          <svg className="about-connect-ring" viewBox="0 0 220 220" aria-hidden="true">
-            <defs>
-              <path id="about-connect-ring-path" fill="none" d={RING_PATH} />
-            </defs>
-            <text>
-              {/* stretched to the circle's own length, so the words close up
-                  into a ring with no gap and no overlap */}
-              <textPath
-                href="#about-connect-ring-path"
-                textLength={RING_LENGTH}
-                lengthAdjust="spacing"
-              >
-                CLICK TO EMAIL ME ✳ CLICK TO EMAIL ME ✳
-              </textPath>
-            </text>
-          </svg>
-
-          <svg className="about-connect-envelope" viewBox="0 0 40 30" aria-hidden="true">
-            <rect x="1.6" y="1.6" width="36.8" height="26.8" rx="3" />
-            <path d="M2.4 4.2 20 17 37.6 4.2" />
-          </svg>
-        </a>
-      </section>
     </main>
   )
 }

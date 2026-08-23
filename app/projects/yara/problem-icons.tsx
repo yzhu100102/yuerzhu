@@ -7,35 +7,25 @@ const ORANGE = '#F98B5A'
 const GREEN = '#007B61'
 const CREAM = '#FFF6DC'
 
-/** A phone, and the hand that would rather not be holding it. */
-function PhoneInHand() {
+/** A phone, and the print of the finger nobody wants to put on it. */
+function Phone() {
   return (
-    <svg viewBox="0 0 120 120" role="img" aria-label="A hand holding a phone">
-      {/* fingers, behind the phone */}
-      <g fill={ORANGE}>
-        <rect x="74" y="46" width="22" height="10" rx="5" />
-        <rect x="74" y="61" width="19" height="10" rx="5" />
+    <svg viewBox="0 0 120 120" role="img" aria-label="A phone with a fingerprint on its screen">
+      {/* the handset */}
+      <rect x="33" y="8" width="54" height="104" rx="12" fill={GREEN} />
+      {/* the screen */}
+      <rect x="39" y="19" width="42" height="82" rx="5" fill={CREAM} />
+      {/* earpiece */}
+      <rect x="52" y="12.5" width="16" height="3" rx="1.5" fill={CREAM} />
+      {/* The print: three ridges nested about one centre, open at the foot the
+          way a print is, with the core ending short between them. Any more
+          detail than this closes up at the size the illustration is set. */}
+      <g fill="none" stroke={ORANGE} strokeWidth="2.6" strokeLinecap="round">
+        <path d="M53.5 68V54.5a6.5 6.5 0 0 1 13 0V68" />
+        <path d="M47 71V54.5a13 13 0 0 1 26 0V71" />
+        <path d="M40.5 74V54.5a19.5 19.5 0 0 1 39 0V74" />
+        <path d="M60 60v8" />
       </g>
-      {/* phone, tipped the way a hand actually holds one */}
-      <g transform="rotate(-6 60 58)">
-        <rect x="37" y="10" width="46" height="80" rx="11" fill={GREEN} />
-        <rect x="42" y="16" width="36" height="62" rx="6" fill={CREAM} />
-      </g>
-      {/* palm, narrower than the phone so the phone reads as sitting in it */}
-      <path
-        d="M42 80h30a13 13 0 0 1 13 13v5a14 14 0 0 1-14 14H43a14 14 0 0 1-14-14v-5a13 13 0 0 1 13-13z"
-        fill={ORANGE}
-      />
-      {/* thumb, laid across the lower screen */}
-      <rect
-        x="30"
-        y="60"
-        width="34"
-        height="13"
-        rx="6.5"
-        fill={ORANGE}
-        transform="rotate(-20 47 66)"
-      />
     </svg>
   )
 }
@@ -86,7 +76,7 @@ function StillGood() {
 
 const concerns = [
   {
-    Icon: PhoneInHand,
+    Icon: Phone,
     title: 'I don\u2019t want to touch my phone right now.',
     note: 'Screens go dark mid-step. Phone gets greasy.',
   },

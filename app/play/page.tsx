@@ -555,11 +555,14 @@ export default function Play() {
           aria-label={groups[viewing.g].title}
           onClick={() => setViewing(null)}
         >
-          <div className="viewer-stage" onClick={(e) => e.stopPropagation()}>
+          {/* The stage is the whole area around the picture, so a click on it
+              closes. Only the piece itself, and the controls sitting on it,
+              stop the click going any further. */}
+          <div className="viewer-stage">
             {groups[viewing.g].shots[viewing.i].youtube ? (
               // YouTube's own player, controls included. Muted so it is allowed
               // to start; the viewer can turn the sound up from the bar.
-              <div className="viewer-embed">
+              <div className="viewer-embed" onClick={(e) => e.stopPropagation()}>
                 <iframe
                   src={`https://www.youtube.com/embed/${
                     groups[viewing.g].shots[viewing.i].youtube
@@ -572,7 +575,7 @@ export default function Play() {
             ) : groups[viewing.g].shots[viewing.i].vimeo ? (
               // Vimeo's own player, so it brings its controls with it. Muted so
               // it is allowed to start; the viewer can turn the sound up.
-              <div className="viewer-embed">
+              <div className="viewer-embed" onClick={(e) => e.stopPropagation()}>
                 <iframe
                   src={`https://player.vimeo.com/video/${
                     groups[viewing.g].shots[viewing.i].vimeo
@@ -592,6 +595,7 @@ export default function Play() {
                 controls
                 autoPlay
                 playsInline
+                onClick={(e) => e.stopPropagation()}
                 ref={(el) => {
                   if (!el) return
                   // Opening the viewer is itself a click, so a clip that has
@@ -605,6 +609,7 @@ export default function Play() {
             ) : (
               <Image
                 className="viewer-image"
+                onClick={(e) => e.stopPropagation()}
                 src={groups[viewing.g].shots[viewing.i].src}
                 width={groups[viewing.g].shots[viewing.i].w}
                 height={groups[viewing.g].shots[viewing.i].h}

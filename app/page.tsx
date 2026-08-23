@@ -5,6 +5,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import ProjectMedia from './project-media'
+import Mark from './marks'
+import ScrollReveal from './scroll-reveal'
 import { CMU, GARMIN, RED_HOUSE } from './links'
 
 // Matches --nav-height in globals.css. The header has to know where its own
@@ -14,12 +16,16 @@ const NAV_HEIGHT = 48
 type Project = {
   id: number
   title: string
-  /** the line above the title — company, discipline, surface */
+  /** the line above the title — who it was for, and what it is */
   kind: string
   description: string
-  started: string
-  role: string
-  software: string
+  /**
+   * How it was made, in the order it is read: what the job was, when, and
+   * with what. Each row's values are set one to a line rather than run
+   * together with commas — a list of four roles on one line reads as a
+   * sentence someone forgot to finish.
+   */
+  meta: { label: string; values: string[] }[]
   /** sampled from the thumbnail itself, most characteristic first */
   swatches: string[]
   href: string
@@ -35,19 +41,21 @@ type Project = {
   height: number
 }
 
-// The dates, roles and software on the three Garmin projects are placeholders —
-// they are not recorded anywhere in this repo. Yara's are the real ones, taken
-// from its own case study.
+// The descriptions on the three Garmin projects are the résumé's own words for
+// them. Yara's row is the one from its own case study, so the stage and the
+// study never disagree about what the work was.
 const PROJECTS: Project[] = [
   {
     id: 1,
-    title: 'Alpha Hunt App',
-    kind: 'Garmin · Product Design · App',
+    title: 'Alpha Hunt',
+    kind: 'Garmin • App',
     description:
-      'A companion app for Garmin’s dog-tracking collars, built so position, terrain and pack status read at a glance from a moving vehicle.',
-    started: 'March 2024',
-    role: 'Product Designer',
-    software: 'Figma, After Effects',
+      'A set of in-field tools for hunters, including map-integrated weather data, map layers, compass and rangefinder.',
+    meta: [
+      { label: 'Role', values: ['Product Designer', 'UX research'] },
+      { label: 'Timeline', values: ['Ongoing'] },
+      { label: 'Programs', values: ['Figma', 'After Effects'] },
+    ],
     swatches: ['#505628', '#ac6d4b', '#757473', '#0b0b0b'],
     image: '/projects/alpha-hunt-v3.jpg',
     href: '/projects/template',
@@ -57,12 +65,14 @@ const PROJECTS: Project[] = [
   {
     id: 2,
     title: 'Approach S72 Golf Biometrics',
-    kind: 'Garmin · Product Design · Wearable',
+    kind: 'Garmin • Wearable',
     description:
-      'Bringing heart rate and body battery onto the S72 golf watch without crowding the one number a player is actually on the course for.',
-    started: 'August 2023',
-    role: 'Product Designer',
-    software: 'Figma, Illustrator',
+      'A new heart rate feature for one of Garmin’s new golf watches, enabling golfers to make data-driven insights during and after a round.',
+    meta: [
+      { label: 'Role', values: ['Product Designer'] },
+      { label: 'Launching', values: ['Q4 2026'] },
+      { label: 'Programs', values: ['Figma'] },
+    ],
     swatches: ['#902c01', '#ae744a', '#4e2615', '#0b0302'],
     image: '/projects/garmin-golf-biometrics-s72.jpg',
     href: '/projects/template',
@@ -72,12 +82,14 @@ const PROJECTS: Project[] = [
   {
     id: 3,
     title: 'Garmin Explore',
-    kind: 'Garmin · Product Design · Web',
+    kind: 'Garmin • Web',
     description:
-      'A rebuild of the trip-planning web app around the map itself, so routes, waypoints and gear stop living in three separate places.',
-    started: 'January 2023',
-    role: 'Product Designer',
-    software: 'Figma',
+      'Leading the 0–1 redesign of Garmin Explore Web, an outdoor mapping, navigation, planning and data management ecosystem.',
+    meta: [
+      { label: 'Role', values: ['Product Designer', 'UX research'] },
+      { label: 'Timeline', values: ['Ongoing'] },
+      { label: 'Programs', values: ['Figma'] },
+    ],
     swatches: ['#a3b550', '#aabcd0', '#d8f0bd', '#faf9f7'],
     image: '/projects/garmin-explore.jpg',
     href: '/projects/template',
@@ -87,12 +99,17 @@ const PROJECTS: Project[] = [
   {
     id: 4,
     title: 'Yara, for Yummly',
-    kind: 'Concept · Conversation UI · User Research',
+    kind: 'Concept • Conversation UI',
     description:
       'A conversational interface for cooking, shopping and meal planning, built on Yummly’s existing recipe platform.',
-    started: 'January 2024',
-    role: 'Sole designer, UX research, CUI design, motion',
-    software: 'Figma, Illustrator, After Effects',
+    meta: [
+      {
+        label: 'Role',
+        values: ['Sole designer', 'UX research', 'CUI design', 'Motion'],
+      },
+      { label: 'Timeline', values: ['13 weeks', 'Spring 2024'] },
+      { label: 'Programs', values: ['Figma', 'Illustrator', 'After Effects'] },
+    ],
     swatches: ['#2d288f', '#f98b5a', '#fff6dc', '#007b61'],
     video: '/projects/project-four.mp4',
     poster: '/projects/project-four-poster.jpg',
@@ -126,7 +143,12 @@ const STEP = {
   // both true at once.
   // Both piles are pushed well out on the diagonal and set a long way back, so
   // the one being read is the only thing at full size anywhere near the middle.
-  wide: { x: 300, y: 64, z: 380, outX: 300, outY: 66, outZ: 460 },
+  // The depth figures are what shrink the two piles: against a 1500px
+  // perspective a card 1100 back is drawn at 58% and one 1350 back at 53%, so
+  // the one being read is plainly the largest thing anywhere on the stage.
+  // Sending them back also pulls them in toward the vanishing point, which is
+  // why the sideways step is so much larger than the gap it actually buys.
+  wide: { x: 640, y: 97, z: 1100, outX: 640, outY: 99, outZ: 1350 },
   // the narrow layout stacks the copy above and below the album, so the piles
   // stay near the card rather than travelling into it
   narrow: { x: 62, y: 11, z: 190, outX: 70, outY: 12, outZ: 260 },
@@ -139,6 +161,44 @@ const STEP = {
  * hanging off the edge as a run of visible edges rather than flying off it.
  */
 const reach = (n: number) => (n === 0 ? 0 : 1 + (n - 1) * 0.1)
+
+/**
+ * How far past a boundary the scroll has to come before the card changes, as a
+ * fraction of one project's share of the page.
+ *
+ * Without it the index is a bare `floor()` of the scroll position, and a
+ * boundary is a knife edge: a pixel of wobble — a trackpad settling, the
+ * rubber-band at the end of a fling, a phone's chrome sliding away — lands on
+ * either side of it in consecutive frames and the album flips back and forth.
+ * The band is only ever crossed in the direction of travel, so nothing is ever
+ * skipped; it just has to be committed to.
+ */
+const SETTLE = 0.08
+
+/**
+ * How recently the pointer must have moved for a `mouseenter` to count as the
+ * reader choosing a project rather than the index sliding under a still hand.
+ * A frame or two — long enough to bridge the gap between a move and the enter
+ * it causes, short enough that a hand at rest never qualifies.
+ */
+const POINTER_GRACE = 120
+
+/**
+ * Whether the hand moved recently enough that a boundary event can be put down
+ * to it. Kept out of the component so that reading the clock — which is what
+ * makes this a question about now rather than about props — is plainly not
+ * something the render does.
+ */
+function movedRecently(at: number) {
+  return performance.now() - at < POINTER_GRACE
+}
+
+/**
+ * How much of the counter laps the thumbnail, on each axis, as a fraction of
+ * the numeral's own box. Small: the figure hangs off the corner and only its
+ * last corner crosses the picture, so the work is not read through it.
+ */
+const OVERLAP = 0.26
 
 /**
  * Whether the stage is on a narrow screen. Read as external state so the server
@@ -193,6 +253,7 @@ function cardTransform(offset: number, step: typeof STEP.wide) {
 }
 
 export default function Home() {
+  const hero = useRef<HTMLElement>(null)
   const scroller = useRef<HTMLDivElement>(null)
   const stage = useRef<HTMLDivElement>(null)
   const stack = useRef<HTMLDivElement>(null)
@@ -205,6 +266,8 @@ export default function Home() {
   const [onHero, setOnHero] = useState(true)
   const narrow = useNarrow()
   const step = narrow ? STEP.narrow : STEP.wide
+  /** when the hand last actually moved the pointer */
+  const lastPointerMove = useRef(-Infinity)
 
   // How far the page has been scrolled picks the project, so the stage can be
   // held still while the reader moves through the work at their own pace.
@@ -213,14 +276,37 @@ export default function Home() {
     const read = () => {
       raf = 0
       const el = scroller.current
-      if (!el) return
+      // On a narrow screen the stage is not in the layout at all — the work is
+      // a plain stack under the opening — so it collapses to nothing and there
+      // is no travel to read. The opening's own underside says where the black
+      // ends instead, which is all the header needs.
+      if (!el || !el.offsetHeight) {
+        const opening = hero.current
+        if (opening) setOnHero(opening.getBoundingClientRect().bottom > NAV_HEIGHT)
+        return
+      }
       const rect = el.getBoundingClientRect()
       const travel = rect.height - window.innerHeight
       const progress = travel > 0 ? Math.min(Math.max(-rect.top / travel, 0), 1) : 0
-      setActive(Math.min(PROJECTS.length - 1, Math.floor(progress * PROJECTS.length)))
-      // the composition assembles once as the work comes up to fill the screen,
-      // and stays put after — re-running it on the way back up reads as a fault
-      setEntered((was) => was || rect.top <= window.innerHeight * 0.12)
+
+      // where the scroll is, counted in projects rather than pixels
+      const place = progress * PROJECTS.length
+      const band = Math.min(PROJECTS.length - 1, Math.floor(place))
+      const into = place - Math.floor(place)
+      setActive((was) => {
+        if (band === was) return was
+        // Coming down the page a new band is entered at its top, so the scroll
+        // has to be `SETTLE` past that edge; going back up it is entered at the
+        // bottom, so it has to be `SETTLE` clear of that one instead.
+        const committed = band > was ? into > SETTLE : into < 1 - SETTLE
+        return committed ? band : was
+      })
+      // The composition assembles as soon as any of the work is showing, which
+      // on arrival is the band already peeking under the black — a stage that
+      // waits until it fills the screen leaves that band empty and white, and
+      // the page looks like it has nothing under the opening. It stays put
+      // after; re-running it on the way back up reads as a fault.
+      setEntered((was) => was || rect.top <= window.innerHeight * 0.98)
       setOnHero(rect.top > NAV_HEIGHT)
     }
     const onScroll = () => {
@@ -251,6 +337,17 @@ export default function Home() {
       ? ''
       : `translateY(${-(item.offsetTop + item.offsetHeight / 2)}px)`
   }, [active, narrow])
+
+  // Whether a `mouseenter` on a title came from the hand or from the list
+  // sliding underneath a pointer at rest. Only a real move is recorded, so an
+  // element arriving under a still cursor leaves the figure alone.
+  useEffect(() => {
+    const onMove = () => {
+      lastPointerMove.current = performance.now()
+    }
+    window.addEventListener('pointermove', onMove, { passive: true })
+    return () => window.removeEventListener('pointermove', onMove)
+  }, [])
 
   // The cursor leans the whole stack a few degrees, so the album shifts under
   // the hand rather than sitting flat.
@@ -291,8 +388,7 @@ export default function Home() {
     }
   }, [])
 
-  // Sets the counter down on the card's top-left corner, lapping it by a
-  // quarter of the figure — the bottom-right one — so the corner of the
+  // Sets the counter down on the card's top-left corner, so the corner of the
   // thumbnail is all that is crossed, whatever shape it happens to be.
   useEffect(() => {
     const place = () => {
@@ -309,11 +405,12 @@ export default function Home() {
       const cardX = originBox.left - stageBox.left - card.offsetWidth / 2
       const cardY = originBox.top - stageBox.top - card.offsetHeight / 2
 
-      // half the figure sits left of the corner and half above it, which leaves
-      // exactly its bottom-right quarter over the card. `offset*` steps back
-      // out to the block, which carries the label above the figure.
-      const x = cardX - figure.offsetWidth / 2 - figure.offsetLeft
-      const y = cardY - figure.offsetHeight / 2 - figure.offsetTop
+      // `OVERLAP` of the figure sits over the card on each axis and the rest
+      // hangs off it, so what crosses the picture is a small corner of the
+      // numeral rather than a quarter of it. `offset*` steps back out to the
+      // block, which carries the label above the figure and the total beside it.
+      const x = cardX - figure.offsetWidth * (1 - OVERLAP) - figure.offsetLeft
+      const y = cardY - figure.offsetHeight * (1 - OVERLAP) - figure.offsetTop
 
       st.style.setProperty('--count-x', `${Math.round(x)}px`)
       // never far enough up to end up under the header
@@ -333,17 +430,38 @@ export default function Home() {
    */
   const goTo = (i: number) => {
     const el = scroller.current
-    if (!el) return
+    if (!el || i === active) return
     const travel = el.offsetHeight - window.innerHeight
     window.scrollTo({
       top: el.offsetTop + travel * ((i + 0.5) / PROJECTS.length),
     })
   }
 
+  /**
+   * The same, but only when the pointer actually went to the title.
+   *
+   * The index slides so that whichever project is up sits on the centre line,
+   * which means that scrolling the page walks the titles underneath a pointer
+   * that has not moved at all — and each one they pass under fires `mouseenter`
+   * as if it had been chosen. That scrolled the page back to it, which slid the
+   * list again, which crossed another title: the album fought whoever was
+   * reading it, worst of all on the way back up. A `mouseenter` that the hand
+   * did not cause is not a choice, so it is ignored.
+   */
+  const onTitleEnter = (i: number) => {
+    if (movedRecently(lastPointerMove.current)) goTo(i)
+  }
+
   const current = PROJECTS[active]
 
   return (
     <main className={`main work${onHero ? ' is-on-hero' : ''}`}>
+      {/* The narrow layout's stack arrives as it is scrolled to, the way the
+          wide layout's stage assembles. Whole blocks rather than word by word:
+          this page re-renders on every scroll frame, and taking its copy apart
+          underneath React is asking for trouble. */}
+      <ScrollReveal split={false} />
+
       {/* Nav */}
       <nav className="nav">
         <Link href="/" className="nav-name">YUER ZHU</Link>
@@ -355,38 +473,93 @@ export default function Home() {
       </nav>
 
       {/* The opening, on black */}
-      <section className="hero hero--dark">
-        <h1 className="hero-title">
-          YUER IS A <em>PRODUCT DESIGNER</em> DRIVEN BY STORYTELLING, CRAFT, AND
-          INTENTIONAL DETAILS.
-        </h1>
-        <p className="hero-subtitle">
-          CURRENTLY, SHE&apos;S DESIGNING <em>OUTDOOR EXPERIENCES</em>{' '}
-          <a className="link" href={GARMIN} target="_blank" rel="noopener noreferrer">
-            @GARMIN
-          </a>
-          .
-        </p>
-        <div className="hero-meta">
-          <div className="meta-item">
-            <span className="meta-icon">⊙</span>
-            <span>
-              BACHELOR OF DESIGN + HCI{' '}
-              <a className="link" href={CMU} target="_blank" rel="noopener noreferrer">
-                @CARNEGIE MELLON UNIVERSITY
-              </a>
-            </span>
+      <section className="hero hero--dark" ref={hero}>
+        {/* the copy moves a little slower than the page it is leaving */}
+        <div className="hero-inner" data-parallax="0.09">
+          <h1 className="hero-title">
+            Yuer is a <em>product designer</em> driven by storytelling, craft,
+            and intentional details.
+          </h1>
+          <p className="hero-subtitle">
+            Currently, she&apos;s designing <em>outdoor experiences</em>{' '}
+            <a className="link" href={GARMIN} target="_blank" rel="noopener noreferrer">
+              @Garmin
+            </a>
+            .
+          </p>
+          <div className="hero-meta">
+            <div className="meta-item">
+              <span className="meta-icon">⊙</span>
+              <span>
+                Bachelor of Design + HCI{' '}
+                <a className="link" href={CMU} target="_blank" rel="noopener noreferrer">
+                  @Carnegie Mellon University
+                </a>
+              </span>
+            </div>
+            <div className="meta-item">
+              <span className="meta-icon">⊙</span>
+              <span>
+                Previously designing{' '}
+                <a className="link" href={RED_HOUSE} target="_blank" rel="noopener noreferrer">
+                  @Red House Communications
+                </a>
+              </span>
+            </div>
           </div>
-          <div className="meta-item">
-            <span className="meta-icon">⊙</span>
-            <span>
-              PREVIOUSLY DESIGNING{' '}
-              <a className="link" href={RED_HOUSE} target="_blank" rel="noopener noreferrer">
-                @RED HOUSE COMMUNICATIONS
-              </a>
-            </span>
-          </div>
+
+          <p className="hero-note">
+            <Mark name="screen" />
+            This site is best viewed on desktop.
+          </p>
         </div>
+      </section>
+
+      {/* ── The work, on a narrow screen ──
+          A plain stack: thumbnail, then the project's name and its labels
+          under it, in source order. The album below is not in the layout at
+          this width and this one is not in it above it — the stylesheet picks
+          between them, so neither is ever built twice. */}
+      <section className="work-mobile">
+        {PROJECTS.map((project) => (
+          <Link href={project.href} key={project.id} className="project-card">
+            <div
+              className={
+                project.background
+                  ? 'project-image project-image--tinted'
+                  : 'project-image parallax-in'
+              }
+              /* only the photographs drift: the Yara card is a clip mastered
+                 to its own frame, and cropping into it would cut the artwork */
+              data-parallax={project.background ? undefined : '0.05'}
+              style={{
+                aspectRatio: `${project.width} / ${project.height}`,
+                background: project.background,
+              }}
+            >
+              {project.video && narrow ? (
+                <ProjectMedia
+                  src={project.video}
+                  poster={project.poster}
+                  label={project.title}
+                  endTitle={project.endTitle}
+                />
+              ) : (
+                <Image
+                  src={(project.image || project.poster)!}
+                  alt={project.title}
+                  fill
+                  sizes="100vw"
+                  style={{ objectFit: 'cover' }}
+                />
+              )}
+            </div>
+            <div className="project-info">
+              <h2 className="project-title">{project.title}</h2>
+              <p className="project-subheader">{project.kind}</p>
+            </div>
+          </Link>
+        ))}
       </section>
 
       {/* One screen of scroll per project, spent on a stage that holds still */}
@@ -398,18 +571,14 @@ export default function Home() {
         <div className={`work-stage${entered ? ' is-in' : ''}`} ref={stage}>
           {/* ── how it was made ── */}
           <dl className="work-meta">
-            <div className="work-meta-row">
-              <dt>Started</dt>
-              <dd>{current.started}</dd>
-            </div>
-            <div className="work-meta-row">
-              <dt>Role</dt>
-              <dd>{current.role}</dd>
-            </div>
-            <div className="work-meta-row">
-              <dt>Software</dt>
-              <dd>{current.software}</dd>
-            </div>
+            {current.meta.map((row) => (
+              <div className="work-meta-row" key={row.label}>
+                <dt>{row.label}</dt>
+                {row.values.map((value) => (
+                  <dd key={value}>{value}</dd>
+                ))}
+              </div>
+            ))}
           </dl>
 
           {/* ── the album ── */}
@@ -445,7 +614,7 @@ export default function Home() {
                         background: project.background,
                       }}
                     >
-                      {project.video && offset === 0 ? (
+                      {project.video && offset === 0 && !narrow ? (
                         // mounted only while the card is up: back in the stack
                         // the clip would sit on its own end title, which reads
                         // as a solid block of colour rather than a thumbnail
@@ -485,7 +654,7 @@ export default function Home() {
                     className="work-list-title"
                     href={project.href}
                     onFocus={() => goTo(i)}
-                    onMouseEnter={() => goTo(i)}
+                    onMouseEnter={() => onTitleEnter(i)}
                   >
                     {project.title}
                   </Link>

@@ -1,7 +1,7 @@
-// The gate visitors land on when they open a protected project.
+// The gate visitors land on when they open a protected project. One screen,
+// centred, with nothing on it but the field, its label and the way back.
 
 import Link from 'next/link'
-import ScrollReveal from '../../scroll-reveal'
 
 export default async function LockedPage({
   searchParams,
@@ -14,8 +14,7 @@ export default async function LockedPage({
   const noPasswordSet = params.unset === '1'
 
   return (
-    <main className="main">
-      <ScrollReveal />
+    <main className="main gate-page">
       <nav className="nav">
         <Link href="/" className="nav-name">YUER ZHU</Link>
         <div className="nav-links">
@@ -25,56 +24,49 @@ export default async function LockedPage({
         </div>
       </nav>
 
-      <article className="case">
-        <section className="gate">
-          <h2 className="case-heading">PROTECTED</h2>
-          <p className="case-lead">This work is under wraps.</p>
-          <p className="case-text">
-            The Garmin projects are covered by an agreement, so they sit behind
-            a password. Ask me for it and it will open the three of them.{' '}
-            <Link className="link" href="/projects/yara">
-              The Yara case study
-            </Link>{' '}
-            is open to read.
+      <section className="gate">
+        {noPasswordSet ? (
+          <p className="gate-note">
+            No password is configured on this site yet, so nothing can be
+            unlocked. Set <code>PROJECT_PASSWORD</code> in the environment and
+            restart the server.
           </p>
+        ) : (
+          <form className="gate-form" method="POST" action="/api/unlock">
+            <input type="hidden" name="next" value={next} />
+            <label className="gate-field">
+              <span className="gate-field-label">Password</span>
+              {/* Shown rather than dotted: this is one shared phrase handed
+                  out to people looking at a portfolio, not an account, and
+                  seeing it typed is worth more here than hiding it is. */}
+              <input
+                className="gate-input"
+                name="password"
+                type="text"
+                autoComplete="off"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
+                autoFocus
+                required
+              />
+            </label>
+            <button className="gate-button" type="submit">
+              Enter
+            </button>
+          </form>
+        )}
 
-          {noPasswordSet ? (
-            <p className="gate-note">
-              No password is configured on this site yet, so nothing can be
-              unlocked. Set <code>PROJECT_PASSWORD</code> in{' '}
-              <code>.env.local</code> and restart the server.
-            </p>
-          ) : (
-            <form className="gate-form" method="POST" action="/api/unlock">
-              <input type="hidden" name="next" value={next} />
-              <label className="gate-field">
-                <span className="gate-field-label">PASSWORD</span>
-                <input
-                  className="gate-input"
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  autoFocus
-                  required
-                />
-              </label>
-              <button className="gate-button" type="submit">
-                ENTER
-              </button>
-            </form>
-          )}
-
-          {wrongPassword && (
-            <p className="gate-note gate-note--error">
-              That password did not match. Try again.
-            </p>
-          )}
-
-          <p className="case-next">
-            <Link href="/">← BACK TO ALL WORK</Link>
+        {wrongPassword && (
+          <p className="gate-note gate-note--error">
+            That password did not match. Try again.
           </p>
-        </section>
-      </article>
+        )}
+
+        <Link className="gate-back" href="/">
+          ← Back to work
+        </Link>
+      </section>
     </main>
   )
 }

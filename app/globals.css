@@ -1,4 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Cactus+Classical+Serif&display=swap');
+/* ── Emilio ──
+   One cut, the light italic, is the whole display face here. It is declared as
+   the family's upright normal weight on purpose: every use of `Emilio` then
+   lands on this file, and nothing is ever left asking the browser to slant or
+   embolden letterforms that are already drawn that way. */
+@font-face {
+  font-family: 'Emilio';
+  src: url('/fonts/EmilioTrial-LightItalic.otf') format('opentype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
 
 *, *::before, *::after {
   box-sizing: border-box;
@@ -7,10 +18,15 @@
 }
 
 :root {
-  --color-bg: #ffffff;
+  /* a hair off pure white, and off pure black below: neither extreme is a
+     colour, and a page set in them reads as a screen rather than as a page */
+  --color-bg: #fcfcfc;
   --color-fg: #222222;
-  --color-accent: #1f2eff;
-  --font-serif: 'Cactus Classical Serif', Georgia, serif;
+  /* the one blue on the site */
+  --color-accent: #0d1ad9;
+  /* the display face: titles, the questions a case study opens on, and the
+     handful of words a sentence turns on */
+  --font-emilio: 'Emilio', Georgia, serif;
   --font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   /* BT Grotesk is a licensed face (Blaze Type) and is not bundled here. Drop the
      licensed web files into public/fonts, add an @font-face for them, and this
@@ -18,7 +34,7 @@
   --font-grotesk: 'BT Grotesk', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --page-padding: 32px;
   --nav-height: 48px;
-  --hero-type-size: clamp(34px, 5vw, 66px);
+  --hero-type-size: clamp(30px, 4.3vw, 56px);
   --grid-gutter: 16px;
   /* every image, video and panel in a case study sits at this width, a little
      inside the text column so the media reads as one consistent band */
@@ -33,16 +49,9 @@
   --block-gap: 80px;
   /* ≈ 1/3 of a project card's height (2-col grid, 4:3 image + text block) */
   --projects-peek: calc(12.5vw + 22px);
-  /* the About page's screens: black, then a grey a step down from the site's
-     own --color-bg, then --color-bg itself */
-  --about-black: #101010;
+  /* the About page's two screens: black, then the site's own --color-bg */
+  --about-black: #141414;
   --about-ink: #f2f0ec;
-  /* the accent is set for a light page; on black it needs lifting to stay
-     readable as a link rather than reading as a dark smudge */
-  --accent-on-dark: #8b96ff;
-  --about-grey-deep: #e4e4e4;
-  /* the About page's closing screen, asked for at this value by name */
-  --about-grey-pale: #efefef;
 }
 
 html {
@@ -69,56 +78,140 @@ a {
   text-decoration: none;
 }
 
-/* Links that read as links: blue, highlighted on hover. */
+/* ── Links ──
+   Two kinds, told apart by where they go.
+ 
+   Anything leaving the site, or standing in for a picture, is set in the
+   display face and marked the way the words a sentence turns on are marked —
+   these are the words worth following. Pointing at one runs a blue field left
+   to right under it and turns the letters white, so the highlight reads as
+   being drawn rather than switched on. The field is only a little taller than
+   the letters themselves: `text-box` trims the font's own leading away first,
+   so the padding measures from the caps rather than from the line box, and the
+   two halves come out even.
+ 
+   Anything staying inside the site is set like the header instead — small,
+   spaced caps that step aside rather than announce themselves. */
 .link,
-.case-next a {
-  color: var(--color-accent);
+.about-story-word,
+.about-story-link {
+  font-family: var(--font-emilio);
+  font-style: normal;
 }
 
-/* Padding draws the highlight; the matching negative inline margin keeps the
-   text on the same spot in the line. */
-.link {
-  --hl-y: 0.22em;
-  --hl-x: 0.2em;
+/* The field, and the colours it swaps. `.say-hello` joins here and not above:
+   it is set in the label face by name, and only borrows the gesture. */
+.link,
+.about-story-word,
+.about-story-link,
+.say-hello {
+  --hl-y: 0.13em;
+  --hl-x: 0.14em;
+  color: var(--color-accent);
   padding: var(--hl-y) var(--hl-x);
   margin: 0 calc(var(--hl-x) * -1);
-  /* a link long enough to wrap gets the highlight on every fragment, not just
-     the first — these run to three words and wrap constantly on a phone */
+  background-color: transparent;
+  background-image: linear-gradient(var(--color-accent), var(--color-accent));
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 0% 100%;
+  transition: background-size 0.22s cubic-bezier(0.33, 1, 0.68, 1),
+    color 0.12s ease;
+  /* a link long enough to wrap gets the field on every fragment, not just the
+     first — these run to three words and wrap constantly on a phone */
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
 }
 
-/* the serif is far bigger, so it needs proportionally less */
+.link:hover,
+.link:focus-visible,
+.about-story-word:hover,
+.about-story-word:focus-visible,
+.about-story-link:hover,
+.about-story-link:focus-visible,
+.say-hello:hover,
+.say-hello:focus-visible {
+  background-size: 100% 100%;
+  color: var(--color-bg);
+}
+
+/* Whichever word's picture is currently in the frame. A rule under it rather
+   than the field: one of these is always the one being shown, and a word left
+   permanently boxed reads as stuck rather than as chosen. */
+.about-story-word.is-shown {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.1em;
+}
+
+/* Trim the font's leading so the field sits evenly above and below the caps.
+   Browsers without text-box support keep the untrimmed box. */
+@supports (text-box: trim-both cap alphabetic) {
+  .link,
+  .about-story-word,
+  .about-story-link,
+  .say-hello {
+    text-box: trim-both cap alphabetic;
+  }
+}
+
+/* On the black the one blue cannot carry text — navy on charcoal comes out
+   under 2:1 — so a link there rests in the page's own ink. The field it draws
+   on hover is the same blue as everywhere else: against it the letters have a
+   ground to sit on, and the blue is finally the loudest thing in the line. */
+.hero--dark .link {
+  color: var(--about-ink);
+}
+
+/* the ink stays on the blue: it is a step off white, and it clears 8:1 there */
+.hero--dark .link:hover,
+.hero--dark .link:focus-visible {
+  color: var(--about-ink);
+}
+
+/* the display face is far bigger where it carries a whole line, so it needs
+   proportionally less room around it */
 .hero-subtitle .link {
   --hl-y: 0.1em;
   --hl-x: 0.1em;
 }
 
-/* Trim the font's leading so the highlight sits evenly above and below the
-   caps. Browsers without text-box support keep the untrimmed box. */
-@supports (text-box: trim-both cap alphabetic) {
-  .link {
-    text-box: trim-both cap alphabetic;
-  }
+/* Set in their own case rather than the label's caps, and a size up: these are
+   the names of two institutions sitting in a line of small type, and the
+   display face needs the room to be read as one. */
+.meta-item .link {
+  font-size: 16px;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
-.link:hover,
+/* Staying on the site: set like the header. */
+.case-next a,
+.gate-back {
+  color: #8f8f8f;
+  transition: color 0.2s ease;
+}
+
 .case-next a:hover,
-.project-card:hover .project-title {
-  background-color: var(--color-accent);
-  color: #ffffff;
+.case-next a:focus-visible,
+.gate-back:hover,
+.gate-back:focus-visible {
+  color: var(--color-accent);
 }
 
-.case-next a:hover,
-.project-card:hover .project-title {
-  box-shadow: 0 0 0 2px var(--color-accent);
+/* a whole card is the link here, so its title is what marks the hover */
+.project-card:hover .project-title,
+.project-card:focus-visible .project-title {
+  color: var(--color-accent);
 }
 
-/* Navigation stays black and only changes fill on hover. */
+/* The header and the contents rail step aside on hover rather than lighting
+   up: they are the furniture, not the content, and the one blue is a dark navy
+   that vanishes into the bar whenever it is sitting on the black. */
 .nav-name:hover,
 .nav-links a:hover,
 .case-nav a:hover {
-  color: var(--color-accent);
+  color: #9a9a9a;
   opacity: 1;
 }
 
@@ -211,14 +304,33 @@ a {
   animation-delay: 0.42s;
 }
 
+/* Every heading set in the sans takes its light cut: at display size the
+   regular is a wall, and the light is what lets the display face's own italic
+   sit inside a line without shouting over it. */
 .hero-title,
 .hero-subtitle {
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
   font-size: var(--hero-type-size);
-  font-weight: 400;
+  /* never a cut the browser has drawn itself */
+  font-weight: 300;
+  font-synthesis-weight: none;
   line-height: 1.05;
   letter-spacing: -0.02em;
   max-width: none;
+  /* The browser weighs every way of breaking these and takes the evenest, so
+     no line is left carrying a word or two on its own — which is what happens
+     to a two-line sentence at this size whenever the window is resized. */
+  text-wrap: balance;
+}
+
+/* The two phrases the opening turns on, in the display face against the sans
+   around them. `normal` because the cut is already italic — asking for italic
+   here would slant it a second time. */
+.hero-title em,
+.hero-subtitle em {
+  font-family: var(--font-emilio);
+  font-style: normal;
+  letter-spacing: -0.01em;
 }
 
 .hero-title {
@@ -235,19 +347,102 @@ a {
   gap: 5px;
 }
 
+/* ── Labels ──
+   The small caps the site marks things with: the credentials under the
+   opening, the invitation to write beneath them, the line above the counter on
+   the work. One declaration, so a new label only has to join the selector —
+   and `text-transform` rather than typed-out caps, so the copy stays readable
+   in the source and to a screen reader. */
+.meta-item,
+.say-hello,
+.hero-note,
+.work-count-label,
+.gate-field-label,
+.gate-back,
+.case-next a {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
 .meta-item {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-family: var(--font-sans);
-  font-size: 13px;
-  letter-spacing: 0.07em;
-  font-weight: 400;
+}
+
+/* An aside under the credentials, set apart from them and dimmer than they
+   are: it is a note about the page rather than a line of the page's own copy.
+   Only ever shown at the width it is about — telling someone already on a
+   desktop that the site is best seen on a desktop is noise. */
+.hero-note {
+  display: none;
+  align-items: center;
+  align-self: flex-start;
+  gap: 2px;
+  margin-top: 26px;
+  color: rgba(242, 240, 236, 0.5);
+}
+
+/* Sits under the credentials as the one thing on the opening to act on, so it
+   is set apart from them and hugs its own text — as a flex child it would
+   otherwise run the width of the column and take the hover highlight with it. */
+.say-hello {
+  align-self: flex-start;
+  margin-top: 26px;
 }
 
 .meta-icon {
   font-size: 16px;
   flex-shrink: 0;
+}
+
+/* Off the page but still in it: reachable by keyboard and to a screen reader,
+   drawn nowhere. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Parallax ──
+   parallax.tsx measures everything carrying `data-parallax` against the window
+   and hands it `--py`: how far off where the page put it the thing should sit.
+   A plain block moves itself. A frame marked `.parallax-in` stays exactly where
+   the layout left it and moves the picture inside it instead, so what travels
+   is the crop rather than the composition — which is why the picture is set a
+   little over-size, to keep the frame full at either end of its run.
+
+   `:not` rather than an override on the frame, so anything already carrying a
+   transform of its own — the About stage's picture is centred with one — keeps
+   what it had. */
+[data-parallax]:not(.parallax-in) {
+  transform: translate3d(0, var(--py, 0px), 0);
+  will-change: transform;
+}
+
+[data-parallax].parallax-in > img,
+[data-parallax].parallax-in > video {
+  transform: translate3d(0, var(--py, 0px), 0) scale(1.22);
+  /* the drift is written every frame; a transition on it would trail the page */
+  transition-property: opacity;
+  will-change: transform;
+}
+
+/* The opening's copy, moving a little slower than the black it is leaving.
+   Its own block rather than the section, so the arrival animations on the
+   lines inside it keep the transform they need. */
+.hero-inner {
+  display: flex;
+  flex-direction: column;
 }
 
 /* ── Projects ── */
@@ -418,26 +613,18 @@ a {
    is put back; everything dark hangs off the modifier. */
 .hero--dark {
   position: relative;
-  padding-top: calc(var(--nav-height) + 6vh);
-  padding-bottom: calc(12vh + var(--work-lift));
+  padding-top: calc(var(--nav-height) + 3vh);
+  padding-bottom: calc(5vh + var(--work-lift));
   background: var(--about-black);
   color: var(--about-ink);
 }
 
-.hero--dark .link {
-  color: var(--accent-on-dark);
-}
-
-.hero--dark .link:hover {
-  background-color: var(--accent-on-dark);
-  color: var(--about-black);
-}
-
 /* Both classes, to out-weigh the `.hero` height set further down for the grid
-   layout: there is no sliver of work peeking under this one to leave room for,
-   so it takes the whole screen. */
+   layout. It stands a little under a screen and the work is lifted `--work-lift`
+   over its foot, which is what brings the first thumbnail in two thirds of the
+   way down rather than at the very bottom edge. */
 .hero.hero--dark {
-  min-height: 100svh;
+  min-height: calc(66svh + var(--work-lift));
 }
 
 /* ── Work ──
@@ -449,6 +636,8 @@ a {
 .work {
   /* the opening runs up behind the nav rather than starting below it */
   padding-top: 0;
+  /* the white the narrow layout's stack opens on; the wide one has no stack */
+  --work-margin: 0px;
   /* How far the work is pulled up over the black, so a band of it is already
      showing when the page is landed on. The opening's own padding is set from
      the same figure, to keep its copy out from under the overlap. */
@@ -464,6 +653,23 @@ a {
 .work.is-on-hero .nav {
   background: var(--about-black);
   color: var(--about-ink);
+}
+
+/* ── The work, on a narrow screen ──
+   A plain stack of thumbnails, each with its name and labels under it, on
+   white. It is not in the layout above the breakpoint and the album is not in
+   it below, so only one of the two is ever built. */
+.work-mobile {
+  display: none;
+  flex-direction: column;
+  gap: 40px;
+  /* its own ground, so none of the black opening shows through */
+  background: var(--color-bg);
+  /* `--work-margin` at the head is the band that shows under the opening when
+     the page is landed on: white, and the full height of it, so what tells the
+     reader there is more below is the page starting rather than a thumbnail
+     with its top sliced off. */
+  padding: var(--work-margin) var(--page-padding) 72px;
 }
 
 .work-scroll {
@@ -569,10 +775,12 @@ a {
   margin-bottom: 5px;
 }
 
+/* One value to a line. A role that is four things is four lines, not a comma
+   list running past the column it is set in. */
 .work-meta-row dd {
   font-family: var(--font-sans);
   font-size: 13px;
-  line-height: 1.45;
+  line-height: 1.5;
   color: var(--color-fg);
 }
 
@@ -604,7 +812,7 @@ a {
   /* Width from the window's width, but never so wide that a near-square
      thumbnail becomes taller than the screen can give the piles room around.
      The cap only bites on the tall ones; a landscape card is nowhere near it. */
-  width: min(clamp(300px, 37vw, 620px), 62svh);
+  width: min(clamp(320px, 43vw, 700px), 68svh);
   pointer-events: auto;
   transform-style: preserve-3d;
   /* the arrival: a card straightens and slides to the middle as it comes up */
@@ -680,7 +888,7 @@ a {
   display: inline-block;
   font-family: var(--font-sans);
   font-size: clamp(19px, 1.6vw, 26px);
-  font-weight: 400;
+  font-weight: 300;
   letter-spacing: 0.01em;
   text-transform: uppercase;
   color: var(--color-fg);
@@ -751,17 +959,29 @@ a {
     transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* The total is hung from the top of the numeral rather than sitting on its
+   baseline: down at the baseline it is level with the foot of the figure, which
+   is the part that laps the thumbnail, so it ended up inside the picture. */
 .work-count-figure {
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;
   gap: clamp(10px, 1.2vw, 22px);
 }
 
-.work-count-label,
+/* the numeral is set on a tight line box, so the total needs nudging back down
+   onto the cap line it is meant to sit level with */
+.work-count-total {
+  padding-top: 0.12em;
+}
+
 .work-count-total {
   font-family: var(--font-sans);
   font-size: 13px;
   letter-spacing: 0.05em;
+}
+
+.work-count-label,
+.work-count-total {
   /* mid grey, so it comes out legible against either side of the blend */
   color: #9a9a9a;
 }
@@ -785,59 +1005,86 @@ a {
   color: #8f8f8f;
 }
 
-/* ── Password gate ── */
+/* ── Password gate ──
+   One screen with the field in the middle of it: its label, the bar, and the
+   way back out. Nothing else — the projects behind it are covered by an
+   agreement, and a page of prose explaining that is not what someone who
+   already has the password came here to read. */
+.gate-page {
+  /* the section measures itself against the whole window, nav included */
+  padding-top: 0;
+}
+
 .gate {
-  max-width: 56ch;
-  margin-left: calc(var(--case-rail) + var(--case-rail-gap));
-  padding: 96px 0 160px;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  padding: var(--nav-height) var(--page-padding) 0;
+  text-align: center;
 }
 
 .gate-form {
   display: flex;
-  align-items: flex-end;
-  gap: 12px;
-  margin-top: 40px;
-}
-
-.gate-field {
-  display: flex;
   flex-direction: column;
-  gap: 8px;
-}
-
-.gate-field-label {
-  font-family: var(--font-sans);
-  font-size: 13px;
-  letter-spacing: 0.07em;
-  color: var(--color-accent);
-}
-
-.gate-input {
-  font-family: var(--font-sans);
-  font-size: 15px;
-  line-height: 19px;
-  color: #222222;
-  width: 260px;
-  padding: 10px 12px;
-  border: 1px solid #d8d8d8;
-  border-radius: 0;
-  background: #ffffff;
-}
-
-.gate-input:focus {
-  outline: none;
-  border-color: var(--color-accent);
+  align-items: center;
+  gap: 26px;
 }
 
 .gate-button {
   font-family: var(--font-sans);
   font-size: 13px;
+  font-weight: 400;
   letter-spacing: 0.07em;
-  color: #ffffff;
-  padding: 11px 20px;
+  text-transform: uppercase;
+  color: var(--color-bg);
+  padding: 11px 26px;
   border: 0;
+  border-radius: 0;
   background: var(--color-accent);
   cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.gate-button:hover,
+.gate-button:focus-visible {
+  opacity: 0.82;
+}
+
+.gate-field {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.gate-field-label {
+  color: var(--color-accent);
+}
+
+/* A rule rather than a box: the field is the only thing on the screen, so it
+   does not need a border drawn round it to be found. */
+.gate-input {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 20px;
+  text-align: center;
+  letter-spacing: 0.06em;
+  color: #222222;
+  width: min(380px, 100%);
+  padding: 10px 4px;
+  border: 0;
+  border-bottom: 1px solid #d8d8d8;
+  border-radius: 0;
+  background: none;
+  transition: border-color 0.2s ease;
+}
+
+.gate-input:focus {
+  outline: none;
+  border-bottom-color: var(--color-accent);
 }
 
 .gate-note {
@@ -845,28 +1092,11 @@ a {
   font-size: 15px;
   line-height: 19px;
   color: #585858;
-  margin-top: 20px;
-  max-width: 52ch;
+  max-width: 42ch;
 }
 
 .gate-note--error {
   color: #c0392b;
-}
-
-@media (max-width: 768px) {
-  .gate {
-    margin-left: 0;
-    padding: 56px 0 96px;
-  }
-
-  .gate-form {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .gate-input {
-    width: 100%;
-  }
 }
 
 /* ── Case study ── */
@@ -890,19 +1120,25 @@ a {
 }
 
 .case-title {
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-synthesis-weight: none;
   /* sized to hold the whole title on one line across the column */
   font-size: clamp(28px, 4.6vw, 52px);
-  font-weight: 400;
   line-height: 1.1;
   letter-spacing: -0.01em;
-  text-transform: uppercase;
   margin-bottom: 0.5em;
   white-space: nowrap;
 }
 
+/* the project's own name, which is the part worth setting apart */
+.case-title em {
+  font-family: var(--font-emilio);
+  font-style: normal;
+}
+
 .case-question {
-  font-family: var(--font-serif);
+  font-family: var(--font-emilio);
   font-size: clamp(23px, 3vw, 40px);
   font-weight: 400;
   line-height: 1.2;
@@ -964,11 +1200,6 @@ a {
   border: 0;
 }
 
-.case-video-idle {
-  width: 100%;
-  height: 100%;
-}
-
 /* ── The brief, as a panel ──
    The question sits dead centre; the voice-interface vocabulary is scattered
    around the edges on a faint Yummly wash, kept clear of the middle so the
@@ -989,7 +1220,7 @@ a {
 .brief-art-question {
   position: relative;
   z-index: 1;
-  font-family: var(--font-serif);
+  font-family: var(--font-emilio);
   font-size: clamp(24px, 3.4vw, 46px);
   font-weight: 400;
   line-height: 1.15;
@@ -1146,12 +1377,11 @@ a {
 .case-lead,
 .case-insight-title {
   font-family: var(--font-grotesk);
-  text-transform: uppercase;
   font-size: 24px;
-  font-weight: 400;
+  font-weight: 300;
   line-height: 1.3;
   letter-spacing: 0;
-  color: #757575;
+  color: #1a1a1a;
   margin-bottom: 10px;
   max-width: none;
   white-space: nowrap;
@@ -1179,11 +1409,14 @@ a {
   gap: var(--grid-gutter);
 }
 
-/* Three spot illustrations for the research concerns. */
+/* Three spot illustrations for the research concerns. The paragraph above
+   names all three, so the set needs room to read as the answer to it rather
+   than as more of the same paragraph. */
 .case-icons {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 32px var(--grid-gutter);
+  gap: 40px var(--grid-gutter);
+  margin-top: var(--block-gap);
   margin-bottom: 16px;
 }
 
@@ -1194,17 +1427,24 @@ a {
 .case-icon svg {
   display: block;
   width: 100%;
-  max-width: 240px;
+  max-width: 148px;
   height: auto;
   margin-bottom: 22px;
 }
 
+/* The line the illustration above it is about — said, so it is set to be read
+   first and the note under it second. Held to a measure well inside the column
+   so the longest of the three breaks early rather than running up against the
+   illustration in the next one. */
 .case-icon-title {
   font-family: var(--font-sans);
-  font-size: 18px;
-  font-weight: 400;
-  color: #222222;
-  margin-bottom: 6px;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: #1a1a1a;
+  text-wrap: balance;
+  max-width: 23ch;
+  margin-bottom: 8px;
 }
 
 .case-icon-label {
@@ -1379,17 +1619,13 @@ a {
 /* The header keeps no bar of its own here. It sits on whichever screen is
    under it and takes that screen's colours with it. */
 .about-page .nav {
-  background: var(--about-grey-pale);
+  background: var(--color-bg);
   transition: background-color 0.4s ease, color 0.4s ease;
 }
 
 .about-page.is-on-stage .nav {
   background: var(--about-black);
   color: var(--about-ink);
-}
-
-.about-page.is-on-story .nav {
-  background: var(--about-grey-deep);
 }
 
 /* ── Screen one: the stage ── */
@@ -1399,16 +1635,20 @@ a {
 /* Everything on this screen is placed against the section and scrolls with it,
    so the picture travels up and off rather than being held in place. */
 .about-stage {
-  /* Set so three quarters of the picture is on screen when the page is landed
-     on: it starts a fifth of the way down and stands a little over a screen
-     tall, which leaves the last quarter below the fold to be scrolled to. */
+  /* The picture starts a fifth of the way down and stands most of a screen
+     tall, which leaves its foot below the fold to be scrolled to. */
   --stage-media-top: 21vh;
+  --stage-media-height: 82vh;
   --stage-intro-top: calc(var(--nav-height) + 5vh);
   /* just past the fold, so the second paragraph is out of sight on arrival but
-     only a moment's scrolling away */
-  --stage-outro-top: 105vh;
+     only a moment's scrolling away — and still crossing the picture rather
+     than sitting on plain black under it */
+  --stage-outro-top: 74vh;
   position: relative;
-  height: 210vh;
+  /* Only as far past the foot of the picture as it takes to close. Any more
+     and the screen ends on a field of black with nothing on it, and the
+     pictures underneath feel a page away. */
+  height: calc(var(--stage-media-top) + var(--stage-media-height) + 8vh);
   background: var(--about-black);
   color: var(--about-ink);
   /* the picture is wider than the column on some sizes */
@@ -1422,17 +1662,23 @@ a {
   top: var(--stage-media-top);
   left: 50%;
   transform: translateX(-50%);
-  height: 105vh;
+  height: var(--stage-media-height);
   aspect-ratio: 3 / 4;
   max-width: calc(100% - var(--page-padding) * 2);
   overflow: hidden;
   background: #1b1b1b;
 }
 
+/* A cut, not a dissolve: the two frames are the same walk a moment apart, and
+   cross-fading them reads as a fault in the picture rather than as a change of
+   shot. */
 .about-stage-shot {
   object-fit: cover;
   opacity: 0;
-  transition: opacity 0.7s ease;
+  /* said outright: the frame carries `.parallax-in`, which hands its children a
+     transition on opacity, and a cut is not something to leave to a duration
+     that happens to be zero */
+  transition: none;
 }
 
 .about-stage-shot.is-up {
@@ -1479,12 +1725,13 @@ a {
   max-width: 56%;
 }
 
-/* The nouns the sentence turns on, set against the sans around them. Cactus
-   Classical Serif ships upright only, so this is the browser's own slant until
-   a drawn italic is licensed to sit here. */
+/* The words the sentences turn on, set against the sans around them. `normal`
+   because the cut is already italic — asking for italic here would slant a
+   drawn italic a second time. */
+.about-stage-intro em,
 .about-stage-outro em {
-  font-family: var(--font-serif);
-  font-style: italic;
+  font-family: var(--font-emilio);
+  font-style: normal;
   letter-spacing: -0.01em;
 }
 
@@ -1517,6 +1764,8 @@ a {
 .about-stage-mark--note {
   left: var(--page-padding);
   top: 84vh;
+  max-width: 22ch;
+  text-transform: uppercase;
 }
 
 /* the ornaments between clauses, set back so they punctuate rather than read */
@@ -1535,37 +1784,63 @@ a {
   position: relative;
   min-height: 100svh;
   display: grid;
-  grid-template-columns: 38% 1fr;
+  /* the pictures scatter through the left of the screen; the sentence keeps
+     the right of it, so nothing is ever read through a photograph */
+  grid-template-columns: 52% 1fr;
   align-items: stretch;
-  gap: 0 clamp(32px, 6vw, 104px);
+  gap: 0 clamp(32px, 4vw, 72px);
   padding-right: var(--page-padding);
-  background: var(--about-grey-deep);
-}
-
-/* runs to the page's left edge and the full height of the screen, flush top
-   and bottom */
-.about-story-media {
-  position: relative;
-  width: 100%;
-  height: 100%;
+  background: var(--color-bg);
   overflow: hidden;
-  background: #e2e2e2;
 }
 
+/* The white the pictures land in: the whole screen, with the sentence sitting
+   over the right of it. No frame, no ground of its own — what shows is the
+   photograph and nothing around it. */
+.about-story-media {
+  position: absolute;
+  inset: 0;
+  /* the sentence and the links above it must stay clickable */
+  pointer-events: none;
+}
+
+/* The long edge of a picture, whichever edge that happens to be. Held to a
+   quarter of the screen so a portrait and a landscape come out at a similar
+   weight instead of the tall one towering. */
+.about-story-media {
+  --shot-long: clamp(170px, 25vw, 360px);
+}
+
+/* `auto` on both, capped on both: the photograph keeps its own proportions and
+   is simply drawn smaller. Nothing is cropped to fit anything. */
 .about-story-shot {
-  object-fit: cover;
-  opacity: 0;
-  transition: opacity 0.45s ease;
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: auto;
+  height: auto;
+  max-width: var(--shot-long);
+  max-height: var(--shot-long);
+  /* a cut rather than a fade: two pictures in two different places cannot
+     cross-dissolve without one ghosting through the other */
+  visibility: hidden;
 }
 
 .about-story-shot.is-up {
-  opacity: 1;
+  visibility: visible;
 }
 
+/* The full height of the screen, so the links can be pushed to the foot of it:
+   the sentence stays up at the top and they sit down in the bottom right
+   corner, which is where the page now signs off. */
 .about-story-body {
   position: relative;
-  align-self: start;
-  padding: calc(var(--nav-height) + 9vh) 0 56px;
+  z-index: 1;
+  grid-column: 2;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  padding: calc(var(--nav-height) + 9vh) 0 clamp(36px, 6vh, 76px);
   text-align: right;
 }
 
@@ -1584,142 +1859,62 @@ a {
   text-wrap: pretty;
 }
 
-/* A word with a picture behind it. Set inline rather than as the button's own
+/* A word that carries a picture. Set inline rather than as the button's own
    inline-block, so a long one still breaks across a line like the words it is
-   sitting among. */
+   sitting among — everything else about it comes from the shared link rule,
+   since standing in for a picture is a kind of going somewhere. */
 .about-story-word {
   display: inline;
-  font: inherit;
+  font-size: inherit;
+  line-height: inherit;
   letter-spacing: inherit;
-  color: inherit;
-  padding: 0;
   border: 0;
-  background: none;
   cursor: pointer;
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.16em;
-  text-decoration-color: rgba(43, 41, 38, 0.25);
-  transition: color 0.2s ease, text-decoration-color 0.2s ease;
 }
 
-.about-story-word:hover,
-.about-story-word:focus-visible,
-.about-story-word.is-shown {
-  color: var(--color-accent);
-  text-decoration-color: var(--color-accent);
-}
-
-.about-story-links {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 10px clamp(20px, 3vw, 40px);
-  margin-top: clamp(36px, 6vh, 72px);
-}
-
-.about-story-link {
-  font-family: var(--font-sans);
-  font-size: clamp(13px, 1.05vw, 17px);
-  letter-spacing: 0.02em;
-  color: #2b2926;
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.16em;
-  text-decoration-color: rgba(43, 41, 38, 0.32);
-  transition: color 0.2s ease, text-decoration-color 0.2s ease;
-}
-
-.about-story-link:hover,
-.about-story-link:focus-visible {
-  color: var(--color-accent);
-  text-decoration-color: var(--color-accent);
-}
-
-/* ── Screen three: the sign-off ── */
-.about-connect {
-  min-height: 100svh;
-  display: grid;
-  place-content: center;
-  justify-items: center;
-  padding: calc(var(--nav-height) + 8vh) var(--page-padding) 12vh;
-  background: var(--about-grey-pale);
-  text-align: center;
-}
-
-.about-connect-lead {
-  font-family: var(--font-sans);
-  font-size: clamp(14px, 1.2vw, 19px);
-  letter-spacing: 0.07em;
-  color: #6b6b6b;
-  margin-bottom: 14px;
-}
-
-.about-connect-name {
-  font-family: var(--font-serif);
-  font-size: clamp(46px, 8.5vw, 124px);
-  font-weight: 400;
-  line-height: 1;
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
-  margin-bottom: clamp(40px, 6vh, 80px);
-}
-
-/* The badge is one link: a ring of type turning around an envelope, opening a
-   drafted mail. */
-.about-connect-badge {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: clamp(184px, 22vw, 250px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-}
-
-.about-connect-ring {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  transform-origin: 50% 50%;
-  animation: ring-turn 24s linear infinite;
-}
-
-.about-connect-ring text {
-  font-family: var(--font-sans);
-  font-size: 15px;
-  letter-spacing: 0.14em;
-  fill: var(--color-fg);
-  transition: fill 0.25s ease;
-}
-
-@keyframes ring-turn {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.about-connect-envelope {
-  position: relative;
-  width: 33%;
-  height: auto;
+/* The mark in front of the word it belongs to. Drawn in `currentColor` and
+   nothing else, so it takes the colour of whatever it sits beside — and on a
+   link, turns with the letters when the field runs under the two together. */
+.mark {
+  display: inline-block;
+  width: 0.82em;
+  height: 0.82em;
+  margin-right: 0.24em;
+  vertical-align: -0.04em;
   fill: none;
-  stroke: var(--color-fg);
-  stroke-width: 2.2;
+  stroke: currentColor;
+  stroke-width: 1.9;
   stroke-linecap: round;
   stroke-linejoin: round;
-  transition: stroke 0.25s ease, transform 0.25s ease;
 }
 
-.about-connect-badge:hover .about-connect-envelope,
-.about-connect-badge:focus-visible .about-connect-envelope {
-  stroke: var(--color-accent);
-  transform: scale(1.08);
+/* `auto` above the block takes whatever height the sentence did not, which is
+   what carries it to the bottom of the screen however short the copy runs. The
+   three sit in a column under the label that introduces them, each hugging its
+   own text so the field that runs under it on hover is the width of the words
+   and not of the column. */
+.about-story-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.08em;
+  margin-top: auto;
+  padding-top: clamp(36px, 6vh, 72px);
 }
 
-.about-connect-badge:hover .about-connect-ring text,
-.about-connect-badge:focus-visible .about-connect-ring text {
-  fill: var(--color-accent);
+.about-story-links .say-hello {
+  align-self: flex-end;
+  margin: 0 0 0.5em;
+  color: #8f8f8f;
+}
+
+/* Set like the opening line rather than like a footer: same face, same size.
+   The colour, the field and the way it is drawn come from the shared link
+   rule at the top of the sheet. */
+.about-story-link {
+  font-size: clamp(19px, 2.6vw, 40px);
+  line-height: 1.16;
+  letter-spacing: -0.022em;
 }
 
 /* ── Arrival ──
@@ -1760,8 +1955,8 @@ a {
   display: inline-block;
   opacity: 0;
   transform: translateY(0.75em);
-  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   transition-delay: var(--reveal-delay, 0s);
 }
 
@@ -1820,7 +2015,7 @@ a {
   overflow: hidden;
   padding: 0;
   border: 0;
-  background: #ffffff;
+  background: var(--color-bg);
   /* the photographs are shot on white, so without an edge the box would
      dissolve into the page */
   box-shadow: 0 0 0 1px #ececec, 0 6px 18px rgba(0, 0, 0, 0.06);
@@ -1891,18 +2086,19 @@ a {
   grid-template-rows: 1fr auto;
   gap: 24px;
   padding: 64px 104px 36px;
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(252, 252, 252, 0.72);
   backdrop-filter: blur(28px) saturate(1.1);
   -webkit-backdrop-filter: blur(28px) saturate(1.1);
   cursor: zoom-out;
 }
 
+/* The stage is the whole area around the piece, and clicking it closes — so it
+   keeps the surround's cursor. Only the piece itself takes it back. */
 .viewer-stage {
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 0;
-  cursor: default;
 }
 
 .viewer-image {
@@ -1912,6 +2108,7 @@ a {
   max-height: 100%;
   object-fit: contain;
   box-shadow: 0 18px 60px rgba(0, 0, 0, 0.14);
+  cursor: default;
 }
 
 /* A hosted player, sized to the stage the same way a picture would be. */
@@ -1919,6 +2116,7 @@ a {
   width: min(100%, calc((100vh - 230px) * 16 / 9));
   aspect-ratio: 16 / 9;
   box-shadow: 0 18px 60px rgba(0, 0, 0, 0.14);
+  cursor: default;
 }
 
 .viewer-embed iframe {
@@ -1930,7 +2128,6 @@ a {
 
 .viewer-caption {
   text-align: center;
-  cursor: default;
 }
 
 .viewer-title {
@@ -2107,135 +2304,39 @@ a {
   }
 
   /* ── Work ──
-     The stage becomes one column. The album takes a band at the top and
-     everything that describes it runs underneath in a single left-aligned
-     block, in reading order — which project, what it is, what it took — rather
-     than being dealt out to the four corners the wide layout uses. */
-  .work-stage {
-    display: flex;
-    flex-direction: column;
-    padding: calc(var(--nav-height) + 12px) var(--page-padding) 18px;
-  }
-
-  /* The album takes the space the copy underneath does not need, up to a
-     point — left uncapped it becomes a tall empty band with a small card
-     adrift in the middle of it. */
-  .work-frame {
-    position: relative;
-    inset: auto;
-    order: 1;
-    flex: 1 1 auto;
-    min-height: 0;
-    max-height: 48svh;
-    margin-bottom: 20px;
-  }
-
-  .work-stack {
-    left: 50%;
-    top: 50%;
-  }
-
-  /* capped against the window's height as well as its width, so the album
-     still fits the band it is given on a short phone */
-  .work-card {
-    width: min(clamp(200px, 74vw, 330px), 34svh);
-  }
-
-  /* one line at the head of the block, tying the figure to the title under it */
-  .work-count {
-    position: static;
-    order: 2;
-    flex: none;
-    flex-direction: row;
-    align-items: baseline;
-    gap: 10px;
-    margin-bottom: 12px;
-  }
-
-  .work-count-number {
-    font-size: 32px;
-  }
-
-  .work-swatches {
-    position: static;
-    order: 3;
-    flex: none;
-    transform: none;
-    margin-bottom: 16px;
-  }
-
-  .work-index {
-    position: static;
-    order: 4;
-    flex: none;
-    width: auto;
-    margin-bottom: 18px;
-    overflow: visible;
-    /* the run is not scrolling past a window any more, so it has no edges to
-       fade out against */
-    -webkit-mask-image: none;
-    mask-image: none;
-  }
-
-  .work-list {
-    position: static;
-    text-align: left;
-  }
-
-  /* only the project being read is in the column; the rest would be a screen's
-     worth of dead grey under it */
-  .work-list-item {
+     The album, its palette and its counter are a wide-screen composition; at
+     this width the work is a plain stack instead. The two are swapped rather
+     than restyled, so neither has to carry the other's layout. */
+  .work-scroll {
     display: none;
-    padding: 0;
   }
 
-  .work-list-item.is-active {
-    display: block;
-    opacity: 1;
+  .work-mobile {
+    display: flex;
   }
 
-  .work-list-rule {
-    margin: 8px 0;
+  /* The opening stops short by its own margin plus a third of the first
+     thumbnail, so what shows under the black is the work already started
+     rather than a strip of empty page. The thumbnail is as wide as the column
+     and very nearly square, so a third of the column's width is a third of it.
+     The album's overlap goes — there is nothing lifted over the black here, so
+     the padding it paid for goes too, and the black is trimmed top and bottom
+     to make room for what it is giving up. */
+  .work {
+    --work-lift: 0px;
+    --work-margin: 56px;
+    --work-peek: calc((100vw - var(--page-padding) * 2) / 3);
   }
 
-  .work-list-desc {
-    max-width: none;
-    margin: 0;
+  .hero.hero--dark {
+    min-height: calc(100svh - var(--work-margin) - var(--work-peek));
+    padding-top: calc(var(--nav-height) + 1vh);
+    padding-bottom: 3vh;
   }
 
-  /* label and value on one line, on a shared column, so the three read as a
-     block rather than as three loose pairs */
-  .work-meta {
-    position: static;
-    order: 5;
-    flex: none;
-    flex-direction: column;
-    width: auto;
-    gap: 5px;
-    margin-bottom: 16px;
-  }
-
-  .work-meta-row {
-    display: grid;
-    grid-template-columns: 74px 1fr;
-    align-items: baseline;
-    gap: 10px;
-  }
-
-  .work-meta-row dt {
-    font-size: 11px;
-    margin-bottom: 0;
-  }
-
-  .work-meta-row dd {
-    font-size: 12px;
-    line-height: 1.4;
-  }
-
-  .work-hint {
-    position: static;
-    order: 6;
-    flex: none;
+  /* the one width the note is about */
+  .hero-note {
+    display: flex;
   }
 
   /* ── About, screen one ──
@@ -2246,6 +2347,7 @@ a {
     /* a little higher than the wide layout, so the opening line still crosses
        the top of the picture at this width */
     --stage-media-top: 18vh;
+    --stage-media-height: 80vh;
   }
 
   /* Edge to edge, and past the foot of the screen: the ratio would otherwise
@@ -2254,7 +2356,6 @@ a {
     left: 0;
     transform: none;
     width: 100%;
-    height: 105vh;
     aspect-ratio: auto;
     max-width: none;
   }
@@ -2281,27 +2382,47 @@ a {
   /* ── About, screen two ──
      The frame pins under the nav so it stays in view while the words that
      change it are being tapped further down the page. */
-  /* Block rather than a one-column grid: as a grid item the picture's
-     containing block is its own row, and a sticky frame would have nowhere to
-     travel. The screen's worth of height stays — without it the section can
-     never reach the top of the window, which strands both the sticky frame and
-     the nav's change of colour. */
+  /* One column rather than two, and a flex one rather than a grid: a grid
+     item's containing block is its own row, which would leave the sticky
+     picture nowhere to travel. The screen's worth of height stays — without it
+     the section can never reach the top of the window, which strands both the
+     sticky frame and the nav's change of colour — and the column is what
+     carries the links down to the foot of it. */
   .about-story {
-    display: block;
-    padding: 0 0 56px;
+    display: flex;
+    flex-direction: column;
+    padding: 0 0 clamp(28px, 5vh, 56px);
   }
 
+  /* There is no white to scatter into at this width, so the band at the head of
+     the screen is the whole of it: the picture sits in the middle of that band,
+     still whole and still at its own proportions, and the sentence reads
+     underneath. */
   .about-story-media {
     position: sticky;
     top: var(--nav-height);
     z-index: 1;
-    aspect-ratio: 4 / 3;
-    max-height: 44svh;
+    flex: none;
+    height: 40svh;
+    --shot-long: min(64vw, 36svh);
+  }
+
+  .about-story-shot {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
   }
 
   .about-story-body {
+    flex: 1 1 auto;
     padding: 28px var(--page-padding) 0;
     text-align: left;
+  }
+
+  /* still the corner, just the column's corner rather than the screen's */
+  .about-story-links {
+    text-align: right;
+    padding-top: clamp(28px, 5vh, 56px);
   }
 
   /* the desktop size is driven by vw, which at this width bottoms out well
@@ -2311,29 +2432,15 @@ a {
   }
 
   .about-story-link {
-    font-size: 15px;
-    padding: 8px 0;
+    font-size: clamp(18px, 5vw, 26px);
   }
 
-  /* ── About, screen three ── */
-  .about-connect {
-    padding: calc(var(--nav-height) + 10vh) var(--page-padding) 14vh;
-  }
-
-  .about-connect-name {
-    font-size: clamp(40px, 13vw, 68px);
-  }
-
-  .about-connect-badge {
-    width: min(62vw, 230px);
+  .about-story-links {
+    align-items: flex-end;
   }
 
   .about-story-body .about-stage-mark--dot {
     display: none;
-  }
-
-  .about-story-links {
-    justify-content: flex-start;
   }
 
   /* ── Case study ── */
@@ -2534,33 +2641,6 @@ a {
   }
 }
 
-/* A short phone, where the album and the copy under it are competing for the
-   same few hundred pixels. The type gives some back; the album is already
-   capped against the window's height. */
-@media (max-width: 768px) and (max-height: 720px) {
-  /* the copy leaves the album a shorter band here, so the widest a near-square
-     thumbnail may be comes down with it */
-  .work-card {
-    width: min(clamp(150px, 62vw, 260px), 26svh);
-  }
-
-  .work-count-number {
-    font-size: 26px;
-  }
-
-  .work-list-title {
-    font-size: 17px;
-  }
-
-  .work-list-desc {
-    font-size: 12px;
-  }
-
-  .work-index {
-    margin-bottom: 12px;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -2614,14 +2694,21 @@ a {
     transition: none;
   }
 
-  .about-connect-ring {
-    animation: none;
-  }
-
   [data-reveal],
   .reveal-word {
     opacity: 1;
     transform: none;
     transition: none;
+  }
+
+  /* parallax.tsx never writes a figure under this setting; these put back what
+     the drift would otherwise have been laid over */
+  [data-parallax]:not(.parallax-in) {
+    transform: none;
+  }
+
+  [data-parallax].parallax-in > img,
+  [data-parallax].parallax-in > video {
+    transform: none;
   }
 }
