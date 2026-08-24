@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import ScrollReveal from '../scroll-reveal'
+import Knot from '../knot'
 import Mark, { type MarkName } from '../marks'
 import { LINKEDIN, RESUME, SAY_HELLO } from '../links'
 
@@ -104,6 +105,16 @@ const STORY: Part[] = [
 
 const PICTURES = STORY.filter((part): part is Picture => typeof part !== 'string')
 
+/**
+ * The one the page opens on, found by the word it belongs to rather than by
+ * position — reordering the sentence should not quietly change which
+ * photograph greets whoever arrives.
+ */
+const OPENS_ON = Math.max(
+  0,
+  PICTURES.findIndex((picture) => picture.word === 'recent hike')
+)
+
 // The page signs off on these rather than on a screen of its own: set in the
 // display face, down in the bottom right corner of the last screen. The résumé
 // is a PDF served from public/, so it opens in the browser's own reader.
@@ -130,7 +141,7 @@ export default function About() {
    * moment it leaves. Only a click changes what the page has settled on — so a
    * reader can wander down the sentence and still end up back where they were.
    */
-  const [shown, setShown] = useState(0)
+  const [shown, setShown] = useState(OPENS_ON)
   const [asked, setAsked] = useState<number | null>(null)
 
   useEffect(() => {
@@ -202,11 +213,11 @@ export default function About() {
           ))}
         </div>
 
-        <span className="about-stage-mark about-stage-mark--dot" aria-hidden="true" />
+        <Knot className="about-stage-mark about-stage-mark--dot" />
         <p className="about-stage-intro" data-parallax="0.05">
           It&apos;s Yuer, pronounced <em>&ldquo;yoo-er&rdquo;</em>{' '}like how
           it&apos;s spelled!{' '}
-          <span className="about-glyph" aria-hidden="true">✳</span> I&apos;m currently
+          <Knot className="about-glyph" /> I&apos;m currently
           based in Olathe, Kansas, working as a <em>product designer</em> at
           Garmin.
         </p>
@@ -214,7 +225,7 @@ export default function About() {
         <p className="about-stage-outro" data-parallax="0.05">
           I&apos;ve been in the <em>design + hardware</em>{' '}intersection for 2
           years, and I&apos;m drawn to the same thing I started with{' '}
-          <span className="about-glyph" aria-hidden="true">→</span> making products{' '}
+          <Knot className="about-glyph" /> making products{' '}
           <em>feel</em>{' '}simple, even when they&apos;re not.
         </p>
 
@@ -246,7 +257,7 @@ export default function About() {
         </div>
 
         <div className="about-story-body">
-          <span className="about-stage-mark about-stage-mark--dot" aria-hidden="true" />
+          <Knot className="about-stage-mark about-stage-mark--dot" />
 
           <p className="about-story-text">
             {STORY.map((part, i) => {
@@ -293,7 +304,6 @@ export default function About() {
           </div>
         </div>
       </section>
-
     </main>
   )
 }

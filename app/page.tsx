@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import ProjectMedia from './project-media'
+import Knot from './knot'
 import Mark from './marks'
 import ScrollReveal from './scroll-reveal'
 import { CMU, GARMIN, RED_HOUSE } from './links'
@@ -477,8 +478,8 @@ export default function Home() {
         {/* the copy moves a little slower than the page it is leaving */}
         <div className="hero-inner" data-parallax="0.09">
           <h1 className="hero-title">
-            Yuer is a <em>product designer</em> driven by storytelling, craft,
-            and intentional details.
+            Yuer <Knot /> is a <em>product designer</em> driven by storytelling,
+            craft, and intentional details.
           </h1>
           <p className="hero-subtitle">
             Currently, she&apos;s designing <em>outdoor experiences</em>{' '}
@@ -489,7 +490,7 @@ export default function Home() {
           </p>
           <div className="hero-meta">
             <div className="meta-item">
-              <span className="meta-icon">⊙</span>
+              <Knot className="meta-icon" />
               <span>
                 Bachelor of Design + HCI{' '}
                 <a className="link" href={CMU} target="_blank" rel="noopener noreferrer">
@@ -498,7 +499,7 @@ export default function Home() {
               </span>
             </div>
             <div className="meta-item">
-              <span className="meta-icon">⊙</span>
+              <Knot className="meta-icon" />
               <span>
                 Previously designing{' '}
                 <a className="link" href={RED_HOUSE} target="_blank" rel="noopener noreferrer">
