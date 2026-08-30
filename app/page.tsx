@@ -59,7 +59,7 @@ const PROJECTS: Project[] = [
     ],
     swatches: ['#505628', '#ac6d4b', '#757473', '#0b0b0b'],
     image: '/projects/alpha-hunt-v3.jpg',
-    href: '/projects/template',
+    href: '/projects/alpha-hunt',
     width: 1418,
     height: 1391,
   },

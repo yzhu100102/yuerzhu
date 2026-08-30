@@ -1258,6 +1258,12 @@ a {
 .case-ph-hero {
   aspect-ratio: 21 / 9;
   margin-bottom: 96px;
+  /* the same rail-and-gutter margin the hero above it takes, so the opening
+     picture lines up with the copy rather than running the page's full width.
+     Set here rather than with the hero because `.case-ph` above resets the
+     max-width every picture on the page shares. */
+  margin-left: calc(var(--case-rail) + var(--case-rail-gap));
+  max-width: calc(100% - var(--case-rail) - var(--case-rail-gap));
 }
 
 /* Hero video. Reserves its 16:9 box up front so mounting the player mid-scroll
@@ -1674,11 +1680,118 @@ a {
   margin-bottom: 0;
 }
 
+/* Yara's features run to a paragraph each, so the rule above was enough. Where
+   a feature argues over two, they need the gap a paragraph break is. */
+.case-insight .case-text + .case-text {
+  margin-top: 12px;
+}
+
+/* Same pull as the clip above: a feature's picture sits on the left edge every
+   other picture on the page sits on, not indented by the number column. */
+.case-insight .case-ph {
+  margin-left: calc(-28px - 20px);
+  width: calc(100% + 28px + 20px);
+  max-width: none;
+}
+
 .case-next {
   font-family: var(--font-sans);
   font-size: 13px;
   letter-spacing: 0.07em;
   margin-top: 32px;
+}
+
+/* ── Alpha Hunt ──
+   Additions to the case-study system for a study that carries four meta
+   columns, an eyebrow over its title, and blocks whose statement is a
+   subheader rather than the label above it. Nothing here changes Yara. */
+
+/* The client and product over the title, set as a label but held back from the
+   accent so the blue stays the mark of a section in the contents rail. */
+.case-kicker {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 0.07em;
+  color: #888;
+  margin-bottom: 40px;
+}
+
+.case-meta--four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+/* A subheader long enough to need two lines. The one-line rule the rest of
+   them keep would run this off the column. */
+.case-lead--wrap {
+  white-space: normal;
+  text-wrap: pretty;
+  max-width: 52ch;
+}
+
+/* A section can carry more than one statement — a question, then its answer.
+   After a picture the break is the full block; after a paragraph it is half,
+   so a pair like Takeaway and Next Steps still reads as one section. */
+.case-ph + .case-lead,
+.case-grid-2 + .case-lead {
+  margin-top: var(--block-gap);
+}
+
+.case-text + .case-lead {
+  margin-top: 40px;
+}
+
+/* Media, so it takes the same air above it as every other picture. */
+.case-grid-2 {
+  margin-top: var(--block-gap);
+  max-width: var(--media-width);
+}
+
+/* The feature's own name, above the line it is about. */
+.case-insight-kicker {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  color: #1a1a1a;
+  margin-bottom: 10px;
+}
+
+/* An empty picture box says nothing about what belongs in it, so while the
+   real artwork is still to come each one carries its own brief. */
+.case-ph {
+  display: grid;
+  place-items: center;
+  padding: 32px;
+}
+
+.case-ph-label {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.45;
+  color: #dcdcdc;
+  text-align: center;
+  text-wrap: balance;
+  max-width: 46ch;
+}
+
+/* A brief that is a list rather than a line — kept left of its own centre so
+   the bullets line up with each other. */
+.case-ph-list {
+  list-style: none;
+  text-align: left;
+  display: inline-block;
+  margin-top: 10px;
+}
+
+.case-ph-list li {
+  /* the bullet in its own column, so a line that wraps hangs under the words
+     rather than under the dot */
+  display: flex;
+  gap: 10px;
+}
+
+.case-ph-list li::before {
+  content: '·';
 }
 
 /* ── About ──
@@ -2511,9 +2624,14 @@ a {
      desktop cap of `100% - rail - gutter` and sets the title one letter per
      line in a 40px column. */
   .case-hero,
-  .case-video {
+  .case-video,
+  .case-ph-hero {
     margin-left: 0;
     max-width: none;
+  }
+
+  .case-ph-hero {
+    margin-bottom: 56px;
   }
 
   .case-hero {
@@ -2638,9 +2756,38 @@ a {
   }
 
   /* nothing to pull back now that the number is not indenting the column */
-  .case-insight .feature-video {
+  .case-insight .feature-video,
+  .case-insight .case-ph {
     margin-left: 0;
     width: 100%;
+  }
+
+  /* ── Alpha Hunt ── */
+  .case-kicker {
+    margin-bottom: 28px;
+  }
+
+  .case-lead--wrap {
+    max-width: none;
+  }
+
+  /* Two boxes side by side at this width are two thumbnails; stacked they are
+     still pictures. */
+  .case-grid-2 {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .case-text + .case-lead {
+    margin-top: 32px;
+  }
+
+  .case-ph {
+    padding: 24px 20px;
+  }
+
+  .case-ph-label {
+    font-size: 14px;
   }
 
   .case-icons {
