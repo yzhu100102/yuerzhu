@@ -45,9 +45,9 @@ type Picture = {
 type Part = string | Picture
 
 const STORY: Part[] = [
-  'Baker of ',
+  "I'm a baker of ",
   {
-    word: 'sweets',
+    word: 'anything sweet',
     mark: 'cake',
     src: '/about/sweets.jpg',
     alt: 'A cake, iced and finished at home',
@@ -56,7 +56,7 @@ const STORY: Part[] = [
     x: '4%',
     y: '28%',
   },
-  ', fell slave to the ',
+  ' and a captive of playing ',
   {
     word: 'tennis',
     mark: 'racket',
@@ -67,9 +67,9 @@ const STORY: Part[] = [
     x: '24%',
     y: '6%',
   },
-  ' trend, a ',
+  '. I like ',
   {
-    word: 'recent hike',
+    word: 'hiking',
     mark: 'mountain',
     src: '/about/hike.jpg',
     alt: 'A hike outside Seattle',
@@ -78,7 +78,7 @@ const STORY: Part[] = [
     x: '9%',
     y: '50%',
   },
-  ' in Seattle, ',
+  ' in Seattle, admiring ',
   {
     word: 'ceramics',
     mark: 'vase',
@@ -89,7 +89,7 @@ const STORY: Part[] = [
     x: '21%',
     y: '38%',
   },
-  ' from a trip to Japan, and still hunting for a perfect ',
+  ', and hunting for the perfect ',
   {
     word: 'kouign-amann',
     mark: 'spiral',
@@ -112,7 +112,7 @@ const PICTURES = STORY.filter((part): part is Picture => typeof part !== 'string
  */
 const OPENS_ON = Math.max(
   0,
-  PICTURES.findIndex((picture) => picture.word === 'recent hike')
+  PICTURES.findIndex((picture) => picture.word === 'hiking')
 )
 
 // The page signs off on these rather than on a screen of its own: set in the
