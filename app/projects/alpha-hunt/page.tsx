@@ -3,6 +3,7 @@
 // for what goes in its place.
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import CaseNav from '../../case-nav'
 import ScrollReveal from '../../scroll-reveal'
@@ -78,12 +79,18 @@ export default function AlphaHuntCaseStudy() {
           </dl>
         </header>
 
-        {/* The film the app is introduced with — the marketing cut. */}
-        <Placeholder
-          className="case-ph-hero"
-          label="Marketing film: the app in the field"
-          ratio="21 / 9"
-        />
+        {/* The picture the study opens on: the tool in the field, and the
+            same reading on the phone beside it. */}
+        <div className="case-hero-image">
+          <Image
+            src="/projects/alpha-hunt-hero.jpg"
+            alt="A hunter standing with a dog on a ridge, phone in hand, with the app's ranging read-out drawn over the scene and shown again on the screen beside it."
+            width={1536}
+            height={870}
+            sizes="(max-width: 768px) 100vw, 66vw"
+            priority
+          />
+        </div>
 
         <div className="case-body">
           <CaseNav sections={sections} />

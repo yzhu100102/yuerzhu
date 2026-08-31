@@ -1255,6 +1255,21 @@ a {
   margin-top: var(--block-gap);
 }
 
+.case-hero-image {
+  /* the same rail-and-gutter margin the hero copy above it takes */
+  margin-left: calc(var(--case-rail) + var(--case-rail-gap));
+  max-width: calc(100% - var(--case-rail) - var(--case-rail-gap));
+  width: 100%;
+  margin-bottom: 96px;
+  overflow: hidden;
+}
+
+.case-hero-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 .case-ph-hero {
   aspect-ratio: 21 / 9;
   margin-bottom: 96px;
@@ -2625,12 +2640,14 @@ a {
      line in a 40px column. */
   .case-hero,
   .case-video,
-  .case-ph-hero {
+  .case-ph-hero,
+  .case-hero-image {
     margin-left: 0;
     max-width: none;
   }
 
-  .case-ph-hero {
+  .case-ph-hero,
+  .case-hero-image {
     margin-bottom: 56px;
   }
 

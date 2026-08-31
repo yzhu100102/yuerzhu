@@ -21,6 +21,7 @@ const useBeforePaint = typeof window === 'undefined' ? useEffect : useLayoutEffe
 const MEDIA = [
   '.project-card',
   '.case-ph',
+  '.case-hero-image',
   '.case-video',
   '.feature-video',
   '.cui-states',
