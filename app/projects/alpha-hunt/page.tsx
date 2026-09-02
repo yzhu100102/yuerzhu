@@ -7,6 +7,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import CaseNav from '../../case-nav'
 import ScrollReveal from '../../scroll-reveal'
+import PhraseWheel from './phrase-wheel'
+import RangeDemo from './range-demo'
 import Placeholder from './placeholder'
 
 // The blue label at the head of each section, and the contents rail docked to
@@ -99,8 +101,7 @@ export default function AlphaHuntCaseStudy() {
             <section className="case-section" id="context">
               <h2 className="case-heading">CONTEXT</h2>
               <p className="case-lead case-lead--wrap">
-                Redesigning the Alpha Hunt app to serve every type of hunter,
-                with a design that catches up with the market.
+                Evolving the Alpha ecosystem, by starting with the app.
               </p>
               <p className="case-text">
                 Garmin Alpha was originally built around hunters who use
@@ -117,7 +118,30 @@ export default function AlphaHuntCaseStudy() {
                 during a hunt — whether or not a dog was part of it. The work in
                 this case study focuses on new features brought into the app.
               </p>
-              <Placeholder label="The existing Alpha app" />
+              {/* The kit the app was built around, and the handheld itself.
+                  The two columns are weighted by each picture's own proportions
+                  so the pair stands at one height without either being cropped. */}
+              <figure className="case-media">
+                <div className="case-media-row">
+                  <Image
+                    src="/projects/alpha-existing-app.jpg"
+                    alt="A Garmin Alpha handheld, an orange dog collar with its tracking unit, and a phone running the Alpha app, laid out on grass."
+                    width={1579}
+                    height={996}
+                    sizes="(max-width: 768px) 100vw, 38vw"
+                  />
+                  <Image
+                    src="/projects/alpha-device-detail.jpg"
+                    alt="A close view of the Alpha handheld: its buttons, antenna, and the topographic map on its screen."
+                    width={1978}
+                    height={1972}
+                    sizes="(max-width: 768px) 100vw, 24vw"
+                  />
+                </div>
+                <figcaption className="case-caption">
+                  The existing Alpha app
+                </figcaption>
+              </figure>
             </section>
 
             <section className="case-section" id="problem">
@@ -130,7 +154,7 @@ export default function AlphaHuntCaseStudy() {
 
             <section className="case-section" id="opportunity">
               <h2 className="case-heading">THE OPPORTUNITY</h2>
-              <Placeholder label="Open the tool, understand what you need, and get back to the hunt." />
+              <PhraseWheel />
               <p className="case-lead case-lead--wrap">
                 How might we give hunters immediate distance and direction
                 information so they can better understand the environment around
@@ -168,7 +192,7 @@ export default function AlphaHuntCaseStudy() {
                     directions while staying physically still — for example,
                     when hanging in a tree stand with limited mobility.
                   </p>
-                  <Placeholder label="Compass Lock: a hunter hanging in a tree stand" />
+                  <RangeDemo />
                 </div>
               </div>
 

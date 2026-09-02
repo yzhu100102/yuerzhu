@@ -1747,6 +1747,8 @@ a {
    After a picture the break is the full block; after a paragraph it is half,
    so a pair like Takeaway and Next Steps still reads as one section. */
 .case-ph + .case-lead,
+.case-media + .case-lead,
+.wheel + .case-lead,
 .case-grid-2 + .case-lead {
   margin-top: var(--block-gap);
 }
@@ -1807,6 +1809,333 @@ a {
 
 .case-ph-list li::before {
   content: '·';
+}
+
+/* A real picture, where the grey box used to be. Takes the same width and the
+   same air above it as every other piece of media on the page. */
+.case-media {
+  width: 100%;
+  max-width: var(--media-width);
+  margin-top: var(--block-gap);
+}
+
+.case-media img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.case-media .case-caption {
+  margin-bottom: 0;
+}
+
+/* Two pictures read as one. The columns are weighted by each picture's own
+   proportions — 1579:996 beside 1978:1972 — so both land at the same height
+   with neither of them cropped. */
+.case-media-row {
+  display: grid;
+  grid-template-columns: 1.585fr 1.003fr;
+  gap: var(--grid-gutter);
+  align-items: start;
+}
+
+/* ── Compass Lock, running ──
+   One phone screen played as a sequence: the map underneath, the UI over it,
+   the lock button in its two states, the compass tape along the bottom edge,
+   and the hand that taps the lock and then drags the tape. range-demo.tsx
+   writes one set of custom properties onto the stage every frame and the rules
+   below are only ever placing things by them:
+     --hx --hy   where the hand's own centre is
+     --press     the dip as it taps
+     --hint      the hand's presence; --arrows, the pair it drags with
+     --locked    0 unlocked, 1 locked
+     --travel    0 to 1 across the clip, which is also across the drag
+
+   The tape is the artwork's own 564 x 117 drawn at the screen's 375pt scale,
+   so it is 150.4% of the screen wide. Its offsets are percentages of its own
+   width, which is what a transform on it means:
+     north sits at tape x 210, and the middle of the screen at 187.5, so
+     centring north is -22.5 of 564                          (-3.989%)
+     the sweep runs 90 degrees; the tape reads 1.495px per degree, so it
+     travels 134.6 further left                              (-23.865%) */
+.range-demo {
+  max-width: var(--media-width);
+  margin-top: var(--block-gap);
+  padding: clamp(32px, 5vw, 64px);
+  background: #e6ebf5;
+  display: grid;
+  place-items: center;
+}
+
+/* Same pull as every other picture in a feature: it sits on the left edge the
+   rest of the page's media sits on, not indented by the number column. */
+.case-insight .range-demo {
+  margin-left: calc(-28px - 20px);
+  width: calc(100% + 28px + 20px);
+  max-width: none;
+}
+
+/* The still the panel holds before the script starts, and the one it keeps for
+   a reader who has asked for no motion: unlocked, tape on north, the hand over
+   the tape with its arrows up. */
+.range-stage {
+  --hx: 48%;
+  --hy: 92.8%;
+  --press: 1;
+  --hint: 1;
+  --arrows: 1;
+  --locked: 0;
+  --travel: 0;
+  position: relative;
+  width: clamp(230px, 27vw, 320px);
+  /* the screen the artwork was drawn at */
+  aspect-ratio: 375 / 815;
+  border-radius: 26px;
+  overflow: hidden;
+  background: #2b3a2c;
+}
+
+/* Every layer fills the screen and stacks in the order it is written. */
+.range-map,
+.range-ui {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.range-ui {
+  object-fit: contain;
+}
+
+/* The lock, in its two states, both on the button's centre — 341.5, 82.5 of
+   the 375 x 815 screen — and both the artwork's own 45 x 44. */
+.range-lock-face,
+.range-lock-open {
+  position: absolute;
+  left: 91.07%;
+  top: 10.12%;
+  width: 12%;
+  height: auto;
+  aspect-ratio: 45 / 44;
+  transform: translate(-50%, -50%);
+}
+
+/* Locked: a white face under the UI, which is where the artwork keeps its own
+   closed padlock — so the padlock lands on the white as the two cross. */
+.range-lock-face {
+  border-radius: 50%;
+  background: #ffffff;
+  opacity: var(--locked);
+}
+
+/* Unlocked: over the UI, covering that closed padlock until the tap. */
+.range-lock-open {
+  opacity: calc(1 - var(--locked));
+}
+
+/* The tape's own window, cut to the screen so the tape can be wider than it
+   and still be clipped at both edges. */
+.range-tape-window {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* the tape's 117 of the screen's 815 */
+  height: 14.36%;
+  overflow: hidden;
+}
+
+.range-tape {
+  position: absolute;
+  left: 0;
+  top: 0;
+  /* 564 of the screen's 375 */
+  width: 150.4%;
+  height: 100%;
+  max-width: none;
+  transform: translateX(calc(-3.989% + var(--travel) * -23.865%));
+}
+
+/* The hand and its arrows: one drawing cut in two, so both sit on the same
+   centre and the arrows can arrive without the hand being drawn twice. */
+.range-hint {
+  position: absolute;
+  left: var(--hx);
+  top: var(--hy);
+  width: 30%;
+  height: auto;
+  transform: translate(-50%, -50%) scale(var(--press));
+  opacity: var(--hint);
+}
+
+.range-hint--arrows {
+  opacity: calc(var(--hint) * var(--arrows));
+}
+
+/* ── The opportunity, said on a wheel ──
+   One seven-second clock, shared by every part of the panel: three phrases at
+   a second and a half each, turning past a window three rows tall so the
+   phrase before and the phrase after sit faded either side of the one being
+   read; then black over the top of it for the sign-off; then a beat of black
+   with nothing in it before the sentence starts again.
+
+   The stops on that clock, as percentages of the seven seconds:
+     0      line one
+     21.43  line two           (1.5s)
+     42.86  line three         (3.0s)
+     64.29  black, sign-off    (4.5s)
+     85.71  black, empty       (6.0s)
+     100    round again        (7.0s) */
+.wheel {
+  position: relative;
+  max-width: var(--media-width);
+  margin-top: var(--block-gap);
+  padding: clamp(44px, 6vw, 84px) clamp(28px, 5vw, 72px);
+  background: #ffffff;
+  /* white on a near-white page needs an edge to read as a panel */
+  border: 1px solid #e6e6e6;
+  overflow: hidden;
+}
+
+/* The sentence for a screen reader, which has no use for the turning. */
+.wheel-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.wheel-window {
+  --wheel-row: 1.5em;
+  font-family: var(--font-grotesk);
+  font-size: clamp(24px, 3.1vw, 42px);
+  font-weight: 300;
+  line-height: var(--wheel-row);
+  color: #111111;
+  text-align: center;
+  height: calc(var(--wheel-row) * 3);
+  overflow: hidden;
+  /* the rows above and below the reading fade out, the way the far side of a
+     wheel falls away */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.16) 17%,
+    #000 42%,
+    #000 58%,
+    rgba(0, 0, 0, 0.16) 83%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.16) 17%,
+    #000 42%,
+    #000 58%,
+    rgba(0, 0, 0, 0.16) 83%,
+    transparent 100%
+  );
+}
+
+.wheel-track {
+  /* the turn itself is quick; the reading is the rest of the second and a half */
+  animation: wheel-turn 7s cubic-bezier(0.72, 0, 0.18, 1) infinite;
+  will-change: transform;
+}
+
+.wheel-phrase {
+  display: block;
+  height: var(--wheel-row);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+/* The wheel holds only the three phrases, so the first sits a row low in the
+   window — nothing above it — and the last sits a row high, with nothing after
+   it. The third rides on up as the black lands, and the snap back to the top
+   happens behind the black, where there is nothing to see. */
+@keyframes wheel-turn {
+  0%,
+  18.3% {
+    transform: translateY(var(--wheel-row));
+  }
+  21.43%,
+  39.7% {
+    transform: translateY(0);
+  }
+  42.86%,
+  61.4% {
+    transform: translateY(calc(var(--wheel-row) * -1));
+  }
+  64.29% {
+    transform: translateY(calc(var(--wheel-row) * -2));
+  }
+  66%,
+  100% {
+    transform: translateY(var(--wheel-row));
+  }
+}
+
+.wheel-curtain {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: #000000;
+  opacity: 0;
+  animation: wheel-curtain 7s linear infinite;
+}
+
+/* Down over the finished sentence, and up again only at the very end of the
+   cycle — so the return to white is a cut, not a fade. */
+@keyframes wheel-curtain {
+  0%,
+  61.4% {
+    opacity: 0;
+  }
+  64.29%,
+  99.9% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.wheel-logo {
+  font-family: var(--font-sans);
+  font-size: clamp(20px, 2.4vw, 32px);
+  font-weight: 700;
+  letter-spacing: 0.34em;
+  /* the tracking is all trailing, so the word needs it taken back off the end
+     to sit on the centre */
+  text-indent: 0.34em;
+  color: #ffffff;
+  opacity: 0;
+  animation: wheel-logo 7s ease infinite;
+}
+
+/* In after the black has landed, out in time to leave the beat empty. */
+@keyframes wheel-logo {
+  0%,
+  64.29% {
+    opacity: 0;
+  }
+  68.6%,
+  81.4% {
+    opacity: 1;
+  }
+  85.71%,
+  100% {
+    opacity: 0;
+  }
 }
 
 /* ── About ──
@@ -2774,7 +3103,8 @@ a {
 
   /* nothing to pull back now that the number is not indenting the column */
   .case-insight .feature-video,
-  .case-insight .case-ph {
+  .case-insight .case-ph,
+  .case-insight .range-demo {
     margin-left: 0;
     width: 100%;
   }
@@ -2801,6 +3131,22 @@ a {
 
   .case-ph {
     padding: 24px 20px;
+  }
+
+  /* two pictures side by side at this width are two thumbnails */
+  .case-media-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* the longest phrase has to fit the column at this width, so the wheel is
+     set smaller here rather than trailing off in an ellipsis */
+  .wheel {
+    padding: 32px 20px;
+  }
+
+  .wheel-window {
+    font-size: clamp(16px, 5vw, 24px);
   }
 
   .case-ph-label {
@@ -2870,6 +3216,29 @@ a {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  /* the sentence is simply there, all three phrases at once, rather than
+     turning past a window */
+  .wheel-track {
+    animation: none;
+  }
+
+  .wheel-window {
+    height: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  /* nothing to sign off, with the sentence simply sitting there */
+  .wheel-curtain {
+    display: none;
+  }
+
+  .wheel-phrase {
+    white-space: normal;
+    overflow: visible;
+    height: auto;
   }
 
   .hero-title,
