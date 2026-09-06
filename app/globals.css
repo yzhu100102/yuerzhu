@@ -1744,12 +1744,25 @@ a {
 }
 
 /* A section can carry more than one statement — a question, then its answer.
-   After a picture the break is the full block; after a paragraph it is half,
-   so a pair like Takeaway and Next Steps still reads as one section. */
+   After anything shown rather than written the break is the full block, which
+   is the air the feature highlights leave around their panels; after a
+   paragraph it is half, so a pair like Takeaway and Next Steps still reads as
+   one section. */
 .case-ph + .case-lead,
+.case-ph + .case-text,
+.case-media + .case-text,
 .case-media + .case-lead,
-.wheel + .case-lead,
-.case-grid-2 + .case-lead {
+.case-creed + .case-text,
+.case-creed + .case-lead,
+.case-flow + .case-text,
+.case-flow + .case-lead,
+.case-refs + .case-text,
+.case-refs + .case-lead,
+.case-grid-2 + .case-text,
+.ranging-demo + .case-text,
+.ranging-demo + .case-lead,
+.nav-demo + .case-text,
+.nav-demo + .case-lead {
   margin-top: var(--block-gap);
 }
 
@@ -1839,6 +1852,237 @@ a {
   align-items: start;
 }
 
+/* ── The system, and where the work starts ──
+   Three devices with the signal running through them. Only the phone is in the
+   Alpha orange and only the phone is drawn large, because it is the only one of
+   the three this case study touches. Its label is taken out of the flow so the
+   three icons still sit on one line. */
+.case-flow {
+  margin: var(--block-gap) 0 0;
+  max-width: var(--media-width);
+  padding: clamp(34px, 5vw, 62px) clamp(20px, 4vw, 56px) clamp(58px, 7vw, 84px);
+  background: #f3f4f6;
+  display: grid;
+  place-items: center;
+}
+
+.case-flow-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(14px, 3vw, 40px);
+}
+
+.case-flow-step {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.case-flow-step svg {
+  display: block;
+  width: clamp(46px, 5.4vw, 72px);
+  height: auto;
+  stroke: #b7bac0;
+  stroke-width: 2.2;
+}
+
+.case-flow-step--focus svg {
+  width: clamp(60px, 7.2vw, 96px);
+  stroke: #ff7538;
+  stroke-width: 2.4;
+}
+
+.case-flow-label {
+  position: absolute;
+  top: calc(100% + 14px);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(11px, 1vw, 13px);
+  letter-spacing: 0.01em;
+  color: #ff7538;
+}
+
+.case-flow-arrow {
+  flex: none;
+  width: clamp(22px, 3.4vw, 46px);
+  height: auto;
+  stroke: #c8cbd0;
+  stroke-width: 2;
+}
+
+/* ── The opportunity, said plainly ──
+   One sentence on black, in three lines, with a bracket standing off each
+   corner: set in from the edge rather than on it, so the frame holds the words
+   without crowding them. Two to one keeps the panel a little taller than the
+   design-system pair further down the page. */
+.case-creed {
+  position: relative;
+  margin-top: var(--block-gap);
+  max-width: var(--media-width);
+  aspect-ratio: 2 / 1;
+  min-height: 300px;
+  background: #111111;
+  display: grid;
+  place-items: center;
+  padding: clamp(28px, 7vw, 104px);
+}
+
+.case-creed-bracket {
+  position: absolute;
+  width: clamp(24px, 3.6vw, 50px);
+  height: auto;
+}
+
+.case-creed-bracket--tl {
+  left: 9%;
+  top: 17%;
+}
+
+.case-creed-bracket--tr {
+  right: 9%;
+  top: 17%;
+  transform: rotate(90deg);
+}
+
+.case-creed-bracket--br {
+  right: 9%;
+  bottom: 17%;
+  transform: rotate(180deg);
+}
+
+.case-creed-bracket--bl {
+  left: 9%;
+  bottom: 17%;
+  transform: rotate(270deg);
+}
+
+.case-creed-text {
+  margin: 0;
+  text-align: center;
+  text-transform: uppercase;
+  color: #ffffff;
+  font-size: clamp(19px, 3vw, 44px);
+  line-height: 1.3;
+  letter-spacing: 0.015em;
+}
+
+.case-creed-text span {
+  display: block;
+}
+
+/* ── The compasses studied ──
+   Six icons at one size with their names under them, which is all the survey
+   needs to say: who was looked at. */
+.case-apps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(26px, 4.4vw, 60px) clamp(20px, 3.6vw, 52px);
+  max-width: 58%;
+}
+
+.case-apps li {
+  display: grid;
+  justify-items: center;
+  gap: clamp(8px, 1vw, 14px);
+}
+
+.case-apps img {
+  display: block;
+  width: 100%;
+  max-width: clamp(62px, 8vw, 104px);
+  height: auto;
+}
+
+.case-apps span {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(11px, 1vw, 13px);
+  letter-spacing: 0.01em;
+  color: #1a1a1a;
+  text-align: center;
+}
+
+/* The three wearables, side by side with what each one settled written under
+   it. The two Apple screens carry a recording cropped to the glass: it is laid
+   over the watch and rounded to the same silhouette, so it reads as the screen
+   rather than as a video sitting on top of one. The Garmin, which is only ever
+   a still, is left alone. */
+.case-refs {
+  list-style: none;
+  margin: var(--block-gap) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(24px, 3.4vw, 48px);
+  max-width: 84%;
+}
+
+.case-refs li {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+}
+
+.case-ref-watch {
+  position: relative;
+  width: 100%;
+  /* the Garmin is the bigger watch, and the two Apple bodies are drawn to the
+     same scale beside it, so they keep their share of the column */
+  max-width: 72%;
+}
+
+.case-refs li:last-child .case-ref-watch {
+  max-width: 80.2%;
+}
+
+.case-ref-watch img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Read off the artwork — the same watch, in the render that has its screen
+   lit, puts the glass at 77, 256 of the 738 by 1216 body. The corner is the
+   screen's own, so the recording ends up cut to the watch's silhouette. */
+.case-ref-screen {
+  position: absolute;
+  left: 10.36%;
+  top: 21.6%;
+  width: 78.6%;
+  height: 56.9%;
+  /* the screen's corner runs a quarter of its width; the recording is cut to
+     the same shape as it is encoded, so the two agree */
+  border-radius: 25% / 21%;
+  object-fit: cover;
+  display: block;
+}
+
+.case-ref-title {
+  margin: clamp(16px, 2vw, 26px) 0 0;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(13px, 1.15vw, 15px);
+  letter-spacing: 0.01em;
+  color: #1a1a1a;
+  text-align: center;
+}
+
+.case-ref-text {
+  margin: 8px 0 0;
+  font-family: var(--font-sans);
+  font-size: clamp(12px, 1vw, 13.5px);
+  line-height: 1.55;
+  color: #666666;
+  text-align: center;
+}
+
 /* Before and after, each on its own ground so the pair reads as a comparison.
    The pictures are transparent between the phones, which is what the colour is
    for. */
@@ -1861,30 +2105,26 @@ a {
   margin-top: var(--grid-gutter);
 }
 
-/* The compasses studied. Every picture is drawn at one scale, so the app icons
-   — all 136 pixels square in the files — come out the same size on the page
-   whatever else each picture carries. That means weighting each column by its
-   own picture's width, and holding each row in to the width that lands those
-   icons at the size the Apple screens set. The pictures carry their own
-   transparent surrounds, so they sit straight on the page rather than in boxes. */
-.case-compare {
+/* Before and after, each on its own ground so the pair reads as a comparison.
+   The pictures are transparent between the phones, which is what the colour is
+   for. */
+.case-swatch {
+  padding: clamp(20px, 6vw, 90px) clamp(24px, 13vw, 190px);
   display: grid;
-  gap: clamp(20px, 3.4vw, 44px);
-  align-items: start;
+  place-items: center;
 }
 
-.case-compare + .case-compare {
-  margin-top: clamp(40px, 6vw, 88px);
+.case-swatch--before {
+  background: #f5e6e6;
 }
 
-.case-compare--apps {
-  grid-template-columns: 609fr 596fr 596fr;
-  max-width: 55%;
+.case-swatch--after {
+  background: #f3f4d2;
 }
 
-.case-compare--devices {
-  grid-template-columns: 1623fr 730fr;
-  max-width: 65%;
+/* the second of a pair sits with the first, not a whole block away */
+.case-media--tight {
+  margin-top: var(--grid-gutter);
 }
 
 /* ── Additional access points, running ──
@@ -2715,170 +2955,6 @@ a {
   height: calc(112.5 * var(--u));
   transform: translate(-50%, -50%) scale(var(--tap));
   opacity: var(--hand);
-}
-
-/* ── The opportunity, said on a wheel ──
-   One seven-second clock, shared by every part of the panel: three phrases at
-   a second and a half each, turning past a window three rows tall so the
-   phrase before and the phrase after sit faded either side of the one being
-   read; then black over the top of it for the sign-off; then a beat of black
-   with nothing in it before the sentence starts again.
-
-   The stops on that clock, as percentages of the seven seconds:
-     0      line one
-     21.43  line two           (1.5s)
-     42.86  line three         (3.0s)
-     64.29  black, sign-off    (4.5s)
-     85.71  black, empty       (6.0s)
-     100    round again        (7.0s) */
-.wheel {
-  position: relative;
-  max-width: var(--media-width);
-  margin-top: var(--block-gap);
-  padding: clamp(44px, 6vw, 84px) clamp(28px, 5vw, 72px);
-  background: #ffffff;
-  /* white on a near-white page needs an edge to read as a panel */
-  border: 1px solid #e6e6e6;
-  overflow: hidden;
-}
-
-/* The sentence for a screen reader, which has no use for the turning. */
-.wheel-sr {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
-.wheel-window {
-  --wheel-row: 1.5em;
-  font-family: var(--font-grotesk);
-  font-size: clamp(24px, 3.1vw, 42px);
-  font-weight: 300;
-  line-height: var(--wheel-row);
-  color: #111111;
-  text-align: center;
-  height: calc(var(--wheel-row) * 3);
-  overflow: hidden;
-  /* the rows above and below the reading fade out, the way the far side of a
-     wheel falls away */
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    rgba(0, 0, 0, 0.16) 17%,
-    #000 42%,
-    #000 58%,
-    rgba(0, 0, 0, 0.16) 83%,
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    rgba(0, 0, 0, 0.16) 17%,
-    #000 42%,
-    #000 58%,
-    rgba(0, 0, 0, 0.16) 83%,
-    transparent 100%
-  );
-}
-
-.wheel-track {
-  /* the turn itself is quick; the reading is the rest of the second and a half */
-  animation: wheel-turn 7s cubic-bezier(0.72, 0, 0.18, 1) infinite;
-  will-change: transform;
-}
-
-.wheel-phrase {
-  display: block;
-  height: var(--wheel-row);
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
-
-/* The wheel holds only the three phrases, so the first sits a row low in the
-   window — nothing above it — and the last sits a row high, with nothing after
-   it. The third rides on up as the black lands, and the snap back to the top
-   happens behind the black, where there is nothing to see. */
-@keyframes wheel-turn {
-  0%,
-  18.3% {
-    transform: translateY(var(--wheel-row));
-  }
-  21.43%,
-  39.7% {
-    transform: translateY(0);
-  }
-  42.86%,
-  61.4% {
-    transform: translateY(calc(var(--wheel-row) * -1));
-  }
-  64.29% {
-    transform: translateY(calc(var(--wheel-row) * -2));
-  }
-  66%,
-  100% {
-    transform: translateY(var(--wheel-row));
-  }
-}
-
-.wheel-curtain {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  background: #000000;
-  opacity: 0;
-  animation: wheel-curtain 7s linear infinite;
-}
-
-/* Down over the finished sentence, and up again only at the very end of the
-   cycle — so the return to white is a cut, not a fade. */
-@keyframes wheel-curtain {
-  0%,
-  61.4% {
-    opacity: 0;
-  }
-  64.29%,
-  99.9% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
-.wheel-logo {
-  font-family: var(--font-sans);
-  font-size: clamp(20px, 2.4vw, 32px);
-  font-weight: 700;
-  letter-spacing: 0.34em;
-  /* the tracking is all trailing, so the word needs it taken back off the end
-     to sit on the centre */
-  text-indent: 0.34em;
-  color: #ffffff;
-  opacity: 0;
-  animation: wheel-logo 7s ease infinite;
-}
-
-/* In after the black has landed, out in time to leave the beat empty. */
-@keyframes wheel-logo {
-  0%,
-  64.29% {
-    opacity: 0;
-  }
-  68.6%,
-  81.4% {
-    opacity: 1;
-  }
-  85.71%,
-  100% {
-    opacity: 0;
-  }
 }
 
 /* ── About ──
@@ -3878,32 +3954,19 @@ a {
   }
 
   /* two pictures side by side at this width are two thumbnails */
-  /* the whole width is little enough at this size */
-  .case-compare {
-    max-width: none;
-  }
-
-  .case-media-row,
-  .case-compare--devices {
+  .case-media-row {
     grid-template-columns: 1fr;
     gap: 16px;
   }
 
-  /* three phones will not read at a third of this width, so they go two up
-     with the third beneath them */
-  .case-compare--apps {
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
+  .case-apps {
+    max-width: none;
+    grid-template-columns: repeat(3, 1fr);
   }
 
-  /* the longest phrase has to fit the column at this width, so the wheel is
-     set smaller here rather than trailing off in an ellipsis */
-  .wheel {
-    padding: 32px 20px;
-  }
-
-  .wheel-window {
-    font-size: clamp(16px, 5vw, 24px);
+  .case-creed {
+    aspect-ratio: auto;
+    padding: clamp(36px, 12vw, 80px) clamp(28px, 9vw, 60px);
   }
 
   .case-ph-label {
@@ -3973,29 +4036,6 @@ a {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
-  }
-
-  /* the sentence is simply there, all three phrases at once, rather than
-     turning past a window */
-  .wheel-track {
-    animation: none;
-  }
-
-  .wheel-window {
-    height: auto;
-    -webkit-mask-image: none;
-    mask-image: none;
-  }
-
-  /* nothing to sign off, with the sentence simply sitting there */
-  .wheel-curtain {
-    display: none;
-  }
-
-  .wheel-phrase {
-    white-space: normal;
-    overflow: visible;
-    height: auto;
   }
 
   .hero-title,

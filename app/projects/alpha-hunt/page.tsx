@@ -4,13 +4,15 @@
 'use client'
 
 import Image from 'next/image'
+import { Roboto_Condensed } from 'next/font/google'
 import Link from 'next/link'
 import CaseNav from '../../case-nav'
 import ScrollReveal from '../../scroll-reveal'
-import PhraseWheel from './phrase-wheel'
 import RangeDemo from './range-demo'
 import RangingDemo from './ranging-demo'
 import AccessDemo from './access-demo'
+import WatchClip from './watch-clip'
+import DeviceFlow from './device-flow'
 import NavigateDemo from './navigate-demo'
 // only the held-back sections still use this; it comes back with them
 // import Placeholder from './placeholder'
@@ -18,9 +20,56 @@ import NavigateDemo from './navigate-demo'
 // The blue label at the head of each section, and the contents rail docked to
 // the left margin, are the same set of words — the rail is an index of what is
 // written down the page.
+// The one sentence the whole feature is measured against, set on black.
+const creed = [
+  'Open the tool,',
+  'understand your surroundings,',
+  'get back to the hunt.',
+]
+
+const condensed = Roboto_Condensed({ subsets: ['latin'], weight: ['700'] })
+
+// The three wearables the navigation model was read off, and what each one
+// settled. The two Apple screens carry a recording; the Garmin does not.
+const REFS = [
+  {
+    watch: '/projects/alpha-watch-a.png',
+    clip: '/projects/alpha-watch-nav.mp4',
+    alt: "Apple Watch guiding a walker to a saved location, the ring showing how far off the heading is.",
+    title: 'Selecting a waypoint',
+    body: 'Apple Watch’s waypoint navigation showed how users could select a saved location and stay aligned with it as they moved.',
+  },
+  {
+    watch: '/projects/alpha-watch-b.png',
+    clip: '/projects/alpha-watch-compass.mp4',
+    alt: 'Apple Watch compass with saved waypoints held around the dial as it turns.',
+    title: 'Waypoints in the compass',
+    body: 'Keeping saved waypoints visible along the compass provided continuous spatial context without requiring users to pan across the map.',
+  },
+  {
+    watch: '/projects/alpha-watch-garmin.png',
+    clip: null,
+    alt: '',
+    wide: true,
+    title: 'Starting from an existing model',
+    body: 'Garmin’s existing location inputs helped define the foundation we could build on.',
+  },
+]
+
+// In the order the icons were drawn in.
+const APPS = [
+  { name: 'onX Hunt', src: '/projects/alpha-app-onx.png' },
+  { name: 'Spartan Forge', src: '/projects/alpha-app-spartan.png' },
+  { name: 'BaseMap', src: '/projects/alpha-app-basemap.png' },
+  { name: 'HuntStand', src: '/projects/alpha-app-huntstand.png' },
+  { name: 'Apple Compass', src: '/projects/alpha-app-apple.png' },
+  { name: 'Garmin Compass', src: '/projects/alpha-app-garmin.png' },
+]
+
 const sections = [
   { id: 'context', label: 'CONTEXT' },
   { id: 'problem', label: 'PROBLEM' },
+  { id: 'goal', label: 'THE GOAL' },
   { id: 'opportunity', label: 'THE OPPORTUNITY' },
   { id: 'features', label: 'FEATURE HIGHLIGHTS' },
   { id: 'competitive', label: 'COMPETITIVE ANALYSIS' },
@@ -123,30 +172,22 @@ export default function AlphaHuntCaseStudy() {
                 during a hunt — whether or not a dog was part of it. The work in
                 this case study focuses on new features brought into the app.
               </p>
-              {/* The kit the app was built around, and the handheld itself.
-                  The two columns are weighted by each picture's own proportions
-                  so the pair stands at one height without either being cropped. */}
+              {/* The kit the app was built around, and then the three pieces of
+                  it drawn as a system, with the work marked on the one this case
+                  study is about. */}
               <figure className="case-media">
-                <div className="case-media-row">
-                  <Image
-                    src="/projects/alpha-existing-app.jpg"
-                    alt="A Garmin Alpha handheld, an orange dog collar with its tracking unit, and a phone running the Alpha app, laid out on grass."
-                    width={1579}
-                    height={996}
-                    sizes="(max-width: 768px) 100vw, 38vw"
-                  />
-                  <Image
-                    src="/projects/alpha-device-detail.jpg"
-                    alt="A close view of the Alpha handheld: its buttons, antenna, and the topographic map on its screen."
-                    width={1978}
-                    height={1972}
-                    sizes="(max-width: 768px) 100vw, 24vw"
-                  />
-                </div>
+                <Image
+                  src="/projects/alpha-existing-app.jpg"
+                  alt="A Garmin Alpha handheld, an orange dog collar with its tracking unit, and a phone running the Alpha app, laid out on grass."
+                  width={1579}
+                  height={996}
+                  sizes="(max-width: 768px) 100vw, 62vw"
+                />
                 <figcaption className="case-caption">
                   The existing Alpha app
                 </figcaption>
               </figure>
+              <DeviceFlow />
             </section>
 
             <section className="case-section" id="problem">
@@ -157,9 +198,32 @@ export default function AlphaHuntCaseStudy() {
               </p>
             </section>
 
+            <section className="case-section" id="goal">
+              <h2 className="case-heading">THE GOAL</h2>
+              {/* A bracket stands off each corner, set in from the edge
+                  rather than on it, so the frame holds the words without
+                  crowding them. */}
+              <div className="case-creed">
+                {['tl', 'tr', 'br', 'bl'].map((corner) => (
+                  <Image
+                    key={corner}
+                    className={`case-creed-bracket case-creed-bracket--${corner}`}
+                    src="/projects/alpha-bracket.png"
+                    alt=""
+                    width={151}
+                    height={151}
+                  />
+                ))}
+                <p className={`case-creed-text ${condensed.className}`}>
+                  {creed.map((line) => (
+                    <span key={line}>{line}</span>
+                  ))}
+                </p>
+              </div>
+            </section>
+
             <section className="case-section" id="opportunity">
               <h2 className="case-heading">THE OPPORTUNITY</h2>
-              <PhraseWheel />
               <p className="case-lead case-lead--wrap">
                 How might we give hunters immediate distance and direction
                 information so they can better understand the environment around
@@ -260,74 +324,62 @@ export default function AlphaHuntCaseStudy() {
                 How do other apps and devices approach compass?
               </p>
               <p className="case-text">
-                Our compass experience was informed by competitive benchmarking
-                across BaseMap, onX, HuntStand, and Apple Compass, with the goal
-                of building on familiar industry patterns while remaining
-                competitive in the category.
+                Our compass tools were informed by competitive benchmarking
+                across onX Hunt, Spartan Forge, BaseMap, HuntStand, Apple
+                Compass, and Garmin Compass. We used familiar interaction
+                patterns to align with users’ existing mental models while
+                identifying opportunities to stay competitive in the hunting
+                space.
               </p>
-              <p className="case-text">
-                BaseMap reinforced the opportunity to extend turn-direction
-                functionality we had already developed for Garmin watches into
-                the mobile experience, while onX validated range-to-target as an
-                important compass capability. HuntStand served as a strong UI
-                reference despite its more basic functionality, and Apple
-                Compass inspired the use of haptic feedback to reinforce
-                directional movement.
-              </p>
-              <p className="case-text">
-                Apple Watch’s Backtrack feature also influenced our information
-                architecture, ultimately leading us to separate range-finding and
-                navigation into two dedicated tools so each could have a clearer
-                hierarchy and more room to support its core use case.
-              </p>
-              {/* The compasses studied: the three hunting apps on one row, the
-                  two watch-makers' own compasses on the next. Each row's columns
-                  are weighted by its pictures' proportions, so everything in a
-                  row stands at one height without any of it being cropped. */}
+              {/* Who was looked at: six icons at one size with their names
+                  under them, which is all the survey needs to say. */}
               <figure className="case-media">
-                <div className="case-compare case-compare--apps">
-                  <Image
-                    src="/projects/alpha-comp-basemap.png"
-                    alt="BaseMap's compass: a bearing readout over a satellite map, with a ranged line running out to a waypoint."
-                    width={609}
-                    height={896}
-                    sizes="(max-width: 768px) 100vw, 22vw"
-                  />
-                  <Image
-                    src="/projects/alpha-comp-onx.png"
-                    alt="onX Hunt's compass: a heading tape across the top and distance markers up a line to the target."
-                    width={596}
-                    height={893}
-                    sizes="(max-width: 768px) 100vw, 22vw"
-                  />
-                  <Image
-                    src="/projects/alpha-comp-huntstand.png"
-                    alt="HuntStand's compass over a satellite map."
-                    width={596}
-                    height={889}
-                    sizes="(max-width: 768px) 100vw, 22vw"
-                  />
-                </div>
-                <div className="case-compare case-compare--devices">
-                  <Image
-                    src="/projects/alpha-comp-apple.png"
-                    alt="Apple's compass on iPhone beside four Apple Watch screens, including Backtrack guiding a walker to a saved point."
-                    width={1623}
-                    height={889}
-                    sizes="(max-width: 768px) 100vw, 38vw"
-                  />
-                  <Image
-                    src="/projects/alpha-comp-garmin.png"
-                    alt="The Garmin watch compass, showing a heading, the deviation from it, and the distance left to run."
-                    width={730}
-                    height={527}
-                    sizes="(max-width: 768px) 100vw, 29vw"
-                  />
-                </div>
+                <ul className="case-apps">
+                  {APPS.map((app) => (
+                    <li key={app.name}>
+                      <Image src={app.src} alt="" width={400} height={400} sizes="104px" />
+                      <span>{app.name}</span>
+                    </li>
+                  ))}
+                </ul>
                 <figcaption className="case-caption">
                   The compasses studied
                 </figcaption>
               </figure>
+
+              <p className="case-lead">
+                Studying waypoint navigation across devices
+              </p>
+              <p className="case-text">
+                Much of the navigation model was informed by compass and
+                waypoint patterns across Apple Watch and Garmin wearables.
+                Backtrack was especially useful for understanding how users
+                orient toward saved locations, while also highlighting where
+                general navigation use cases—like driving or hiking—needed to be
+                adapted for hunting-specific scenarios.
+              </p>
+              {/* Three references side by side. The two Apple screens are
+                  live: the recordings are cropped to the glass and rounded to
+                  the silhouette, so they sit in the watches rather than on
+                  them. The Garmin is as it came. */}
+              <ul className="case-refs">
+                {REFS.map((ref) => (
+                  <li key={ref.title}>
+                    <div className="case-ref-watch">
+                      <Image
+                        src={ref.watch}
+                        alt=""
+                        width={ref.wide ? 668 : 600}
+                        height={989}
+                        sizes="(max-width: 768px) 100vw, 30vw"
+                      />
+                      {ref.clip && <WatchClip src={ref.clip} label={ref.alt} />}
+                    </div>
+                    <h3 className="case-ref-title">{ref.title}</h3>
+                    <p className="case-ref-text">{ref.body}</p>
+                  </li>
+                ))}
+              </ul>
 
               {/* Held back for now — the remote-mode comparison:
               <p className="case-lead">How can we be better?</p>
