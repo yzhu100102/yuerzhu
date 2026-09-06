@@ -9,7 +9,11 @@ import CaseNav from '../../case-nav'
 import ScrollReveal from '../../scroll-reveal'
 import PhraseWheel from './phrase-wheel'
 import RangeDemo from './range-demo'
-import Placeholder from './placeholder'
+import RangingDemo from './ranging-demo'
+import AccessDemo from './access-demo'
+import NavigateDemo from './navigate-demo'
+// only the held-back sections still use this; it comes back with them
+// import Placeholder from './placeholder'
 
 // The blue label at the head of each section, and the contents rail docked to
 // the left margin, are the same set of words — the rail is an index of what is
@@ -20,7 +24,8 @@ const sections = [
   { id: 'opportunity', label: 'THE OPPORTUNITY' },
   { id: 'features', label: 'FEATURE HIGHLIGHTS' },
   { id: 'competitive', label: 'COMPETITIVE ANALYSIS' },
-  { id: 'adaptation', label: 'ADAPTATION' },
+  // held back with the section itself
+  // { id: 'adaptation', label: 'ADAPTATION' },
   { id: 'design-system', label: 'DESIGN SYSTEM' },
   { id: 'results', label: 'RESULTS' },
 ]
@@ -209,7 +214,7 @@ export default function AlphaHuntCaseStudy() {
                     or scanning terrain, the design minimizes the amount of user
                     interaction.
                   </p>
-                  <Placeholder label="Ranging" />
+                  <RangingDemo />
                 </div>
               </div>
 
@@ -226,7 +231,7 @@ export default function AlphaHuntCaseStudy() {
                     move around obstacles, then check back in at any point to
                     make sure they&apos;re still on track.
                   </p>
-                  <Placeholder label="Reference point" />
+                  <NavigateDemo />
                 </div>
               </div>
 
@@ -244,7 +249,7 @@ export default function AlphaHuntCaseStudy() {
                     can use the map to understand what&apos;s around the waypoint
                     while planning their route or hunt.
                   </p>
-                  <Placeholder label="The tool opened from a saved waypoint" />
+                  <AccessDemo />
                 </div>
               </div>
             </section>
@@ -255,21 +260,76 @@ export default function AlphaHuntCaseStudy() {
                 How do other apps and devices approach compass?
               </p>
               <p className="case-text">
-                Researching how similar navigation tools worked across Garmin
-                devices and competitive hunting apps helped define the core
-                behaviors this experience needed to support. It also surfaced
-                familiar patterns we could build on, gaps we could avoid, and
-                new ideas that shaped the direction of the feature.
+                Our compass experience was informed by competitive benchmarking
+                across BaseMap, onX, HuntStand, and Apple Compass, with the goal
+                of building on familiar industry patterns while remaining
+                competitive in the category.
               </p>
-              <Placeholder
-                label="The compasses studied"
-                items={[
-                  'Apple compass (app and watch)',
-                  'Hunt app compasses',
-                  'Garmin watch',
-                ]}
-              />
+              <p className="case-text">
+                BaseMap reinforced the opportunity to extend turn-direction
+                functionality we had already developed for Garmin watches into
+                the mobile experience, while onX validated range-to-target as an
+                important compass capability. HuntStand served as a strong UI
+                reference despite its more basic functionality, and Apple
+                Compass inspired the use of haptic feedback to reinforce
+                directional movement.
+              </p>
+              <p className="case-text">
+                Apple Watch’s Backtrack feature also influenced our information
+                architecture, ultimately leading us to separate range-finding and
+                navigation into two dedicated tools so each could have a clearer
+                hierarchy and more room to support its core use case.
+              </p>
+              {/* The compasses studied: the three hunting apps on one row, the
+                  two watch-makers' own compasses on the next. Each row's columns
+                  are weighted by its pictures' proportions, so everything in a
+                  row stands at one height without any of it being cropped. */}
+              <figure className="case-media">
+                <div className="case-compare case-compare--apps">
+                  <Image
+                    src="/projects/alpha-comp-basemap.png"
+                    alt="BaseMap's compass: a bearing readout over a satellite map, with a ranged line running out to a waypoint."
+                    width={609}
+                    height={896}
+                    sizes="(max-width: 768px) 100vw, 22vw"
+                  />
+                  <Image
+                    src="/projects/alpha-comp-onx.png"
+                    alt="onX Hunt's compass: a heading tape across the top and distance markers up a line to the target."
+                    width={596}
+                    height={893}
+                    sizes="(max-width: 768px) 100vw, 22vw"
+                  />
+                  <Image
+                    src="/projects/alpha-comp-huntstand.png"
+                    alt="HuntStand's compass over a satellite map."
+                    width={596}
+                    height={889}
+                    sizes="(max-width: 768px) 100vw, 22vw"
+                  />
+                </div>
+                <div className="case-compare case-compare--devices">
+                  <Image
+                    src="/projects/alpha-comp-apple.png"
+                    alt="Apple's compass on iPhone beside four Apple Watch screens, including Backtrack guiding a walker to a saved point."
+                    width={1623}
+                    height={889}
+                    sizes="(max-width: 768px) 100vw, 38vw"
+                  />
+                  <Image
+                    src="/projects/alpha-comp-garmin.png"
+                    alt="The Garmin watch compass, showing a heading, the deviation from it, and the distance left to run."
+                    width={730}
+                    height={527}
+                    sizes="(max-width: 768px) 100vw, 29vw"
+                  />
+                </div>
+                <figcaption className="case-caption">
+                  The compasses studied
+                </figcaption>
+              </figure>
 
+              {/* Held back for now — the remote-mode comparison:
               <p className="case-lead">How can we be better?</p>
               <p className="case-text">
                 OnX Hunt&apos;s compass experience is tied to the hunter&apos;s
@@ -293,8 +353,10 @@ export default function AlphaHuntCaseStudy() {
                   ratio="4 / 5"
                 />
               </div>
+              */}
             </section>
 
+            {/* Held back for now — what still works offline:
             <section className="case-section" id="adaptation">
               <h2 className="case-heading">ADAPTATION</h2>
               <p className="case-lead">Mitigations when offline</p>
@@ -321,6 +383,7 @@ export default function AlphaHuntCaseStudy() {
                 <Placeholder label="The offline state in the app" ratio="4 / 5" />
               </div>
             </section>
+            */}
 
             <section className="case-section" id="design-system">
               <h2 className="case-heading">DESIGN SYSTEM</h2>
@@ -341,10 +404,38 @@ export default function AlphaHuntCaseStudy() {
                 experience needs to intentionally break from the system to
                 better support in-field use.
               </p>
-              <div className="case-grid-2">
-                <Placeholder label="Before: tools with inconsistent UI" ratio="4 / 5" />
-                <Placeholder label="After: consistent UI" ratio="4 / 5" />
-              </div>
+              {/* The same five tools, before and after. Each sits on its own
+                  ground so the pair reads as a comparison rather than a run of
+                  screens; the pictures carry their own transparent surrounds, so
+                  the colour shows between the phones. */}
+              <figure className="case-media">
+                <div className="case-swatch case-swatch--before">
+                  <Image
+                    src="/projects/alpha-ds-before.png"
+                    alt="Five tools before the alignment work: exit buttons, action buttons and sheets all handled differently from screen to screen."
+                    width={2000}
+                    height={829}
+                    sizes="(max-width: 768px) 100vw, 60vw"
+                  />
+                </div>
+                <figcaption className="case-caption">
+                  Before: tools with inconsistent UI
+                </figcaption>
+              </figure>
+              <figure className="case-media case-media--tight">
+                <div className="case-swatch case-swatch--after">
+                  <Image
+                    src="/projects/alpha-ds-after.png"
+                    alt="The same five tools after the alignment work, sharing one set of exit patterns, action buttons and sheets."
+                    width={2000}
+                    height={788}
+                    sizes="(max-width: 768px) 100vw, 60vw"
+                  />
+                </div>
+                <figcaption className="case-caption">
+                  After: consistent UI
+                </figcaption>
+              </figure>
             </section>
 
             <section className="case-section" id="results">

@@ -1839,26 +1839,312 @@ a {
   align-items: start;
 }
 
-/* ── Compass Lock, running ──
-   One phone screen played as a sequence: the map underneath, the UI over it,
-   the lock button in its two states, the compass tape along the bottom edge,
-   and the hand that taps the lock and then drags the tape. range-demo.tsx
-   writes one set of custom properties onto the stage every frame and the rules
-   below are only ever placing things by them:
-     --hx --hy   where the hand's own centre is
-     --press     the dip as it taps
-     --hint      the hand's presence; --arrows, the pair it drags with
-     --locked    0 unlocked, 1 locked
-     --travel    0 to 1 across the clip, which is also across the drag
+/* Before and after, each on its own ground so the pair reads as a comparison.
+   The pictures are transparent between the phones, which is what the colour is
+   for. */
+.case-swatch {
+  padding: clamp(20px, 6vw, 90px) clamp(24px, 13vw, 190px);
+  display: grid;
+  place-items: center;
+}
 
-   The tape is the artwork's own 564 x 117 drawn at the screen's 375pt scale,
-   so it is 150.4% of the screen wide. Its offsets are percentages of its own
-   width, which is what a transform on it means:
-     north sits at tape x 210, and the middle of the screen at 187.5, so
-     centring north is -22.5 of 564                          (-3.989%)
-     the sweep runs 90 degrees; the tape reads 1.495px per degree, so it
-     travels 134.6 further left                              (-23.865%) */
-.range-demo {
+.case-swatch--before {
+  background: #f5e6e6;
+}
+
+.case-swatch--after {
+  background: #f3f4d2;
+}
+
+/* the second of a pair sits with the first, not a whole block away */
+.case-media--tight {
+  margin-top: var(--grid-gutter);
+}
+
+/* The compasses studied. Every picture is drawn at one scale, so the app icons
+   — all 136 pixels square in the files — come out the same size on the page
+   whatever else each picture carries. That means weighting each column by its
+   own picture's width, and holding each row in to the width that lands those
+   icons at the size the Apple screens set. The pictures carry their own
+   transparent surrounds, so they sit straight on the page rather than in boxes. */
+.case-compare {
+  display: grid;
+  gap: clamp(20px, 3.4vw, 44px);
+  align-items: start;
+}
+
+.case-compare + .case-compare {
+  margin-top: clamp(40px, 6vw, 88px);
+}
+
+.case-compare--apps {
+  grid-template-columns: 609fr 596fr 596fr;
+  max-width: 55%;
+}
+
+.case-compare--devices {
+  grid-template-columns: 1623fr 730fr;
+  max-width: 65%;
+}
+
+/* ── Additional access points, running ──
+   The same phone at the same 375 x 815, so it borrows the Range panel's stage
+   and its hand. access-demo.tsx writes:
+     --mx --my   how far the map has been panned, in artwork pixels
+     --sheet     the sheet's top edge, 815 off the bottom through 52 wide open
+     --scroll    how far the panel has run up behind the sheet's own top group
+     --tool      0 the map, 1 the range tool opened on the waypoint
+     --spin      degrees the tool's map has turned
+     --press     the dip on a tapped row
+   along with --hand, --tap and --hx --hy for the hand.
+
+   The map is opened to 1.55 and starts pushed right, which is what gives it the
+   190 pixels of itself to travel through while the pan happens. */
+.aap-stage {
+  --mx: 0;
+  --my: 0;
+  --sheet: 815;
+  --scroll: 0;
+  --tool: 0;
+  --spin: 7;
+  --press: 1;
+  --bar: 500;
+  --tap: 1;
+  --hand: 0;
+  --hx: 421;
+  --hy: 929;
+}
+
+.aap-home,
+.aap-tool {
+  position: absolute;
+  inset: 0;
+}
+
+.aap-home {
+  opacity: calc(1 - var(--tool));
+}
+
+/* The tool arrives over the map rather than replacing it in a cut. */
+.aap-tool {
+  opacity: var(--tool);
+  transform: scale(calc(1.04 - 0.04 * var(--tool)));
+  pointer-events: none;
+}
+
+.aap-map,
+.aap-toolmap {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.aap-map {
+  transform: translate(calc((95 + var(--mx)) * var(--u)), calc(var(--my) * var(--u)))
+    scale(1.55);
+}
+
+/* The tool's map turns about the waypoint the tool is anchored on, opened just
+   far enough to do that without pulling a corner into frame. */
+.aap-toolmap {
+  transform-origin: calc(187.5 * var(--u)) calc(661 * var(--u));
+  transform: translateY(calc(-39.8 * var(--u))) rotate(calc(var(--spin) * 1deg))
+    scale(1.4);
+}
+
+/* The waypoints ride the map, so they are placed in the map's own pixels. */
+.aap-pin {
+  left: calc((var(--px) + var(--mx)) * var(--u));
+  top: calc((var(--py) + var(--my)) * var(--u));
+  width: calc(43 * var(--u));
+  height: calc(52 * var(--u));
+}
+
+/* Frosted glass, kept live rather than baked, so the map still runs behind it
+   while it moves. */
+.aap-glass {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(233, 236, 236, 0.5);
+  -webkit-backdrop-filter: blur(calc(8 * var(--u)));
+  backdrop-filter: blur(calc(8 * var(--u)));
+}
+
+.aap-glass--search,
+.aap-glass--weather,
+.aap-glass--device {
+  top: calc(60 * var(--u));
+  width: calc(41 * var(--u));
+  height: calc(41 * var(--u));
+}
+
+.aap-glass--search {
+  left: calc(221.5 * var(--u));
+}
+
+.aap-glass--weather {
+  left: calc(270 * var(--u));
+}
+
+.aap-glass--device {
+  left: calc(318.5 * var(--u));
+}
+
+.aap-glass--locate,
+.aap-glass--td {
+  left: calc(319.5 * var(--u));
+  width: calc(38 * var(--u));
+  height: calc(38 * var(--u));
+}
+
+.aap-glass--locate {
+  top: calc(642 * var(--u));
+}
+
+.aap-glass--td {
+  top: calc(689.5 * var(--u));
+}
+
+.aap-tabbar {
+  left: calc(6 * var(--u));
+  top: calc(745 * var(--u));
+  width: calc(363 * var(--u));
+  height: calc(64 * var(--u));
+  border-radius: calc(32 * var(--u));
+}
+
+.aap-island {
+  position: absolute;
+  left: calc(131 * var(--u));
+  top: calc(13 * var(--u));
+  width: calc(113 * var(--u));
+  height: calc(32 * var(--u));
+  border-radius: calc(16 * var(--u));
+  background: #000000;
+}
+
+.aap-avatar {
+  left: calc(14 * var(--u));
+  top: calc(60 * var(--u));
+  width: calc(41 * var(--u));
+  height: calc(40 * var(--u));
+}
+
+.aap-glyphs {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* The sheet. Its own top group is pinned to the top of it and the panel runs up
+   behind, which is the whole point of the gesture. */
+.aap-sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--sheet) * var(--u));
+  bottom: 0;
+  overflow: hidden;
+  border-radius: calc(12 * var(--u)) calc(12 * var(--u)) 0 0;
+  background: #0a0a0a;
+}
+
+.aap-panel {
+  left: 0;
+  top: calc((88 - var(--scroll)) * var(--u));
+  width: 100%;
+  height: calc(964 * var(--u));
+}
+
+.aap-top {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: calc(88 * var(--u));
+}
+
+/* The tool is anchored on the waypoint, so the waypoint's own pin stands where
+   the walker's arrow would otherwise be. */
+.aap-anchor {
+  left: calc(166 * var(--u));
+  top: calc(635 * var(--u));
+  width: calc(43 * var(--u));
+  height: calc(52 * var(--u));
+}
+
+/* ── Compass Lock, running ──
+   The same phone screen as the Range panel, so it borrows that panel's classes
+   for everything the two share — the stage, the sight line, the graduations,
+   the slider and its two handles, the walker's arrow, the hand. What is left
+   here is what only this panel does. range-demo.tsx writes:
+     --spin      degrees the map has been turned, +16 through -16
+     --tape      where the compass tape's zero sits
+     --locked    0 unlocked, 1 locked
+     --press     the dip as the lock is tapped
+     --arrows    the pair the hand drags with
+   along with --hand and --hx --hy, which the shared hand class reads.
+
+   The map is opened to 1.79 about the walker and starts pushed up 88 pixels
+   rather than centred. That is what lets it turn 16 degrees either way without
+   pulling a corner into frame at a zoom this low. */
+.lock-stage {
+  --spin: 16;
+  --tape: 144;
+  --locked: 0;
+  --press: 1;
+  --arrows: 0;
+  --bar: 500;
+  --hand: 0;
+  --hx: 436;
+  --hy: 274;
+}
+
+.lock-map {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: calc(187 * var(--u)) calc(650 * var(--u));
+  transform: translateY(calc(-87.9 * var(--u))) rotate(calc(var(--spin) * 1deg))
+    scale(1.79);
+}
+
+/* The locked button, over the unlocked one the chrome carries. */
+.lock-shut {
+  left: calc(319.5 * var(--u));
+  top: calc(61.5 * var(--u));
+  width: calc(44 * var(--u));
+  height: calc(44 * var(--u));
+  opacity: var(--locked);
+  transform: scale(var(--press));
+}
+
+.lock-stage .lock-arrows {
+  opacity: calc(var(--hand) * var(--arrows));
+}
+
+/* ── Range, running ──
+   The four Range mocks are 375 x 815, so this works in the artwork's own
+   pixels: --u is one of them, and every offset below was measured off the
+   files. ranging-demo.tsx writes these each frame:
+     --zoom      1 at rest, 1.3546 with the map open
+     --bar       the slider's top edge, 500 down to 222
+     --pin       how much of the waypoint is down
+     --press     the dip on the Mark button
+     --tap       the dip on the hand
+     --hand      the pointing hand's presence
+     --pinch     the pinch drawing's presence
+     --spread    how far the pinch has opened, 0 to 1
+     --hx --hy   where the pointing hand's own centre is
+   and the numbers themselves as text, since they count.
+
+   The map, the furniture and the four screens all share one pivot: screen 2 is
+   screen 1 scaled 1.3546 about 53.94% across and the top edge. */
+.ranging-demo {
   max-width: var(--media-width);
   margin-top: var(--block-gap);
   padding: clamp(32px, 5vw, 64px);
@@ -1867,111 +2153,568 @@ a {
   place-items: center;
 }
 
-/* Same pull as every other picture in a feature: it sits on the left edge the
-   rest of the page's media sits on, not indented by the number column. */
-.case-insight .range-demo {
+/* The same pull as every other picture in a feature. */
+.case-insight .ranging-demo {
   margin-left: calc(-28px - 20px);
   width: calc(100% + 28px + 20px);
   max-width: none;
 }
 
-/* The still the panel holds before the script starts, and the one it keeps for
-   a reader who has asked for no motion: unlocked, tape on north, the hand over
-   the tape with its arrows up. */
-.range-stage {
-  --hx: 48%;
-  --hy: 92.8%;
+/* The still the panel holds before the script starts: the first screen, with
+   the hand still off it. */
+.ranging-stage {
+  --sw: clamp(230px, 27vw, 320px);
+  --u: calc(var(--sw) / 375);
+  --zoom: 1;
+  --bar: 500;
+  --pin: 0;
   --press: 1;
-  --hint: 1;
-  --arrows: 1;
-  --locked: 0;
-  --travel: 0;
+  --tap: 1;
+  --hand: 0;
+  --pinch: 0;
+  --spread: 0;
+  --hx: 301;
+  --hy: 929;
   position: relative;
-  width: clamp(230px, 27vw, 320px);
-  /* the screen the artwork was drawn at */
+  width: var(--sw);
   aspect-ratio: 375 / 815;
-  border-radius: 26px;
+  /* the corner the mocks were exported on */
+  border-radius: calc(40 * var(--u));
   overflow: hidden;
   background: #2b3a2c;
 }
 
-/* Every layer fills the screen and stacks in the order it is written. */
-.range-map,
-.range-ui {
+.ranging-stage img {
   position: absolute;
+  max-width: none;
+}
+
+.ranging-map,
+.ranging-chrome {
   inset: 0;
   width: 100%;
   height: 100%;
+}
+
+.ranging-map {
   object-fit: cover;
+  transform: scale(var(--zoom));
+  transform-origin: 53.94% 0;
 }
 
-.range-ui {
-  object-fit: contain;
-}
-
-/* The lock, in its two states, both on the button's centre — 341.5, 82.5 of
-   the 375 x 815 screen — and both the artwork's own 45 x 44. */
-.range-lock-face,
-.range-lock-open {
+/* The sight line down the middle, dotted two on two off. */
+.ranging-plumb {
   position: absolute;
-  left: 91.07%;
-  top: 10.12%;
-  width: 12%;
-  height: auto;
-  aspect-ratio: 45 / 44;
-  transform: translate(-50%, -50%);
+  left: calc(187 * var(--u));
+  top: calc(44 * var(--u));
+  width: max(1px, calc(1 * var(--u)));
+  height: calc(601 * var(--u));
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.85) 0 calc(2 * var(--u)),
+    transparent calc(2 * var(--u)) calc(4 * var(--u))
+  );
 }
 
-/* Locked: a white face under the UI, which is where the artwork keeps its own
-   closed padlock — so the padlock lands on the white as the two cross. */
-.range-lock-face {
-  border-radius: 50%;
+/* A graduation: a hairline the width of the sight, and two bars either side of
+   it left open in the middle so the sight line reads through. */
+.ranging-rung {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--y) * var(--u));
+  height: 0;
+}
+
+.ranging-rung-hair,
+.ranging-rung-bar {
+  position: absolute;
+  top: 0;
+  transform: translateY(-50%);
+}
+
+.ranging-rung-hair {
+  left: calc(101 * var(--u));
+  width: calc(167 * var(--u));
+  height: max(1px, calc(1 * var(--u)));
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.ranging-rung-bar {
+  width: calc(43 * var(--u));
+  height: calc(3 * var(--u));
   background: #ffffff;
-  opacity: var(--locked);
 }
 
-/* Unlocked: over the UI, covering that closed padlock until the tap. */
-.range-lock-open {
-  opacity: calc(1 - var(--locked));
+.ranging-rung-bar--l {
+  left: calc(137 * var(--u));
 }
 
-/* The tape's own window, cut to the screen so the tape can be wider than it
-   and still be clipped at both edges. */
-.range-tape-window {
+.ranging-rung-bar--r {
+  left: calc(195 * var(--u));
+}
+
+/* The range line runs from the middle of the slider down to the user's arrow,
+   so its height is whatever the slider has left above them. */
+.ranging-line {
+  left: calc(185.5 * var(--u));
+  width: calc(4 * var(--u));
+  top: calc((var(--bar) + 11.5) * var(--u));
+  height: calc((633.5 - var(--bar)) * var(--u));
+}
+
+.ranging-handles {
+  left: calc(83 * var(--u));
+  top: calc(var(--bar) * var(--u));
+  width: calc(206 * var(--u));
+  height: calc(23 * var(--u));
+}
+
+/* The waypoint sits on the slider, and grows into place as it lands. */
+.ranging-waypoint {
+  left: calc(169 * var(--u));
+  top: calc((var(--bar) - 31) * var(--u));
+  width: calc(37 * var(--u));
+  height: calc(50 * var(--u));
+  opacity: var(--pin);
+  transform-origin: 50% 92%;
+  transform: scale(calc(0.6 + 0.4 * var(--pin)));
+}
+
+.ranging-user {
+  left: calc(160 * var(--u));
+  top: calc(609 * var(--u));
+  width: calc(54 * var(--u));
+  height: calc(64 * var(--u));
+}
+
+.ranging-button {
+  left: calc(268 * var(--u));
+  top: calc(626 * var(--u));
+  width: calc(96 * var(--u));
+  height: calc(47 * var(--u));
+  transform: scale(var(--press));
+}
+
+/* The readout and the graduation labels. Both are text rather than artwork so
+   they can count, and both keep tabular figures so the pill does not twitch as
+   the digits change. */
+.ranging-readout,
+.ranging-tag {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.ranging-readout {
+  left: 50%;
+  top: calc(80 * var(--u));
+  transform: translate(-50%, -50%);
+  min-width: calc(79 * var(--u));
+  height: calc(30 * var(--u));
+  padding: 0 calc(10 * var(--u));
+  background: rgba(205, 205, 204, 0.8);
+  color: #14171a;
+  font-size: calc(19 * var(--u));
+  font-weight: 600;
+  letter-spacing: calc(-0.3 * var(--u));
+}
+
+.ranging-tag {
+  left: calc(12 * var(--u));
+  top: calc(var(--y) * var(--u));
+  transform: translateY(-50%);
+  width: calc(53 * var(--u));
+  height: calc(30 * var(--u));
+  background: rgba(0, 0, 0, 0.4);
+  color: #ffffff;
+  font-size: calc(15 * var(--u));
+  font-weight: 500;
+  letter-spacing: calc(-0.2 * var(--u));
+}
+
+/* The pinch is one drawing rather than two fingers, so the gesture is played
+   by opening it: it grows and drifts along its own arrow as the map opens. It
+   is set low and right of the lake so its arrow crosses the water while the
+   hand itself stays off it — the point of the shot is watching the lake open. */
+.ranging-pinch {
+  left: calc(202 * var(--u));
+  top: calc(198 * var(--u));
+  width: calc(126 * var(--u));
+  height: calc(126 * var(--u));
+  transform: translate(-50%, -50%)
+    translate(
+      calc(4 * var(--spread) * var(--u)),
+      calc(-4 * var(--spread) * var(--u))
+    )
+    scale(calc(0.94 + 0.13 * var(--spread)));
+  opacity: var(--pinch);
+}
+
+.ranging-hand {
+  left: calc(var(--hx) * var(--u));
+  top: calc(var(--hy) * var(--u));
+  width: calc(112.5 * var(--u));
+  height: calc(112.5 * var(--u));
+  transform: translate(-50%, -50%) scale(var(--tap));
+  opacity: var(--hand);
+}
+
+/* ── Navigate, running ──
+   The five Navigate mocks are 375 x 815, so this works in the artwork's own
+   pixels: --u is one of them. navigate-demo.tsx writes these each frame:
+     --spin      degrees the map has left to swing, 18 down to 0
+     --pan       how far the map has run under the walker, 0 to 618
+     --tape      where the compass tape's zero sits, so the heading is centred
+     --dev       how many pixels of tape lie between the heading and the truck
+     --gear      the bearing's presence: header, angle, bar
+     --menu      the waypoint list's presence
+     --tick      the tick on the picked row
+     --home      1 once the walker is standing on the truck
+     --tx --ty   the truck on the map, on the far end of the bearing line
+     --press --tap --hand --hx --hy   the button, the hand
+   and the header's own text, since it counts down.
+
+   The map is opened to 1.78 about the walker and starts pushed up 86 pixels
+   rather than centred. The shift is what keeps the zoom that low: from the
+   middle the walk could only use the half of the map above the walker, so it
+   would have taken 2.1 to both turn 16 degrees without pulling a corner into
+   frame and still have 590 pixels left to run through. */
+.nav-demo {
+  max-width: var(--media-width);
+  margin-top: var(--block-gap);
+  padding: clamp(32px, 5vw, 64px);
+  background: #e6ebf5;
+  display: grid;
+  place-items: center;
+}
+
+.case-insight .nav-demo {
+  margin-left: calc(-28px - 20px);
+  width: calc(100% + 28px + 20px);
+  max-width: none;
+}
+
+/* The still the panel holds before the script starts: the first screen. */
+.nav-stage {
+  --sw: clamp(230px, 27vw, 320px);
+  --u: calc(var(--sw) / 375);
+  --spin: 16;
+  --pan: 0;
+  --tape: 80.45;
+  --dev: 116;
+  --gear: 0;
+  --menu: 0;
+  --tick: 0;
+  --home: 0;
+  --tx: 472;
+  --ty: 81;
+  --press: 1;
+  --tap: 1;
+  --hand: 0;
+  --hx: 321;
+  --hy: 929;
+  position: relative;
+  width: var(--sw);
+  aspect-ratio: 375 / 815;
+  border-radius: calc(40 * var(--u));
+  overflow: hidden;
+  background: #2b3a2c;
+}
+
+.nav-stage img,
+.nav-stage svg {
+  position: absolute;
+  max-width: none;
+}
+
+/* The map turns and runs about the walker, because that is the point they are
+   standing on. */
+.nav-map {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: calc(189.5 * var(--u)) calc(648 * var(--u));
+  transform: translateY(calc((var(--pan) - 86.3) * var(--u)))
+    rotate(calc(var(--spin) * 1deg)) scale(1.78);
+}
+
+.nav-chrome {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* The sight line, the angle off it and the bearing line, all one drawing. The
+   angle and the bearing go once the walker is standing on the waypoint; the
+   sight line and the pin stay. */
+.nav-angle {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.nav-wedge,
+.nav-ray {
+  opacity: calc(var(--gear) * (1 - var(--home)));
+}
+
+.nav-truck {
+  left: calc((var(--tx) - 16.5) * var(--u));
+  top: calc((var(--ty) - 42) * var(--u));
+  width: calc(33 * var(--u));
+  height: calc(46 * var(--u));
+  opacity: var(--gear);
+}
+
+.nav-rung {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--at) * var(--u));
+  height: 0;
+}
+
+.nav-rung-hair,
+.nav-rung-bar {
+  position: absolute;
+  top: 0;
+  transform: translateY(-50%);
+}
+
+.nav-rung-hair {
+  left: calc(102 * var(--u));
+  width: calc(166 * var(--u));
+  height: max(1px, calc(1 * var(--u)));
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.nav-rung-bar {
+  width: calc(42 * var(--u));
+  height: calc(3 * var(--u));
+  background: #ffffff;
+}
+
+.nav-rung-bar--l {
+  left: calc(139.5 * var(--u));
+}
+
+.nav-rung-bar--r {
+  left: calc(197.5 * var(--u));
+}
+
+.nav-tag {
+  position: absolute;
+  left: calc(12 * var(--u));
+  top: calc(var(--at) * var(--u));
+  transform: translateY(-50%);
+  width: calc(53 * var(--u));
+  height: calc(30 * var(--u));
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.4);
+  color: #ffffff;
+  font-family: var(--font-sans);
+  font-size: calc(15 * var(--u));
+  font-weight: 500;
+  letter-spacing: calc(-0.2 * var(--u));
+  line-height: 1;
+}
+
+.nav-user {
+  left: calc(161.5 * var(--u));
+  top: calc(603 * var(--u));
+  width: calc(54 * var(--u));
+  height: calc(64 * var(--u));
+}
+
+/* ── The compass tape ──
+   compass-tape.tsx places the furniture in degrees and the whole track slides,
+   so the tape can run as far as a panel turns without running out of itself.
+   Both the compass-lock panel and the navigate panel carry one, and each sets
+   --tape to say where the tape's zero should sit. */
+.tape-panel {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
-  /* the tape's 117 of the screen's 815 */
-  height: 14.36%;
+  height: calc(124 * var(--u));
   overflow: hidden;
+  background: rgba(16, 16, 16, 0.68);
+  font-family: var(--font-sans);
 }
 
-.range-tape {
+.tape-track {
   position: absolute;
-  left: 0;
-  top: 0;
-  /* 564 of the screen's 375 */
-  width: 150.4%;
-  height: 100%;
-  max-width: none;
-  transform: translateX(calc(-3.989% + var(--travel) * -23.865%));
+  inset: 0;
+  transform: translateX(calc(var(--tape) * var(--u)));
 }
 
-/* The hand and its arrows: one drawing cut in two, so both sit on the same
-   centre and the arrows can arrive without the hand being drawn twice. */
-.range-hint {
+.tape-tick,
+.tape-dot,
+.tape-deg,
+.tape-point {
   position: absolute;
-  left: var(--hx);
-  top: var(--hy);
-  width: 30%;
-  height: auto;
-  transform: translate(-50%, -50%) scale(var(--press));
-  opacity: var(--hint);
+  left: calc(var(--at) * 1.5 * var(--u));
+  transform: translateX(-50%);
 }
 
-.range-hint--arrows {
-  opacity: calc(var(--hint) * var(--arrows));
+.tape-tick {
+  top: calc(29 * var(--u));
+  width: max(1px, calc(3 * var(--u)));
+  height: calc(14 * var(--u));
+  background: rgba(57, 107, 157, 0.84);
+}
+
+.tape-tick--small {
+  top: calc(33 * var(--u));
+  height: calc(5 * var(--u));
+  width: max(1px, calc(2.5 * var(--u)));
+  background: rgba(153, 153, 153, 0.96);
+  border-radius: 999px;
+}
+
+.tape-dot {
+  top: calc(30 * var(--u));
+  width: calc(11 * var(--u));
+  height: calc(11 * var(--u));
+  border-radius: 50%;
+}
+
+.tape-deg {
+  top: calc(58 * var(--u));
+  font-size: calc(11 * var(--u));
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.82);
+  line-height: 1;
+}
+
+.tape-point {
+  top: calc(80 * var(--u));
+  font-size: calc(14 * var(--u));
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.4);
+  line-height: 1;
+}
+
+.tape-point--main {
+  top: calc(76 * var(--u));
+  font-size: calc(20 * var(--u));
+  color: rgba(255, 255, 255, 0.95);
+}
+
+/* How far off the heading is: pinned at the tape's centre and closing to
+   nothing there, with the chevrons cut off rather than squeezed. */
+.nav-bar {
+  position: absolute;
+  left: calc(189.5 * var(--u));
+  top: calc(24 * var(--u));
+  height: calc(20 * var(--u));
+  width: calc(var(--dev) * var(--u));
+  background: url('/projects/alpha-nav-deviation.png') left center / auto 100% no-repeat;
+  opacity: var(--gear);
+}
+
+.nav-flag {
+  left: calc((189.5 + var(--dev) - 16.5) * var(--u));
+  top: calc(13 * var(--u));
+  width: calc(33 * var(--u));
+  height: calc(46 * var(--u));
+  opacity: var(--gear);
+}
+
+/* The header: the truck and how far off it is, then arrival, in green and a
+   shade quieter. */
+.nav-head {
+  position: absolute;
+  left: 50%;
+  top: calc(80 * var(--u));
+  transform: translate(-50%, -50%);
+  height: calc(30 * var(--u));
+  padding: 0 calc(14 * var(--u));
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(205, 205, 204, 0.8);
+  color: #14171a;
+  font-family: var(--font-sans);
+  font-size: calc(15 * var(--u));
+  font-weight: 600;
+  letter-spacing: calc(-0.2 * var(--u));
+  line-height: 1;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  opacity: calc(var(--gear) * (1 - var(--home)));
+}
+
+/* Arrival takes the header's place: the same pill in green, and a shade
+   quieter than the one it replaces. */
+.nav-home {
+  position: absolute;
+  left: 50%;
+  top: calc(80 * var(--u));
+  transform: translate(-50%, -50%);
+  height: calc(30 * var(--u));
+  padding: 0 calc(26 * var(--u));
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(24, 145, 72, 0.85);
+  color: rgba(255, 255, 255, 0.92);
+  font-family: var(--font-sans);
+  font-size: calc(15 * var(--u));
+  font-weight: 600;
+  letter-spacing: calc(-0.2 * var(--u));
+  line-height: 1;
+  white-space: nowrap;
+  opacity: calc(var(--home) * 0.92);
+}
+
+.nav-list {
+  left: calc(326 * var(--u));
+  top: calc(642 * var(--u));
+  width: calc(38 * var(--u));
+  height: calc(38 * var(--u));
+  border-radius: calc(10 * var(--u));
+  transform: scale(var(--press));
+}
+
+/* The waypoint list, and the tick that lands on the row that is picked. */
+.nav-menu {
+  left: calc(70 * var(--u));
+  top: calc(185 * var(--u));
+  width: calc(330 * var(--u));
+  height: calc(549 * var(--u));
+  opacity: var(--menu);
+  transform-origin: calc(275 * var(--u)) calc(476 * var(--u));
+  transform: scale(calc(0.94 + 0.06 * var(--menu)));
+}
+
+.nav-tick-mark {
+  left: calc(137 * var(--u));
+  top: calc(277 * var(--u));
+  width: calc(14 * var(--u));
+  height: calc(16 * var(--u));
+  opacity: calc(var(--menu) * var(--tick));
+}
+
+.nav-hand {
+  left: calc(var(--hx) * var(--u));
+  top: calc(var(--hy) * var(--u));
+  width: calc(112.5 * var(--u));
+  height: calc(112.5 * var(--u));
+  transform: translate(-50%, -50%) scale(var(--tap));
+  opacity: var(--hand);
 }
 
 /* ── The opportunity, said on a wheel ──
@@ -3104,7 +3847,8 @@ a {
   /* nothing to pull back now that the number is not indenting the column */
   .case-insight .feature-video,
   .case-insight .case-ph,
-  .case-insight .range-demo {
+  .case-insight .ranging-demo,
+  .case-insight .nav-demo {
     margin-left: 0;
     width: 100%;
   }
@@ -3134,9 +3878,22 @@ a {
   }
 
   /* two pictures side by side at this width are two thumbnails */
-  .case-media-row {
+  /* the whole width is little enough at this size */
+  .case-compare {
+    max-width: none;
+  }
+
+  .case-media-row,
+  .case-compare--devices {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 16px;
+  }
+
+  /* three phones will not read at a third of this width, so they go two up
+     with the third beneath them */
+  .case-compare--apps {
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
   }
 
   /* the longest phrase has to fit the column at this width, so the wheel is
