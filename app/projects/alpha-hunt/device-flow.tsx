@@ -21,7 +21,7 @@ export default function DeviceFlow() {
     <figure className="case-flow">
       <div className="case-flow-row">
         <div className="case-flow-step case-flow-step--focus">
-          <svg viewBox="0 0 64 64" role="img" aria-label="Phone" {...STROKE}>
+          <svg viewBox="17 3 30 58" role="img" aria-label="Phone" {...STROKE}>
             <rect x="19" y="5" width="26" height="54" rx="5" />
             <path d="M28 12h8" />
             <path d="M28 52h8" />
@@ -32,7 +32,7 @@ export default function DeviceFlow() {
         <Arrow />
 
         <div className="case-flow-step">
-          <svg viewBox="0 0 64 64" role="img" aria-label="Handheld" {...STROKE}>
+          <svg viewBox="12 3 42 59" role="img" aria-label="Handheld" {...STROKE}>
             <path d="M44 15l8-10" />
             <rect x="14" y="15" width="30" height="45" rx="6" />
             <rect x="20" y="21" width="18" height="15" rx="2" />
@@ -48,7 +48,7 @@ export default function DeviceFlow() {
         <div className="case-flow-step">
           {/* the strap is broken where the unit sits on it, so the unit reads
               as mounted rather than balanced on top */}
-          <svg viewBox="0 0 64 64" role="img" aria-label="Dog collar" {...STROKE}>
+          <svg viewBox="10 7 42 51" role="img" aria-label="Dog collar" {...STROKE}>
             <path d="M41 17l8-8" />
             <path d="M22 30A20 14 0 1 0 42 30" />
             <rect x="22" y="16" width="20" height="14" rx="3" />

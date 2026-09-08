@@ -11,11 +11,11 @@ import ScrollReveal from '../../scroll-reveal'
 import RangeDemo from './range-demo'
 import RangingDemo from './ranging-demo'
 import AccessDemo from './access-demo'
-import WatchClip from './watch-clip'
+import LoopClip from '../loop-clip'
 import DeviceFlow from './device-flow'
 import NavigateDemo from './navigate-demo'
 // only the held-back sections still use this; it comes back with them
-// import Placeholder from './placeholder'
+// import Placeholder from '../placeholder'
 
 // The blue label at the head of each section, and the contents rail docked to
 // the left margin, are the same set of words — the rail is an index of what is
@@ -184,7 +184,7 @@ export default function AlphaHuntCaseStudy() {
                   sizes="(max-width: 768px) 100vw, 62vw"
                 />
                 <figcaption className="case-caption">
-                  The existing Alpha app
+                  The existing Alpha ecosystem
                 </figcaption>
               </figure>
               <DeviceFlow />
@@ -373,7 +373,9 @@ export default function AlphaHuntCaseStudy() {
                         height={989}
                         sizes="(max-width: 768px) 100vw, 30vw"
                       />
-                      {ref.clip && <WatchClip src={ref.clip} label={ref.alt} />}
+                      {ref.clip && (
+                        <LoopClip src={ref.clip} label={ref.alt} className="case-ref-screen" />
+                      )}
                     </div>
                     <h3 className="case-ref-title">{ref.title}</h3>
                     <p className="case-ref-text">{ref.body}</p>

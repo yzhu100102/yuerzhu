@@ -1,6 +1,6 @@
-// Gate for the client work. The Garmin studies — /projects/alpha-hunt and
-// whatever still sits on /projects/template — are held behind a password; the
-// Yara case study at /projects/yara is open.
+// Gate for the client work. The Garmin studies — /projects/alpha-hunt,
+// /projects/s72, and whatever still sits on /projects/template — are held
+// behind a password; the Yara case study at /projects/yara is open.
 //
 // `middleware` is deprecated in Next 16 and renamed to `proxy`
 // (node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/proxy.md).
@@ -9,7 +9,11 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export const config = {
-  matcher: ['/projects/alpha-hunt/:path*', '/projects/template/:path*'],
+  matcher: [
+    '/projects/alpha-hunt/:path*',
+    '/projects/s72/:path*',
+    '/projects/template/:path*',
+  ],
 }
 
 /**

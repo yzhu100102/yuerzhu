@@ -36,6 +36,10 @@
   --nav-height: 48px;
   --hero-type-size: clamp(30px, 4.3vw, 56px);
   --grid-gutter: 16px;
+  /* one break for everything inside a section — between features, and between a
+     picture and the statement after it — so only the sections in the rail are
+     set further apart */
+  --sub-gap: 120px;
   /* every image, video and panel in a case study sits at this width, a little
      inside the text column so the media reads as one consistent band */
   /* media fills the column now that the column itself is the measure */
@@ -1264,6 +1268,34 @@ a {
   overflow: hidden;
 }
 
+/* The film, in the column every other picture takes. Left uninteractive: it is
+   a loop, and a click would drop it out of the cut. */
+.case-clip {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #101010;
+}
+
+/* The player replaces this element with its own iframe and carries the class
+   across, so these are the iframe's rules once it is up. The size is set here
+   rather than left to the width and height attributes the player writes.
+   It is run 28% over the window and centred, so the player's own title bar and
+   its logo — which sit against the top and bottom edges — fall outside what
+   can be seen. The film is full-frame, so this costs 14% off each edge; both
+   dimensions grow together, so nothing is stretched. */
+.case-clip-frame {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: block;
+  width: 128%;
+  height: 128%;
+  border: 0;
+  pointer-events: none;
+}
+
 .case-hero-image img {
   display: block;
   width: 100%;
@@ -1430,7 +1462,13 @@ a {
 .case-section {
   /* clear the fixed top nav when jumping to an anchor */
   scroll-margin-top: calc(var(--nav-height) + 32px);
-  padding-bottom: 128px;
+  padding-bottom: 140px;
+}
+
+/* The goal and the opportunity are one thought — the sentence, then the
+   question it opens — so they sit close enough to read as a pair. */
+.case-section--pair {
+  padding-bottom: 40px;
 }
 
 .case-section:last-child {
@@ -1654,7 +1692,9 @@ a {
   display: flex;
   gap: 20px;
   padding-top: 4px;
-  margin-bottom: 88px;
+  /* the break between anything and the next thing inside a section, kept the
+     same wherever it falls; see --sub-gap */
+  margin-bottom: var(--sub-gap);
 }
 
 .case-insight:last-child {
@@ -1707,6 +1747,33 @@ a {
   margin-left: calc(-28px - 20px);
   width: calc(100% + 28px + 20px);
   max-width: none;
+}
+
+/* A flow of watch screens. No ground of its own: the pictures are transparent
+   and the watch cases are drawn at about 40% opacity, so on the page's own
+   paper they read as pale outlines with the screens crisp inside them.
+
+   All four stand at one height, which the widest of them — the three-step
+   flow — sets by filling the column. Each of the others then takes its own
+   share of that same width through --flow, so the watches come out the same
+   size whatever the step count, and the shorter flows simply stop sooner.
+
+   Compounded because .case-media's own max-width is declared further down and
+   would otherwise clamp this straight back. */
+.case-media.case-flow-shot {
+  display: grid;
+  justify-items: start;
+  /* the pull every other picture in an insight takes, so the set lines up with
+     the section's own left edge rather than the number column's */
+  margin-left: calc(-28px - 20px);
+  width: calc(100% + 28px + 20px);
+  max-width: none;
+}
+
+/* compounded for the same reason: .case-media img sets width to 100% further
+   down, and each flow needs its own share of the bleed instead */
+.case-media.case-flow-shot img {
+  width: var(--flow, 100%);
 }
 
 .case-next {
@@ -1763,11 +1830,92 @@ a {
 .ranging-demo + .case-lead,
 .nav-demo + .case-text,
 .nav-demo + .case-lead {
-  margin-top: var(--block-gap);
+  margin-top: var(--sub-gap);
 }
 
 .case-text + .case-lead {
   margin-top: 40px;
+}
+
+/* The opportunity, asked over its own still. The still is a ground rather than
+   a picture, so the words sit on it and stay real text. */
+.case-hmw {
+  position: relative;
+  margin-top: var(--block-gap);
+  max-width: var(--media-width);
+}
+
+.case-hmw img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Read off the still: the APPROACH S70 lockup starts 106 of its 978 pixels
+   down, so the clip finishes the same distance up from the bottom. Both are
+   centred, and both sit on the same black, so the clip shows no edge. */
+.case-hmw-render {
+  position: absolute;
+  left: 50%;
+  bottom: 10.84%;
+  transform: translateX(-50%);
+  display: block;
+  width: 24%;
+  height: auto;
+}
+
+.case-hmw-question {
+  position: absolute;
+  left: 50%;
+  /* three lines rather than two, so it is set a little above the middle to
+     leave the clip below it room */
+  top: 44%;
+  transform: translate(-50%, -50%);
+  width: 84%;
+  margin: 0;
+  text-align: center;
+  text-transform: uppercase;
+  color: #ffffff;
+  font-size: clamp(15px, 2.05vw, 30px);
+  font-weight: 500;
+  font-style: italic;
+  line-height: 1.34;
+  letter-spacing: 0.01em;
+}
+
+/* the breaks are written into the copy, so each line is its own block */
+.case-hmw-question span {
+  display: block;
+}
+
+/* A numbered pair of questions, set as the body copy it belongs to and
+   indented only as far as its own numbers need. */
+.case-list {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 19px;
+  color: #585858;
+  max-width: 62ch;
+  margin: 0 0 10px;
+  padding-left: 1.5em;
+}
+
+.case-list li + li {
+  margin-top: 4px;
+}
+
+/* Three explorations shown side by side, on the same rules as the pair. */
+.case-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--grid-gutter);
+  margin-top: var(--block-gap);
+  max-width: var(--media-width);
+}
+
+.case-grid-3 + .case-lead,
+.case-grid-3 + .case-text {
+  margin-top: var(--block-gap);
 }
 
 /* Media, so it takes the same air above it as every other picture. */
@@ -1832,7 +1980,8 @@ a {
   margin-top: var(--block-gap);
 }
 
-.case-media img {
+.case-media img,
+.case-media > video {
   display: block;
   width: 100%;
   height: auto;
@@ -1852,6 +2001,13 @@ a {
   align-items: start;
 }
 
+/* The same idea for the S72's pair: the reading on the wrist beside the watch
+   in play — 1152:1366 beside 3152:1452, so the portrait shot ends up the
+   narrow one and both stand at one height. */
+.case-media-row--s72 {
+  grid-template-columns: 0.843fr 2.171fr;
+}
+
 /* ── The system, and where the work starts ──
    Three devices with the signal running through them. Only the phone is in the
    Alpha orange and only the phone is drawn large, because it is the only one of
@@ -1860,7 +2016,10 @@ a {
 .case-flow {
   margin: var(--block-gap) 0 0;
   max-width: var(--media-width);
-  padding: clamp(34px, 5vw, 62px) clamp(20px, 4vw, 56px) clamp(58px, 7vw, 84px);
+  /* a little shorter than the photograph above it, which stands at 1579:996 */
+  aspect-ratio: 16 / 9;
+  min-height: 260px;
+  padding: clamp(28px, 4vw, 56px) clamp(20px, 4vw, 56px) clamp(52px, 6vw, 74px);
   background: #f3f4f6;
   display: grid;
   place-items: center;
@@ -1879,18 +2038,27 @@ a {
   place-items: center;
 }
 
+/* Sized by height, since three devices in a row read as one set when they
+   stand the same height rather than the same width — and the phone stands
+   taller than the two it hands off to, because it is the one being worked on.
+   Each box is cut to its own drawing, so these are the drawings' own heights. */
 .case-flow-step svg {
   display: block;
-  width: clamp(46px, 5.4vw, 72px);
-  height: auto;
+  width: auto;
+  height: clamp(72px, 8.8vw, 126px);
   stroke: #b7bac0;
-  stroke-width: 2.2;
+  stroke-width: 2.6;
 }
 
 .case-flow-step--focus svg {
-  width: clamp(60px, 7.2vw, 96px);
+  height: clamp(96px, 12vw, 172px);
   stroke: #ff7538;
-  stroke-width: 2.4;
+  stroke-width: 3;
+}
+
+/* one line weight across the set, whatever each drawing is scaled to */
+.case-flow-step svg * {
+  vector-effect: non-scaling-stroke;
 }
 
 .case-flow-label {
@@ -1908,7 +2076,7 @@ a {
 
 .case-flow-arrow {
   flex: none;
-  width: clamp(22px, 3.4vw, 46px);
+  width: clamp(26px, 4.2vw, 58px);
   height: auto;
   stroke: #c8cbd0;
   stroke-width: 2;
@@ -1972,6 +2140,15 @@ a {
 
 .case-creed-text span {
   display: block;
+}
+
+/* The design system boards, given room inside their own ground rather than
+   outside it: the padding is the #1e1e1e those files are drawn on, so it reads
+   as more of the board and the block's own left edge still lines up with
+   everything else in the column. */
+.case-board {
+  padding: clamp(14px, 2.2vw, 34px);
+  background: #1e1e1e;
 }
 
 /* ── The compasses studied ──
@@ -3924,7 +4101,8 @@ a {
   .case-insight .feature-video,
   .case-insight .case-ph,
   .case-insight .ranging-demo,
-  .case-insight .nav-demo {
+  .case-insight .nav-demo,
+  .case-media.case-flow-shot {
     margin-left: 0;
     width: 100%;
   }
@@ -3940,7 +4118,8 @@ a {
 
   /* Two boxes side by side at this width are two thumbnails; stacked they are
      still pictures. */
-  .case-grid-2 {
+  .case-grid-2,
+  .case-grid-3 {
     grid-template-columns: 1fr;
     gap: 12px;
   }
@@ -3962,6 +4141,11 @@ a {
   .case-apps {
     max-width: none;
     grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* each flow simply fills the column at this width */
+  .case-media.case-flow-shot img {
+    width: 100%;
   }
 
   .case-creed {

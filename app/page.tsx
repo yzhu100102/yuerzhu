@@ -76,7 +76,7 @@ const PROJECTS: Project[] = [
     ],
     swatches: ['#902c01', '#ae744a', '#4e2615', '#0b0302'],
     image: '/projects/garmin-golf-biometrics-s72.jpg',
-    href: '/projects/template',
+    href: '/projects/s72',
     width: 1705,
     height: 1211,
   },
