@@ -16,7 +16,10 @@ const FILM = 'ZC1eqHgkP-4'
 // YouTube's own suggestions over the last frame.
 const OPENS = 9
 const CLOSES = 18
-const RESUMES = 71
+// 71.32 is the last frame of the golfer and 71.33 the first of the watch, so
+// this sits a frame past the cut: near enough to open on the watch, far enough
+// that a seek landing a little early still cannot catch the shot before it.
+const RESUMES = 71.36
 const SHORT_OF_END = 0.4
 
 // What this uses of the IFrame API, rather than the whole of it.

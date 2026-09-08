@@ -1280,18 +1280,23 @@ a {
 /* The player replaces this element with its own iframe and carries the class
    across, so these are the iframe's rules once it is up. The size is set here
    rather than left to the width and height attributes the player writes.
-   It is run 28% over the window and centred, so the player's own title bar and
-   its logo — which sit against the top and bottom edges — fall outside what
-   can be seen. The film is full-frame, so this costs 14% off each edge; both
-   dimensions grow together, so nothing is stretched. */
+   The whole film frame is in
+   view, and the player's own furniture is still out of it: the player is run
+   taller than the film's 16:9 rather than wider, so it letterboxes, and the
+   title bar and end screen — which sit against the player's top and bottom
+   edges — land in the black bars. The window then shows the band between
+   them, which is the film at exactly its own size.
+
+   137% of a 16:9 window leaves a bar of about a sixth of the width at each
+   end, which is more than either piece of furniture needs. */
 .case-clip-frame {
   position: absolute;
-  left: 50%;
+  left: 0;
   top: 50%;
-  transform: translate(-50%, -50%);
+  transform: translateY(-50%);
   display: block;
-  width: 128%;
-  height: 128%;
+  width: 100%;
+  height: 137%;
   border: 0;
   pointer-events: none;
 }
@@ -1774,6 +1779,16 @@ a {
    down, and each flow needs its own share of the bleed instead */
 .case-media.case-flow-shot img {
   width: var(--flow, 100%);
+}
+
+/* A photograph inside an insight, rather than a flow of screens. Takes the
+   same pull the flows do and fills it, so the pictures within one feature share
+   a left edge instead of the photograph standing in from the flow beneath it.
+   Compounded for the same reason as the rule above. */
+.case-media.case-media--insight {
+  margin-left: calc(-28px - 20px);
+  width: calc(100% + 28px + 20px);
+  max-width: none;
 }
 
 .case-next {
@@ -4102,7 +4117,8 @@ a {
   .case-insight .case-ph,
   .case-insight .ranging-demo,
   .case-insight .nav-demo,
-  .case-media.case-flow-shot {
+  .case-media.case-flow-shot,
+  .case-media.case-media--insight {
     margin-left: 0;
     width: 100%;
   }

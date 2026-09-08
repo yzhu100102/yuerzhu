@@ -12,10 +12,12 @@ type Props = {
   src: string
   /** What the clip shows, for anything not watching it. */
   label: string
+  /** A still to hold before the film itself is there. */
+  poster?: string
   className?: string
 }
 
-export default function LoopClip({ src, label, className }: Props) {
+export default function LoopClip({ src, label, poster, className }: Props) {
   const ref = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
@@ -44,6 +46,7 @@ export default function LoopClip({ src, label, className }: Props) {
       className={className}
       ref={ref}
       src={src}
+      poster={poster}
       aria-label={label}
       autoPlay
       loop

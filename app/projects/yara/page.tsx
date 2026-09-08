@@ -11,6 +11,7 @@ import BriefGraphic from './brief-graphic'
 import CraftIcons from './craft-icons'
 import DeepDives from './deep-dives'
 import FeatureVideo from './feature-video'
+import LoopClip from '../loop-clip'
 import ProblemIcons from './problem-icons'
 
 const sections = [
@@ -97,17 +98,15 @@ export default function YaraCaseStudy() {
               approachable so that talking to the app in your own kitchen
               doesn&apos;t feel strange.
             </p>
+            {/* Through LoopClip rather than a bare <video>, so it stops when
+                it is scrolled away from instead of decoding for the whole
+                length of the article. */}
             <div className="cui-states">
-            <video
-              src="/projects/cui-states.mp4"
-              poster="/projects/cui-states-poster.jpg"
-              aria-label="Yara&apos;s kinetic states: awake, loading, success, timer, error, alert, speaking, and listening."
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="metadata"
-            />
+              <LoopClip
+                src="/projects/cui-states.mp4"
+                poster="/projects/cui-states-poster.jpg"
+                label="Yara's kinetic states: awake, loading, success, timer, error, alert, speaking, and listening."
+              />
             </div>
             </section>
 

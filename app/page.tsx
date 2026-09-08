@@ -65,7 +65,7 @@ const PROJECTS: Project[] = [
   },
   {
     id: 2,
-    title: 'Approach S72 Golf Biometrics',
+    title: 'Reading green slope at a glance',
     kind: 'Garmin • Wearable',
     description:
       'A new heart rate feature for one of Garmin’s new golf watches, enabling golfers to make data-driven insights during and after a round.',
@@ -74,11 +74,15 @@ const PROJECTS: Project[] = [
       { label: 'Launching', values: ['Q4 2026'] },
       { label: 'Programs', values: ['Figma'] },
     ],
-    swatches: ['#902c01', '#ae744a', '#4e2615', '#0b0302'],
-    image: '/projects/garmin-golf-biometrics-s72.jpg',
+    // Off the picture itself: the burnt-orange ground and the near-black watch
+    // are the two colours most of it is made of, the camel is the sweater, and
+    // the green is the screens — only a fiftieth of the picture by area, but
+    // the thing it is of.
+    swatches: ['#902d01', '#a78048', '#80a93a', '#090201'],
+    image: '/projects/s72-putt-thumb.jpg',
     href: '/projects/s72',
-    width: 1705,
-    height: 1211,
+    width: 1800,
+    height: 1333,
   },
   {
     id: 3,

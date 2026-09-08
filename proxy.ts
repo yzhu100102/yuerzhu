@@ -1,6 +1,8 @@
-// Gate for the client work. The Garmin studies — /projects/alpha-hunt,
-// /projects/s72, and whatever still sits on /projects/template — are held
-// behind a password; the Yara case study at /projects/yara is open.
+// Gate for the client work. The Yara case study at /projects/yara is open;
+// everything else here is held behind a password, and not all behind the same
+// one: the two Garmin device studies share theirs, and Explore — which is still
+// sitting on /projects/template — has its own. Each keeps its own cookie, so
+// unlocking one does not unlock the other.
 //
 // `middleware` is deprecated in Next 16 and renamed to `proxy`
 // (node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/proxy.md).
@@ -14,6 +16,18 @@ export const config = {
     '/projects/s72/:path*',
     '/projects/template/:path*',
   ],
+}
+
+/**
+ * Which password opens a given path, and the cookie that remembers it. Read
+ * with literal keys, since a dynamic process.env lookup is not inlined at
+ * build time.
+ */
+function gateFor(pathname: string) {
+  if (pathname.startsWith('/projects/template')) {
+    return { password: process.env.EXPLORE_PASSWORD, cookie: 'explore_access' }
+  }
+  return { password: process.env.PROJECT_PASSWORD, cookie: 'project_access' }
 }
 
 /**
@@ -31,12 +45,12 @@ async function accessToken(secret: string) {
 }
 
 export async function proxy(request: NextRequest) {
-  const password = process.env.PROJECT_PASSWORD
+  const { password, cookie } = gateFor(request.nextUrl.pathname)
 
   // No password configured means the gate cannot be checked. Fail closed: an
   // unset variable must not quietly publish the work.
   if (password) {
-    const supplied = request.cookies.get('project_access')?.value
+    const supplied = request.cookies.get(cookie)?.value
     if (supplied && supplied === (await accessToken(password))) {
       return NextResponse.next()
     }

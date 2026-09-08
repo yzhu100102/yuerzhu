@@ -17,7 +17,13 @@ import { useEffect, useLayoutEffect } from 'react'
  */
 const useBeforePaint = typeof window === 'undefined' ? useEffect : useLayoutEffect
 
-/** Pictures, film and panels — these come in from the side. */
+/** Pictures, film and panels — these come in from the side.
+ *
+ * Anything listed here has to be a root: nothing in the list may sit inside
+ * anything else in it, or the two transforms compound and the inner one
+ * travels twice as far. That is why the placeholder grids are absent — the
+ * placeholders inside them are here instead — and why a demo appears by its
+ * own root rather than by the pieces it is built from. */
 const MEDIA = [
   '.project-card',
   '.case-ph',
@@ -28,6 +34,18 @@ const MEDIA = [
   '.brief-art',
   '.case-icon svg',
   '.deep-dive svg',
+  // real pictures, and the panels that carry their own ground. The one entry
+  // covers a good deal: the boards, the watch flows and the film compound
+  // their class onto .case-media, and the app row, the before-and-after
+  // swatches and the paired pictures all sit inside a .case-media figure
+  '.case-media',
+  '.case-hmw',
+  '.case-creed',
+  '.case-refs',
+  '.case-flow',
+  // the demos, which arrive as one piece rather than a stage at a time
+  '.ranging-demo',
+  '.nav-demo',
 ].join(',')
 
 /** Copy — this fades up. */

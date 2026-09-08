@@ -241,6 +241,16 @@ export default function S72CaseStudy() {
                     they&apos;ve marked the putt, ie. made a shot? Is that data
                     useful or just cluttering the screen?
                   </p>
+                  {/* NOTE: alt left empty deliberately — see the note in 02. */}
+                  <figure className="case-media case-media--insight">
+                    <Image
+                      src="/projects/s72-shot-pin.jpg"
+                      alt=""
+                      width={1562}
+                      height={1007}
+                      sizes="(max-width: 768px) 100vw, 74vw"
+                    />
+                  </figure>
                   {/* Read left to right: onto the green, Back to mark the pin,
                       and the slope comes back on its own. Held well in from the
                       column's edges so the watches stay small enough to read as
@@ -277,6 +287,20 @@ export default function S72CaseStudy() {
                     shot you take. Supporting both manual inputs and automatic
                     detections of the putt was part of the challenge.
                   </p>
+                  {/* NOTE: alt left empty for now. The flow directly beneath
+                      each of these describes the same moment screen by screen,
+                      so an empty alt is right for a picture that would only
+                      repeat it — but if these stills show something the flow
+                      does not, they want real alt text. */}
+                  <figure className="case-media case-media--insight">
+                    <Image
+                      src="/projects/s72-shot-putt.jpg"
+                      alt=""
+                      width={2200}
+                      height={1418}
+                      sizes="(max-width: 768px) 100vw, 74vw"
+                    />
+                  </figure>
                   <figure className="case-media case-flow-shot" style={STEP_PAIR}>
                     <Image
                       src="/projects/s72-step-putt.png"
@@ -356,11 +380,11 @@ export default function S72CaseStudy() {
                   column's full width rather than being held in. */}
               <figure className="case-media">
                 <Image
-                  src="/projects/s72-readings.png"
-                  alt="Four watch screens compared: one reading for the whole line, readings for each third, and a details page reached by tapping a bubble."
+                  src="/projects/s72-readings-pad.png"
+                  alt="Watch screens compared: one reading for the whole line, readings for each third, and a details page reached by tapping a bubble."
                   width={2100}
-                  height={636}
-                  sizes="(max-width: 768px) 100vw, 68vw"
+                  height={1015}
+                  sizes="(max-width: 768px) 100vw, 74vw"
                 />
               </figure>
 
@@ -399,11 +423,11 @@ export default function S72CaseStudy() {
               </p>
               <figure className="case-media">
                 <Image
-                  src="/projects/s72-access.png"
+                  src="/projects/s72-access-pad.png"
                   alt="Three watch screens compared: an on-screen Mark Pin button, the same screen marked by pressing Back, and Mark Pin as an option in the menu."
                   width={2100}
-                  height={693}
-                  sizes="(max-width: 768px) 100vw, 68vw"
+                  height={1015}
+                  sizes="(max-width: 768px) 100vw, 74vw"
                 />
               </figure>
             </section>
@@ -429,11 +453,11 @@ export default function S72CaseStudy() {
               </p>
               <figure className="case-media">
                 <Image
-                  src="/projects/s72-gps-2.png"
+                  src="/projects/s72-gps-pad.png"
                   alt="Three watch screens compared: a radius accuracy indicator added to the existing UI, a projected line with no pin mark, and a manually entered putt reading."
                   width={2100}
-                  height={754}
-                  sizes="(max-width: 768px) 100vw, 68vw"
+                  height={1015}
+                  sizes="(max-width: 768px) 100vw, 74vw"
                 />
               </figure>
             </section>
