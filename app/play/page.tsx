@@ -158,7 +158,7 @@ const groups: Group[] = [
   },
   {
     id: 'pub-a',
-    title: 'PUBLICATIONS',
+    title: 'ILLUSTRATION',
     description: 'Add a short description of this piece.',
     x: 494, y: 149, w: 350, h: 219, d: 1.3,
     image: '/play/publications/publications.jpg',
@@ -166,7 +166,7 @@ const groups: Group[] = [
   },
   {
     id: 'pub-b',
-    title: 'PUBLICATIONS',
+    title: 'ILLUSTRATION',
     description: 'Add a short description of this piece.',
     x: 1851, y: 1060, w: 350, h: 259, d: 0.6,
     image: '/play/publications/mockup2.jpg',
@@ -175,7 +175,7 @@ const groups: Group[] = [
   },
   {
     id: 'dh-booklet',
-    title: 'DESIGN HERO',
+    title: 'MITSUO KATSUI: DESIGN HERO',
     description: 'Add a short description of this piece.',
     x: 2299, y: 70, w: 350, h: 206, d: 1,
     image: '/play/designhero/booklet.jpg',
@@ -183,7 +183,7 @@ const groups: Group[] = [
   },
   {
     id: 'dh-poster',
-    title: 'DESIGN HERO',
+    title: 'MITSUO KATSUI: DESIGN HERO',
     description: 'Add a short description of this piece.',
     x: 2269, y: 1582, w: 350, h: 261, d: 1.4,
     image: '/play/designhero/poster.jpg',
@@ -192,7 +192,7 @@ const groups: Group[] = [
   },
   ...HERO_CLIPS.map((clip) => ({
     id: clip.id,
-    title: 'DESIGN HERO',
+    title: 'MITSUO KATSUI: DESIGN HERO',
     description: 'Add a short description of this piece.',
     x: clip.x, y: clip.y, w: 350, h: 197, d: clip.d,
     video: `/play/designhero/${clip.file}-preview.mp4`,
@@ -217,7 +217,7 @@ const groups: Group[] = [
   },
   {
     id: 's3-package',
-    title: 'S3 — HOME PACKAGE',
+    title: 'PACKAGE AND CARD DESIGN',
     description: 'Add a short description of this piece.',
     x: 138, y: 1525, w: 350, h: 232, d: 1.2,
     loop: S3_LOOP,
@@ -228,7 +228,7 @@ const groups: Group[] = [
   },
   {
     id: 's3-anim',
-    title: 'S3',
+    title: 'INTERNET CONNECTIVITY CAMPAIGN',
     description: 'Add a short description of this piece.',
     x: 450, y: 1711, w: 350, h: 197, d: 1.5, z: 3,
     video: '/play/s3/animation-preview.mp4',

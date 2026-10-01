@@ -52,7 +52,7 @@ export default function YaraCaseStudy() {
       <article className="case">
         <header className="case-hero">
           <h1 className="case-title">
-            <em>Yara,</em> a voice assistant for Yummly.
+            <em>Yara,</em> a Voice Assistant for Yummly.
           </h1>
           <p className="case-text case-text--hero">
             A conversational interface for cooking, shopping, and meal planning,

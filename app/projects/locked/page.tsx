@@ -1,7 +1,10 @@
 // The gate visitors land on when they open a protected project. One screen,
-// centred, with nothing on it but the field, its label and the way back.
+// centred, with nothing on it but the field, its label, the way to ask for a
+// passcode and the way back.
 
 import Link from 'next/link'
+
+import { ASK_FOR_PASSCODE } from '../../links'
 
 export default async function LockedPage({
   searchParams,
@@ -60,6 +63,18 @@ export default async function LockedPage({
         {wrongPassword && (
           <p className="gate-note gate-note--error">
             That password did not match. Try again.
+          </p>
+        )}
+
+        {/* Not a Link: a mailto is not a route, so there is nothing for the
+            router to navigate to or prefetch. Held back when no password is
+            set, because then there is no passcode to be had. */}
+        {!noPasswordSet && (
+          <p className="gate-note">
+            <a className="gate-ask-link" href={ASK_FOR_PASSCODE}>
+              Email me
+            </a>{' '}
+            for the passcode!
           </p>
         )}
 

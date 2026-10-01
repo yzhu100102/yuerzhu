@@ -115,7 +115,7 @@ export default function AlphaHuntCaseStudy() {
         <header className="case-hero">
           <p className="case-kicker">GARMIN ALPHA HUNT APP</p>
           <h1 className="case-title">
-            Helping hunters <em>understand their surroundings</em>
+            Helping Hunters <em>Understand Their Surroundings</em>
           </h1>
           <p className="case-text case-text--hero">
             A new compass, ranging, and navigation tool for Garmin&apos;s Alpha

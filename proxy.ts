@@ -1,8 +1,7 @@
 // Gate for the client work. The Yara case study at /projects/yara is open;
-// everything else here is held behind a password, and not all behind the same
-// one: the two Garmin device studies share theirs, and Explore — which is still
-// sitting on /projects/template — has its own. Each keeps its own cookie, so
-// unlocking one does not unlock the other.
+// every Garmin study is held behind one shared password on one cookie, so
+// unlocking any of them unlocks them all. Explore is still sitting on
+// /projects/template, which is why that is the path listed for it.
 //
 // `middleware` is deprecated in Next 16 and renamed to `proxy`
 // (node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/proxy.md).
@@ -14,21 +13,14 @@ export const config = {
   matcher: [
     '/projects/alpha-hunt/:path*',
     '/projects/s72/:path*',
+    '/projects/l60/:path*',
+    '/projects/c3/:path*',
     '/projects/template/:path*',
   ],
 }
 
-/**
- * Which password opens a given path, and the cookie that remembers it. Read
- * with literal keys, since a dynamic process.env lookup is not inlined at
- * build time.
- */
-function gateFor(pathname: string) {
-  if (pathname.startsWith('/projects/template')) {
-    return { password: process.env.EXPLORE_PASSWORD, cookie: 'explore_access' }
-  }
-  return { password: process.env.PROJECT_PASSWORD, cookie: 'project_access' }
-}
+/** The cookie that remembers a visitor got past the gate. */
+const COOKIE = 'project_access'
 
 /**
  * What the cookie holds: a hash of the password rather than the password
@@ -45,12 +37,14 @@ async function accessToken(secret: string) {
 }
 
 export async function proxy(request: NextRequest) {
-  const { password, cookie } = gateFor(request.nextUrl.pathname)
+  // Read with a literal key, since a dynamic process.env lookup is not inlined
+  // at build time.
+  const password = process.env.PROJECT_PASSWORD
 
   // No password configured means the gate cannot be checked. Fail closed: an
   // unset variable must not quietly publish the work.
   if (password) {
-    const supplied = request.cookies.get(cookie)?.value
+    const supplied = request.cookies.get(COOKIE)?.value
     if (supplied && supplied === (await accessToken(password))) {
       return NextResponse.next()
     }

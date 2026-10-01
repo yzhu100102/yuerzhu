@@ -9,6 +9,7 @@ import Knot from './knot'
 import Mark from './marks'
 import ScrollReveal from './scroll-reveal'
 import { CMU, GARMIN, RED_HOUSE } from './links'
+import { LAST_PROJECT } from './last-project'
 
 // Matches --nav-height in globals.css. The header has to know where its own
 // underside is to hand the black opening its colours back.
@@ -42,7 +43,7 @@ type Project = {
   height: number
 }
 
-// The descriptions on the three Garmin projects are the résumé's own words for
+// The descriptions on the Garmin projects are the résumé's own words for
 // them. Yara's row is the one from its own case study, so the stage and the
 // study never disagree about what the work was.
 const PROJECTS: Project[] = [
@@ -65,10 +66,10 @@ const PROJECTS: Project[] = [
   },
   {
     id: 2,
-    title: 'Reading green slope at a glance',
+    title: 'Golf Data at a Glance',
     kind: 'Garmin • Wearable',
     description:
-      'A new heart rate feature for one of Garmin’s new golf watches, enabling golfers to make data-driven insights during and after a round.',
+      'A new slope-reading and heart rate feature for the latest Garmin golf watch.',
     meta: [
       { label: 'Role', values: ['Product Designer'] },
       { label: 'Launching', values: ['Q4 2026'] },
@@ -86,6 +87,44 @@ const PROJECTS: Project[] = [
   },
   {
     id: 3,
+    title: 'Outdoor Rangefinder',
+    kind: 'Garmin • Handheld Device',
+    description:
+      'A recall feature for Garmin’s L60i rangefinder, helping users quickly revisit previously measured distances.',
+    meta: [
+      { label: 'Role', values: ['Product Designer'] },
+      { label: 'Timeline', values: ['Ongoing'] },
+      { label: 'Programs', values: ['Figma'] },
+    ],
+    // the laser is a thirtieth of the picture and the whole point of it, so it
+    // leads; the black it is cut against is most of the frame and anchors
+    swatches: ['#86e76e', '#2e6331', '#202a25', '#010101'],
+    image: '/projects/l60-rangefinder.jpg',
+    href: '/projects/l60',
+    width: 1800,
+    height: 886,
+  },
+  {
+    id: 4,
+    title: 'Chronograph',
+    kind: 'Garmin • Handheld Device',
+    description:
+      'New data visualizations and analysis tools for the new Garmin Chronograph, designed to help users understand ammunition performance.',
+    meta: [
+      { label: 'Role', values: ['Product Designer'] },
+      { label: 'Timeline', values: ['Ongoing'] },
+      { label: 'Programs', values: ['Figma'] },
+    ],
+    // the range it is stood in: dry brush, the sky behind it, the concrete it
+    // is set on, and the device itself
+    swatches: ['#594a30', '#bcc2c5', '#d3cbbe', '#2a2315'],
+    image: '/projects/c3-chronograph.jpg',
+    href: '/projects/c3',
+    width: 1480,
+    height: 975,
+  },
+  {
+    id: 5,
     title: 'Garmin Explore',
     kind: 'Garmin • Web',
     description:
@@ -102,7 +141,7 @@ const PROJECTS: Project[] = [
     height: 923,
   },
   {
-    id: 4,
+    id: 6,
     title: 'Yara, for Yummly',
     kind: 'Concept • Conversation UI',
     description:
@@ -273,6 +312,58 @@ export default function Home() {
   const step = narrow ? STEP.narrow : STEP.wide
   /** when the hand last actually moved the pointer */
   const lastPointerMove = useRef(-Infinity)
+
+  // Coming back from a case study opens the work on that study's own card.
+  // Leaving a project used to drop the reader at the top of the page with the
+  // opening in front of them again, having to scroll back down to find the
+  // place they had just been reading about.
+  //
+  // Deliberately an ordinary effect and not a layout one. The router puts a
+  // page it has navigated to back at the top, and it does that during the
+  // commit — a layout effect runs inside that and is simply overruled. This
+  // runs after it and has the last word. Nothing is seen at the wrong place
+  // either way: React flushes this before the browser paints the page it has
+  // just committed, so the work's very first frame is already on the card.
+  //
+  // It is also declared above the effect that reads the scroll, so the
+  // position is already the right one the first time the stage is asked what
+  // should be up.
+  useEffect(() => {
+    let last: string | null = null
+    try {
+      last = sessionStorage.getItem(LAST_PROJECT)
+      // Read once. It says where the reader has just come from, so having been
+      // used it is spent — wandering off to the about page and back should
+      // open the work where the work opens, not on some project from earlier.
+      sessionStorage.removeItem(LAST_PROJECT)
+    } catch {
+      return
+    }
+    if (!last) return
+    const i = PROJECTS.findIndex((project) => project.href === last)
+    if (i < 0) return
+
+    const root = document.documentElement
+    const behavior = root.style.scrollBehavior
+    // the site scrolls smoothly, which here would walk the reader down the
+    // page from the top rather than simply starting them on the card
+    root.style.scrollBehavior = 'auto'
+
+    const el = scroller.current
+    if (el && el.offsetHeight) {
+      // the wide album: a project is a share of the scroll, and the middle of
+      // its share is the part where it is unambiguously the one up
+      const travel = el.offsetHeight - window.innerHeight
+      window.scrollTo(0, el.offsetTop + travel * ((i + 0.5) / PROJECTS.length))
+    } else {
+      // the narrow stack, where the scroller is not in the layout at all and
+      // the thumbnails are simply a run down the page
+      const cards = document.querySelectorAll('.work-mobile .project-card')
+      cards[i]?.scrollIntoView({ block: 'center' })
+    }
+
+    root.style.scrollBehavior = behavior
+  }, [])
 
   // How far the page has been scrolled picks the project, so the stage can be
   // held still while the reader moves through the work at their own pace.

@@ -173,11 +173,14 @@ a {
 }
 
 /* The field, and the colours it swaps. `.say-hello` joins here and not above:
-   it is set in the label face by name, and only borrows the gesture. */
+   it is set in the label face by name, and only borrows the gesture, and
+   `.gate-ask-link` is the same case — it sits inside a note and takes the
+   note's face. */
 .link,
 .about-story-word,
 .about-story-link,
-.say-hello {
+.say-hello,
+.gate-ask-link {
   --hl-y: 0.13em;
   --hl-x: 0.14em;
   color: var(--color-accent);
@@ -203,7 +206,9 @@ a {
 .about-story-link:hover,
 .about-story-link:focus-visible,
 .say-hello:hover,
-.say-hello:focus-visible {
+.say-hello:focus-visible,
+.gate-ask-link:hover,
+.gate-ask-link:focus-visible {
   background-size: 100% 100%;
   color: var(--color-bg);
 }
@@ -223,7 +228,8 @@ a {
   .link,
   .about-story-word,
   .about-story-link,
-  .say-hello {
+  .say-hello,
+  .gate-ask-link {
     text-box: trim-both cap alphabetic;
   }
 }

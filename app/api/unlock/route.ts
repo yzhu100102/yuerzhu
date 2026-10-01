@@ -1,8 +1,8 @@
 // Checks the password and, if it matches, hands back the cookie the proxy looks
 // for. The password is compared here on the server and never sent to the client.
 //
-// There are two of them: the Garmin device studies share one, Explore has its
-// own. Which applies is decided by where the visitor was heading.
+// One password covers every gated study, so where the visitor was heading only
+// decides where they are sent back to, not what opens it.
 
 import { NextResponse } from 'next/server'
 
@@ -14,16 +14,8 @@ async function accessToken(secret: string) {
     .join('')
 }
 
-/**
- * Which password opens a given path, and the cookie that remembers it. Kept in
- * step with the same function in proxy.ts, which runs apart from this code.
- */
-function gateFor(pathname: string) {
-  if (pathname.startsWith('/projects/template')) {
-    return { password: process.env.EXPLORE_PASSWORD, cookie: 'explore_access' }
-  }
-  return { password: process.env.PROJECT_PASSWORD, cookie: 'project_access' }
-}
+/** Kept in step with proxy.ts, which runs apart from this code. */
+const COOKIE = 'project_access'
 
 /** Only ever redirect back into this site, never to a URL a visitor supplied. */
 function safeNext(value: string) {
@@ -34,7 +26,7 @@ export async function POST(request: Request) {
   const form = await request.formData()
   const supplied = String(form.get('password') ?? '')
   const next = safeNext(String(form.get('next') ?? '/'))
-  const { password, cookie } = gateFor(next)
+  const password = process.env.PROJECT_PASSWORD
 
   if (!password || supplied !== password) {
     const locked = new URL('/projects/locked', request.url)
@@ -44,7 +36,7 @@ export async function POST(request: Request) {
   }
 
   const response = NextResponse.redirect(new URL(next, request.url), 303)
-  response.cookies.set(cookie, await accessToken(password), {
+  response.cookies.set(COOKIE, await accessToken(password), {
     httpOnly: true,
     sameSite: 'lax',
     path: '/',

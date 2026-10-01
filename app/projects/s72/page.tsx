@@ -75,7 +75,7 @@ export default function S72CaseStudy() {
         <header className="case-hero">
           <p className="case-kicker">GARMIN APPROACH S72 GOLF WATCH</p>
           <h1 className="case-title">
-            Reading green slope <em>at a glance</em>
+            Golf Data <em>at a Glance</em>
           </h1>
           <p className="case-text">
             A putt-reading experience for Garmin Approach S72 golf watch that
