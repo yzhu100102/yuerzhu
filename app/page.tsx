@@ -87,61 +87,6 @@ const PROJECTS: Project[] = [
   },
   {
     id: 3,
-    title: 'Outdoor Rangefinder',
-    kind: 'Garmin • Handheld Device',
-    description:
-      'A recall feature for Garmin’s L60i rangefinder, helping users quickly revisit previously measured distances.',
-    meta: [
-      { label: 'Role', values: ['Product Designer'] },
-      { label: 'Timeline', values: ['Ongoing'] },
-      { label: 'Programs', values: ['Figma'] },
-    ],
-    // the laser is a thirtieth of the picture and the whole point of it, so it
-    // leads; the black it is cut against is most of the frame and anchors
-    swatches: ['#86e76e', '#2e6331', '#202a25', '#010101'],
-    image: '/projects/l60-rangefinder.jpg',
-    href: '/projects/l60',
-    width: 1800,
-    height: 886,
-  },
-  {
-    id: 4,
-    title: 'Chronograph',
-    kind: 'Garmin • Handheld Device',
-    description:
-      'New data visualizations and analysis tools for the new Garmin Chronograph, designed to help users understand ammunition performance.',
-    meta: [
-      { label: 'Role', values: ['Product Designer'] },
-      { label: 'Timeline', values: ['Ongoing'] },
-      { label: 'Programs', values: ['Figma'] },
-    ],
-    // the range it is stood in: dry brush, the sky behind it, the concrete it
-    // is set on, and the device itself
-    swatches: ['#594a30', '#bcc2c5', '#d3cbbe', '#2a2315'],
-    image: '/projects/c3-chronograph.jpg',
-    href: '/projects/c3',
-    width: 1480,
-    height: 975,
-  },
-  {
-    id: 5,
-    title: 'Garmin Explore',
-    kind: 'Garmin • Web',
-    description:
-      'Leading the 0–1 redesign of Garmin Explore Web, an outdoor mapping, navigation, planning and data management ecosystem.',
-    meta: [
-      { label: 'Role', values: ['Product Designer', 'UX research'] },
-      { label: 'Timeline', values: ['Ongoing'] },
-      { label: 'Programs', values: ['Figma'] },
-    ],
-    swatches: ['#a3b550', '#aabcd0', '#d8f0bd', '#faf9f7'],
-    image: '/projects/garmin-explore.jpg',
-    href: '/projects/template',
-    width: 1616,
-    height: 923,
-  },
-  {
-    id: 6,
     title: 'Yara, for Yummly',
     kind: 'Concept • Conversation UI',
     description:
@@ -167,6 +112,61 @@ const PROJECTS: Project[] = [
     // ratio so the two sit at a similar size in the stack.
     width: 1705,
     height: 1211,
+  },
+  {
+    id: 4,
+    title: 'Outdoor Rangefinder',
+    kind: 'Garmin • Handheld Device',
+    description:
+      'A recall feature for Garmin’s L60i rangefinder, helping users quickly revisit previously measured distances.',
+    meta: [
+      { label: 'Role', values: ['Product Designer'] },
+      { label: 'Timeline', values: ['Ongoing'] },
+      { label: 'Programs', values: ['Figma'] },
+    ],
+    // the laser is a thirtieth of the picture and the whole point of it, so it
+    // leads; the black it is cut against is most of the frame and anchors
+    swatches: ['#86e76e', '#2e6331', '#202a25', '#010101'],
+    image: '/projects/l60-rangefinder.jpg',
+    href: '/projects/l60',
+    width: 1800,
+    height: 886,
+  },
+  {
+    id: 5,
+    title: 'Chronograph',
+    kind: 'Garmin • Handheld Device',
+    description:
+      'New data visualizations and analysis tools for the new Garmin Chronograph, designed to help users understand ammunition performance.',
+    meta: [
+      { label: 'Role', values: ['Product Designer'] },
+      { label: 'Timeline', values: ['Ongoing'] },
+      { label: 'Programs', values: ['Figma'] },
+    ],
+    // the range it is stood in: dry brush, the sky behind it, the concrete it
+    // is set on, and the device itself
+    swatches: ['#594a30', '#bcc2c5', '#d3cbbe', '#2a2315'],
+    image: '/projects/c3-chronograph.jpg',
+    href: '/projects/c3',
+    width: 1480,
+    height: 975,
+  },
+  {
+    id: 6,
+    title: 'Garmin Explore',
+    kind: 'Garmin • Web',
+    description:
+      'Leading the 0–1 redesign of Garmin Explore Web, an outdoor mapping, navigation, planning and data management ecosystem.',
+    meta: [
+      { label: 'Role', values: ['Product Designer', 'UX research'] },
+      { label: 'Timeline', values: ['Ongoing'] },
+      { label: 'Programs', values: ['Figma'] },
+    ],
+    swatches: ['#a3b550', '#aabcd0', '#d8f0bd', '#faf9f7'],
+    image: '/projects/garmin-explore.jpg',
+    href: '/projects/template',
+    width: 1616,
+    height: 923,
   },
 ]
 

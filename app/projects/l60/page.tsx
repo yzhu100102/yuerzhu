@@ -6,6 +6,7 @@
 
 import Link from 'next/link'
 import CaseNav from '../../case-nav'
+import FilmLoop from '../film-loop'
 import ScrollReveal from '../../scroll-reveal'
 
 const sections = [
@@ -61,7 +62,21 @@ export default function OutdoorRangefinder() {
           </dl>
         </header>
 
-        <div className="case-ph case-ph-hero" />
+        {/* Three stretches of the product film, played one after another and
+            then round again. The film is mastered at 2:1 and uploaded inside a
+            16:9 frame, so the window is given the picture's shape and the
+            black the upload added falls outside it. */}
+        <FilmLoop
+          hero
+          ratio={2}
+          film="t2WUTW-6R8k"
+          cuts={[
+            { from: 0, to: 18 },
+            { from: 26, to: 45 },
+            { from: 51, to: 55 },
+          ]}
+          label="Garmin's L60i rangefinder film"
+        />
 
         <div className="case-body">
           <CaseNav sections={sections} />

@@ -1278,31 +1278,44 @@ a {
    a loop, and a click would drop it out of the cut. */
 .case-clip {
   position: relative;
-  aspect-ratio: 16 / 9;
+  /* the shape of the picture, not of the file holding it — film-loop.tsx
+     hands this in, and it is 16:9 unless a film says otherwise */
+  aspect-ratio: var(--clip-ratio, 1.7778);
   overflow: hidden;
   background: #101010;
+}
+
+/* The film as the study's opening picture: the rail-and-gutter margin the
+   hero copy above it takes, rather than the content column's. */
+.case-media.case-clip--hero {
+  margin-top: 0;
+  margin-bottom: 96px;
+  margin-left: calc(var(--case-rail) + var(--case-rail-gap));
+  max-width: calc(100% - var(--case-rail) - var(--case-rail-gap));
 }
 
 /* The player replaces this element with its own iframe and carries the class
    across, so these are the iframe's rules once it is up. The size is set here
    rather than left to the width and height attributes the player writes.
-   The whole film frame is in
-   view, and the player's own furniture is still out of it: the player is run
-   taller than the film's 16:9 rather than wider, so it letterboxes, and the
-   title bar and end screen — which sit against the player's top and bottom
-   edges — land in the black bars. The window then shows the band between
-   them, which is the film at exactly its own size.
+   The size does two jobs.
 
-   137% of a 16:9 window leaves a bar of about a sixth of the width at each
-   end, which is more than either piece of furniture needs. */
+   Taller than the film's 16:9, so the player letterboxes: its title bar and
+   end screen sit against the player's own top and bottom edges and land in
+   those black bars, out of the window. The 37 points of extra height leave a
+   bar of about a sixth of the width at each end, which is more than either
+   piece of furniture needs.
+
+   Width stays at 100%, so the picture is never cropped sideways: the player
+   fits the film to the width it is given, and the window is shaped to the
+   picture, so what falls outside is only the black the upload added. */
 .case-clip-frame {
   position: absolute;
-  left: 0;
+  left: 50%;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translate(-50%, -50%);
   display: block;
   width: 100%;
-  height: 137%;
+  height: var(--clip-height, 137%);
   border: 0;
   pointer-events: none;
 }
@@ -3186,67 +3199,59 @@ a {
 /* Everything on this screen is placed against the section and scrolls with it,
    so the picture travels up and off rather than being held in place. */
 .about-stage {
-  /* The picture starts a fifth of the way down and stands most of a screen
-     tall, which leaves its foot below the fold to be scrolled to. */
-  --stage-media-top: 21vh;
-  --stage-media-height: 82vh;
+  /* The portrait stands half the height the old full-bleed picture did, and
+     sits down the left rather than in the middle. Its top is set above the
+     foot of the opening paragraph, so the two overlap by a line. */
+  --stage-media-top: 27vh;
+  --stage-media-height: 41vh;
   --stage-intro-top: calc(var(--nav-height) + 5vh);
   /* just past the fold, so the second paragraph is out of sight on arrival but
-     only a moment's scrolling away — and still crossing the picture rather
-     than sitting on plain black under it */
+     only a moment's scrolling away */
   --stage-outro-top: 74vh;
   position: relative;
-  /* Only as far past the foot of the picture as it takes to close. Any more
-     and the screen ends on a field of black with nothing on it, and the
-     pictures underneath feel a page away. */
-  height: calc(var(--stage-media-top) + var(--stage-media-height) + 8vh);
+  /* Set against the lowest thing on the screen rather than against the
+     portrait, which no longer runs to the foot of it: the second paragraph
+     starts at 74vh and runs to about 94vh, and the screen closes 8vh under
+     that. */
+  height: 102vh;
   background: var(--about-black);
   color: var(--about-ink);
   /* the picture is wider than the column on some sizes */
   overflow: hidden;
 }
 
-/* Taller than the window on purpose: it is crossed by both paragraphs on the
-   way past and carries on out of the top of the screen. */
+/* Down the left margin, not in the middle, and tucked up under the opening
+   paragraph so the two overlap. */
 .about-stage-media {
   position: absolute;
   top: var(--stage-media-top);
-  left: 50%;
-  transform: translateX(-50%);
+  left: var(--page-padding);
   height: var(--stage-media-height);
-  aspect-ratio: 3 / 4;
+  /* the photograph's own proportions, so nothing of it is cropped away */
+  aspect-ratio: 1100 / 1371;
   max-width: calc(100% - var(--page-padding) * 2);
   overflow: hidden;
   background: #1b1b1b;
 }
 
-/* A cut, not a dissolve: the two frames are the same walk a moment apart, and
-   cross-fading them reads as a fault in the picture rather than as a change of
-   shot. */
 .about-stage-shot {
+  display: block;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  opacity: 0;
-  /* said outright: the frame carries `.parallax-in`, which hands its children a
-     transition on opacity, and a cut is not something to leave to a duration
-     that happens to be zero */
-  transition: none;
 }
 
-.about-stage-shot.is-up {
-  opacity: 1;
-}
-
-/* The display type crosses the picture, so the picture carries a wash dark
-   enough to hold white text whatever photograph is dropped in behind it. */
+/* Only the head of the portrait is crossed now — by the last line of the
+   opening paragraph — so the wash is just at the top, and lighter than the one
+   a full-bleed picture needed. */
 .about-stage-media::after {
   content: '';
   position: absolute;
   inset: 0;
   background: linear-gradient(
     180deg,
-    rgba(0, 0, 0, 0.34) 0%,
-    rgba(0, 0, 0, 0.06) 42%,
-    rgba(0, 0, 0, 0.38) 100%
+    rgba(0, 0, 0, 0.42) 0%,
+    rgba(0, 0, 0, 0) 34%
   );
 }
 
@@ -3308,13 +3313,6 @@ a {
 /* the intro starts to the right of the dot that introduces it */
 .about-stage-intro {
   padding-left: 18px;
-}
-
-.about-stage-mark--note {
-  left: var(--page-padding);
-  top: 84vh;
-  max-width: 22ch;
-  text-transform: uppercase;
 }
 
 /* the ornaments between clauses, set back so they punctuate rather than read */
@@ -3876,24 +3874,13 @@ a {
   }
 
   /* ── About, screen one ──
-     The same pinned picture with the copy crossing it, sized for the column
-     rather than the window. */
+     The same portrait down the left, at the size a phone column can hold: the
+     wide figure is measured against a window far taller than it is narrow, and
+     left alone here it would be most of the screen. */
   .about-stage {
     --stage-intro-top: calc(var(--nav-height) + 18px);
-    /* a little higher than the wide layout, so the opening line still crosses
-       the top of the picture at this width */
-    --stage-media-top: 18vh;
-    --stage-media-height: 80vh;
-  }
-
-  /* Edge to edge, and past the foot of the screen: the ratio would otherwise
-     make a picture this tall far wider than the phone it is on. */
-  .about-stage-media {
-    left: 0;
-    transform: none;
-    width: 100%;
-    aspect-ratio: auto;
-    max-width: none;
+    --stage-media-top: 17vh;
+    --stage-media-height: 30vh;
   }
 
   .about-stage-intro,
@@ -3908,11 +3895,6 @@ a {
 
   .about-stage-outro {
     left: var(--page-padding);
-  }
-
-  /* there is no margin left to set it in */
-  .about-stage-mark--note {
-    display: none;
   }
 
   /* ── About, screen two ──
@@ -3987,13 +3969,15 @@ a {
   .case-hero,
   .case-video,
   .case-ph-hero,
-  .case-hero-image {
+  .case-hero-image,
+  .case-media.case-clip--hero {
     margin-left: 0;
     max-width: none;
   }
 
   .case-ph-hero,
-  .case-hero-image {
+  .case-hero-image,
+  .case-media.case-clip--hero {
     margin-bottom: 56px;
   }
 

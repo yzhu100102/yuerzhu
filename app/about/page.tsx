@@ -14,15 +14,17 @@ import { LINKEDIN, RESUME, SAY_HELLO } from '../links'
 const NAV_HEIGHT = 48
 
 // ── Screen one ──
-// A picture far taller than the window, scrolling with the page and changing
-// over once as the second paragraph arrives. Swap in real photographs.
-const STAGE = [
-  { src: '/about/stage-01.jpg', alt: 'Yuer by the Ponte Vecchio in Florence' },
-  {
-    src: '/about/stage-02.jpg',
-    alt: 'Yuer by the Ponte Vecchio, a moment later',
-  },
-]
+// A portrait down the left, held under the opening paragraph and given its own
+// proportions rather than cropped to a frame.
+const PORTRAIT = {
+  // A new name rather than the old one overwritten: this project's image
+  // optimiser keeps serving the previous bytes for a path whose file has
+  // changed underneath it, and a rename is what actually clears it.
+  src: '/about/portrait-color.jpg',
+  alt: 'Yuer, in front of a Japanese maple',
+  width: 1100,
+  height: 1371,
+}
 
 // ── Screen two ──
 // The story reads as one sentence; the words carrying a picture light the frame
@@ -130,8 +132,6 @@ type Screen = 'stage' | 'story'
 export default function About() {
   const stage = useRef<HTMLElement>(null)
   const story = useRef<HTMLElement>(null)
-  /** which stage frame is up */
-  const [frame, setFrame] = useState(0)
   const [screen, setScreen] = useState<Screen>('stage')
   /**
    * Which picture the page has settled on, and which one is being looked at.
@@ -152,13 +152,6 @@ export default function About() {
       const reaches = (el: HTMLElement | null) =>
         !!el && el.getBoundingClientRect().bottom > NAV_HEIGHT
       setScreen(reaches(stage.current) ? 'stage' : 'story')
-
-      // The cut waits for the white underneath to arrive: held to the second
-      // paragraph it landed while the reader was still reading it, which reads
-      // as the picture glitching rather than as a second shot.
-      const white = story.current
-      if (!white) return
-      setFrame(white.getBoundingClientRect().top < window.innerHeight ? 1 : 0)
     }
 
     const onScroll = () => {
@@ -199,18 +192,15 @@ export default function About() {
       {/* ── Screen one ── */}
       <section className="about-stage" ref={stage}>
         <div className="about-stage-media parallax-in" data-parallax="0.1">
-          {STAGE.map((shot, i) => (
-            <Image
-              key={shot.src}
-              className={`about-stage-shot${i === frame ? ' is-up' : ''}`}
-              src={shot.src}
-              alt={i === frame ? shot.alt : ''}
-              aria-hidden={i === frame ? undefined : true}
-              fill
-              sizes="(max-width: 768px) 100vw, 66vw"
-              priority={i === 0}
-            />
-          ))}
+          <Image
+            className="about-stage-shot"
+            src={PORTRAIT.src}
+            alt={PORTRAIT.alt}
+            width={PORTRAIT.width}
+            height={PORTRAIT.height}
+            sizes="(max-width: 768px) 70vw, 34vh"
+            priority
+          />
         </div>
 
         <Knot className="about-stage-mark about-stage-mark--dot" />
@@ -228,12 +218,6 @@ export default function About() {
           <Knot className="about-glyph" /> making products{' '}
           <em>feel</em>{' '}simple, even when they&apos;re not.
         </p>
-
-        <span className="about-stage-mark about-stage-mark--note">
-          A memorable trip to Florence,
-          <br />
-          by the Ponte Vecchio bridge
-        </span>
       </section>
 
       {/* ── Screen two ── */}

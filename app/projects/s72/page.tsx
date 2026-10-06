@@ -15,7 +15,7 @@ import ScrollReveal from '../../scroll-reveal'
 // only the held-back section still uses this; it comes back with it
 // import Placeholder from '../placeholder'
 import LoopClip from '../loop-clip'
-import MarketingClip from './marketing-clip'
+import FilmLoop from '../film-loop'
 
 // The one question the work is measured against, set over the still.
 const asking = Roboto({ subsets: ['latin'], weight: ['500'], style: ['italic'] })
@@ -111,6 +111,20 @@ export default function S72CaseStudy() {
 
           <div className="case-content">
             <section className="case-section" id="context">
+              {/* The film opens the section, ahead of its own heading: the
+                  stretches that show the feature, played one after another
+                  and then round again. The heading then sits with the copy it
+                  belongs to rather than away from it above the film. */}
+              <FilmLoop
+                film="RH3AC3ttKZ0"
+                cuts={[
+                  { from: 12, to: 16 },
+                  { from: 29, to: 35 },
+                  { from: 41, to: 46 },
+                  { from: 53, to: 63 },
+                ]}
+                label="Garmin's Approach golf watch film: aerial course imagery on the watch face, then its Back and Start/Stop buttons"
+              />
               <h2 className="case-heading">CONTEXT</h2>
               <p className="case-lead case-lead--wrap">Building from the S70</p>
               <p className="case-text">
@@ -119,9 +133,6 @@ export default function S72CaseStudy() {
                 patterns, reworked the UI, improved usability, and made room for
                 new features.
               </p>
-              {/* The two stretches of the marketing film that show the feature,
-                  played one after the other and then round again. */}
-              <MarketingClip label="Garmin's Approach S70 film, cut to the putt-reading feature" />
             </section>
 
             <section className="case-section" id="need">
