@@ -593,8 +593,9 @@ a {
 }
 
 /* ── End title card ──
-   White, for contrast against the colour field, with the name typing in behind
-   a round cursor. Opacity is driven from the video clock in ProjectMedia. */
+   The same white the clip is mastered on, so the card and the footage share one
+   field and the hand-off between them is only the drawing changing. Opacity is
+   driven from the video clock in ProjectMedia. */
 .endcard {
   position: absolute;
   inset: 0;
@@ -602,8 +603,7 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  /* the CUI screens' blue, sampled from the app's phone frames */
-  background: #211d8f;
+  background: #ffffff;
   transition: opacity 0.28s ease;
 }
 
@@ -611,11 +611,15 @@ a {
   display: flex;
   align-items: center;
   gap: 0.28em;
-  font-family: var(--font-sans);
+  /* SF Pro. Apple does not licence it as a webfont, so it is asked for the way
+     it is actually available — as the system face — and the site's own sans
+     stands in everywhere else. */
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text',
+    'SF Pro Display', system-ui, var(--font-sans);
   font-size: clamp(15px, 2.1vw, 28px);
   font-weight: 400;
   letter-spacing: -0.01em;
-  color: #ffffff;
+  color: #111111;
   white-space: pre;
 }
 
@@ -623,19 +627,24 @@ a {
   width: 0.58em;
   height: 0.58em;
   border-radius: 50%;
-  background: #f98b5a;
+  /* the blue the mark is drawn in, sampled from the clip's last frame */
+  background: #332d9e;
   flex: none;
-  animation: dot-in 0.42s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+  animation: dot-in 0.26s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/* The dot arrives as the mark the clip has just finished drawing — about six
+   times the cursor it settles into, which is what that mark measures against
+   this card at the sizes it is drawn — and slams down into place. Opaque the
+   whole way, so it reads as the same object closing rather than a new one
+   fading up, and quick enough that the name reads as the result of the
+   landing rather than a separate beat. */
 @keyframes dot-in {
   from {
-    transform: scale(0.2);
-    opacity: 0;
+    transform: scale(6);
   }
   to {
     transform: scale(1);
-    opacity: 1;
   }
 }
 
@@ -1320,6 +1329,157 @@ a {
   pointer-events: none;
 }
 
+/* The two things a film on this site is operated with: a stop in the middle
+   and the way out to YouTube. They come up together on the way in, and the
+   stop stays up while the film is held so there is something to start it with.
+   The layer itself is click-through — only the two controls take a click, so
+   the picture is never covered by an invisible hotspot. */
+.case-clip-controls {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  /* On the way in only. Taking the pointer off the film clears them at once,
+     rather than leaving them to fade over something that is being looked at. */
+  transition: opacity 0.16s ease;
+}
+
+.case-clip:hover .case-clip-controls,
+.case-clip:focus-within .case-clip-controls,
+.case-video:hover .case-clip-controls,
+.case-video:focus-within .case-clip-controls {
+  opacity: 1;
+  transition: none;
+}
+
+.case-clip-stop,
+.case-clip-sound,
+.case-clip-open {
+  position: absolute;
+  pointer-events: auto;
+  border: 0;
+  color: #ffffff;
+  transition: background-color 0.18s ease, transform 0.18s ease;
+}
+
+/* Solid rather than frosted. The player draws a stop of its own in the middle
+   of the picture whenever it is halted, and nothing on this side of the frame
+   can reach in and hide it — so this covers it instead, which is why it is
+   opaque and a shade wider than the one underneath. */
+.case-clip-stop {
+  background: #141414;
+}
+
+.case-clip-sound,
+.case-clip-open {
+  background: rgba(17, 17, 17, 0.62);
+  -webkit-backdrop-filter: blur(7px);
+  backdrop-filter: blur(7px);
+}
+
+.case-clip-stop:hover {
+  background: #2c2c2c;
+}
+
+.case-clip-sound:hover,
+.case-clip-open:hover {
+  background: rgba(17, 17, 17, 0.85);
+}
+
+.case-clip-stop:focus-visible,
+.case-clip-sound:focus-visible,
+.case-clip-open:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
+}
+
+.case-clip-stop {
+  left: 50%;
+  top: 50%;
+  width: 76px;
+  height: 76px;
+  margin: -38px 0 0 -38px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.case-clip-stop svg {
+  width: 26px;
+  height: 26px;
+  /* the triangle reads as off-centre against a circle unless it is nudged */
+  margin-left: 1px;
+}
+
+.case-clip-stop:active,
+.case-clip-sound:active {
+  transform: scale(0.94);
+}
+
+/* Sound sits in the far corner, away from the stop in the middle and the way
+   out at the top, so the three never crowd each other. */
+.case-clip-sound {
+  right: 14px;
+  bottom: 14px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.case-clip-sound svg {
+  width: 21px;
+  height: 21px;
+}
+
+.case-clip-open {
+  right: 14px;
+  top: 14px;
+  padding: 8px 13px;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+@media (max-width: 768px) {
+  .case-clip-stop {
+    width: 58px;
+    height: 58px;
+    margin: -29px 0 0 -29px;
+  }
+
+  .case-clip-stop svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .case-clip-open {
+    right: 10px;
+    top: 10px;
+    padding: 6px 10px;
+    font-size: 10px;
+  }
+
+  .case-clip-sound {
+    right: 10px;
+    bottom: 10px;
+    width: 36px;
+    height: 36px;
+  }
+
+  .case-clip-sound svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
 .case-hero-image img {
   display: block;
   width: 100%;
@@ -1340,6 +1500,9 @@ a {
 /* Hero video. Reserves its 16:9 box up front so mounting the player mid-scroll
    never shifts the page under the reader. */
 .case-video {
+  /* a frame of its own, so the link out to YouTube measures against this and
+     not against whatever happens to be positioned further up the page */
+  position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
   margin-bottom: 80px;
@@ -1347,11 +1510,22 @@ a {
   background-color: #555555;
 }
 
+/* Run taller than the film's own 16:9, so the player letterboxes it and the
+   title bar and watermark — which sit against the player's top and bottom
+   edges — land in the black outside the window. Left click-through as well, so
+   nothing of YouTube's is ever hovered and the site's own pair are the only
+   things on the picture. The same trick, and the same figure, as the looping
+   films on the other studies. */
 .case-video iframe {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
   display: block;
   width: 100%;
-  height: 100%;
+  height: 137%;
   border: 0;
+  pointer-events: none;
 }
 
 /* ── The brief, as a panel ──

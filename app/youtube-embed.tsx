@@ -1,9 +1,10 @@
 'use client'
 
 // A YouTube embed that mounts as soon as the page does and starts itself.
-// Browsers only grant autoplay to muted video, so it starts muted with
-// YouTube's full control bar — play, pause, volume, captions, quality,
-// fullscreen — so the viewer can turn the sound on whenever they want.
+// Browsers only grant autoplay to muted video, so it starts muted. It carries
+// the same two controls the looping films on the other studies do — a stop in
+// the middle and the way out to YouTube — rather than the player's own bar, so
+// every film on the site is operated the same way.
 //
 // It used to wait for the player to be nine tenths on screen before mounting.
 // On a case study the film sits under a title, a standfirst and a row of
@@ -15,7 +16,8 @@
 // Otherwise scrolling a little would pause a video someone had deliberately
 // started, which is worse than never having autoplayed it at all.
 
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { ClipGlyph } from './projects/film-loop'
 
 /**
  * How much of the player has to be on screen for it to run, and how little
@@ -40,14 +42,37 @@ export default function YoutubeEmbed({ id, title }: Props) {
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   /** Set once the viewer takes manual control; we stop steering after that. */
   const viewerDriving = useRef(false)
+  /** Stopped by hand. */
+  const [held, setHeld] = useState(false)
+  /** Silent until asked otherwise, which is also the only way it may autoplay. */
+  const [muted, setMuted] = useState(true)
 
-  const command = useCallback((func: 'playVideo' | 'pauseVideo') => {
-    if (viewerDriving.current) return
+  const send = useCallback((func: 'playVideo' | 'pauseVideo' | 'mute' | 'unMute') => {
     iframeRef.current?.contentWindow?.postMessage(
       JSON.stringify({ event: 'command', func, args: [] }),
       'https://www.youtube.com'
     )
   }, [])
+
+  const toggle = useCallback(() => {
+    viewerDriving.current = true
+    setHeld((was) => {
+      send(was ? 'playVideo' : 'pauseVideo')
+      return !was
+    })
+  }, [send])
+
+  const toggleSound = useCallback(() => {
+    setMuted((was) => {
+      send(was ? 'unMute' : 'mute')
+      return !was
+    })
+  }, [send])
+
+  const command = useCallback((func: 'playVideo' | 'pauseVideo') => {
+    if (viewerDriving.current) return
+    send(func)
+  }, [send])
 
   // Clicking into an iframe moves focus out of the page, which is the one
   // signal we get that someone is using the player's own controls.
@@ -93,9 +118,9 @@ export default function YoutubeEmbed({ id, title }: Props) {
 
   const src =
     `https://www.youtube.com/embed/${encodeURIComponent(id)}` +
-    // controls=1 and fs=1 are YouTube's defaults, set explicitly so a later
-    // edit does not quietly take the control bar away
-    '?autoplay=1&mute=1&controls=1&fs=1&enablejsapi=1&playsinline=1&rel=0'
+    // controls=0: the film carries the site's own pair instead of the
+    // player's bar, so every one of them is operated the same way
+    '?autoplay=1&mute=1&controls=0&fs=0&enablejsapi=1&playsinline=1&rel=0&modestbranding=1'
 
   // Rendered outright rather than swapped in once something has been observed:
   // the frame reserves its own 16:9 box in the stylesheet, so there is nothing
@@ -109,6 +134,60 @@ export default function YoutubeEmbed({ id, title }: Props) {
         allow="autoplay; encrypted-media; picture-in-picture; web-share; fullscreen"
         allowFullScreen
       />
+      <div className="case-clip-controls">
+        <button type="button" className="case-clip-stop" onClick={toggle}>
+          <ClipGlyph held={held} />
+          <span className="visually-hidden">
+            {held ? 'Play' : 'Pause'} {title}
+          </span>
+        </button>
+        <button type="button" className="case-clip-sound" onClick={toggleSound}>
+          <SoundGlyph muted={muted} />
+          <span className="visually-hidden">
+            {muted ? 'Unmute' : 'Mute'} {title}
+          </span>
+        </button>
+        <a
+          className="case-clip-open"
+          href={`https://www.youtube.com/watch?v=${encodeURIComponent(id)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span aria-hidden="true">Watch on YouTube</span>
+          <span className="visually-hidden">
+            Watch {title} on YouTube — opens in a new tab
+          </span>
+        </a>
+      </div>
     </div>
+  )
+}
+
+/** A speaker, struck through while it is silent. */
+export function SoundGlyph({ muted }: { muted: boolean }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path
+        d="M4 9.5h3.2L12 5.6v12.8L7.2 14.5H4Z"
+        fill="currentColor"
+      />
+      {muted ? (
+        <path
+          d="M15.5 9.5 20.5 14.5M20.5 9.5 15.5 14.5"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          fill="none"
+        />
+      ) : (
+        <path
+          d="M15.4 9.1a4.1 4.1 0 0 1 0 5.8M18 6.6a7.7 7.7 0 0 1 0 10.8"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          fill="none"
+        />
+      )}
+    </svg>
   )
 }

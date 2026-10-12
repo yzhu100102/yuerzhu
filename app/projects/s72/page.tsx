@@ -77,22 +77,15 @@ export default function S72CaseStudy() {
           <h1 className="case-title">
             Golf Data <em>at a Glance</em>
           </h1>
-          <p className="case-text">
-            A putt-reading experience for Garmin Approach S72 golf watch that
-            helps golfers understand how a green slopes and which direction a
-            putt is likely to break.
-          </p>
-          <p className="case-text">
-            Garmin golf watches already showed green contours through
-            color-coded map data, but interpreting that information still
-            required the golfer to read the map themselves. This new
-            putt-reading feature for the upcoming Approach S72 golf watch
-            translates that contour data into a more direct callout of slope
-            data from a specific location on the green.
-          </p>
+          {/* One block now rather than three; it keeps the hero modifier, which
+              is what sets the measure and the gap down to the meta list. */}
           <p className="case-text case-text--hero">
-            This project involved working with existing golf workflows, hardware
-            controls, and imperfect GPS and compass data.
+            Designed new experiences for the Approach S72, Garmin’s latest golf
+            watch. This project includes a putt-reading feature that translates
+            green contour data into clear slope and break direction, and heart
+            rate data visualizations that show how it impacts performance in a
+            round. The work balanced existing golf workflows with hardware
+            controls and GPS/compass limitations.
           </p>
           <dl className="case-meta case-meta--four">
             {meta.map((row) => (

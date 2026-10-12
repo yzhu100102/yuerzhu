@@ -1,15 +1,15 @@
 'use client'
 
-// The tinted video card. The clip runs only as far as "Hi! I'm Yara," and then
-// cuts to a title card: the orange dot arrives in the middle of the frame on its
-// own, the project name types itself in beside it, and the loop starts over.
+// The tinted video card. The clip plays out and then gives way to a title
+// card: the dot lands where the mark was and at its size, shrinks to a cursor,
+// the project name types itself in beside it, and the loop starts over.
 
 import { useEffect, useRef, useState } from 'react'
 
-/** Where the clip is cut — just after "Hi! I'm Yara," has settled. */
-const CUT_AT = 3.4
-/** The dot holds the centre alone before the name appears beside it. */
-const DOT_ALONE = 0.5
+/** How far short of the clip's end the card takes over. */
+const SHORT_OF_END = 0.08
+/** The dot holds the centre alone, landing, before the name appears. */
+const DOT_ALONE = 0.32
 const TYPE_FOR = 0.7
 const HOLD_AFTER = 1.6
 
@@ -46,7 +46,9 @@ export default function ProjectMedia({ src, poster, label, endTitle }: Props) {
 
     const tick = () => {
       if (!onCard) {
-        if (video.currentTime >= CUT_AT) {
+        // the clip's own end, which is only known once it has loaded
+        const runs = video.duration
+        if (runs > 0 && video.currentTime >= runs - SHORT_OF_END) {
           onCard = true
           cardStart = performance.now()
           video.pause()

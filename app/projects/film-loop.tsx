@@ -2,13 +2,13 @@
 // round.
 //
 // This drives the player rather than using a <video>: the cuts are played back
-// to back and then from the top again, muted, and only while the visual is
+// to back and then from the top again, and only while the visual is
 // actually on screen. The player is left uninteractive on purpose — it is a
 // loop on a case study page, not something to scrub, and a stray click would
 // drop it out of the cut.
 'use client'
 
-import { useEffect, useRef, type CSSProperties } from 'react'
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
 
 /** A stretch of the film, in seconds on its own clock. */
 export type Cut = {
@@ -112,6 +112,20 @@ type Props = {
 export default function FilmLoop({ film, cuts, label, ratio = 16 / 9, hero }: Props) {
   const frameRef = useRef<HTMLDivElement>(null)
   const holderRef = useRef<HTMLElement>(null)
+  const playerRef = useRef<Player | null>(null)
+  /** Stopped by hand. Held in a ref as well, because the loop below reads it. */
+  const [held, setHeld] = useState(false)
+  const heldRef = useRef(false)
+
+  const toggle = useCallback(() => {
+    const player = playerRef.current
+    if (!player) return
+    const next = !heldRef.current
+    heldRef.current = next
+    setHeld(next)
+    if (next) player.pauseVideo()
+    else player.playVideo()
+  }, [])
   // The cuts arrive as a literal, which is a new array on every render. Held
   // as text so the effect below depends on what they say rather than on the
   // identity of the array, and the player is not torn down and rebuilt each
@@ -140,6 +154,7 @@ export default function FilmLoop({ film, cuts, label, ratio = 16 / 9, hero }: Pr
 
     api().then((YT) => {
       if (gone) return
+      playerRef.current = null
       player = new YT.Player(frame, {
         videoId: film,
         host: 'https://www.youtube-nocookie.com',
@@ -151,19 +166,22 @@ export default function FilmLoop({ film, cuts, label, ratio = 16 / 9, hero }: Pr
           rel: 0,
           modestbranding: 1,
           playsinline: 1,
+          // silent, with nothing on the frame to turn it up: these are moving
+          // stills rather than something to sit and watch
           mute: 1,
           start: Math.floor(opens),
           origin: window.location.origin,
         },
         events: {
           onReady: () => {
+            playerRef.current = player
             player?.mute()
             player?.seekTo(opens, true)
-            if (seen && !still) player?.playVideo()
+            if (seen && !still && !heldRef.current) player?.playVideo()
             // No cut but the last announces its own close, so every one of
             // them is watched for instead.
             watch = window.setInterval(() => {
-              if (!player) return
+              if (!player || heldRef.current) return
               const cut = list[at]
               if (!cut) return
               const runs = player.getDuration()
@@ -184,7 +202,7 @@ export default function FilmLoop({ film, cuts, label, ratio = 16 / 9, hero }: Pr
             if (event.data === YT.PlayerState.ENDED) {
               at = 0
               player?.seekTo(opens, true)
-              if (seen && !still) player?.playVideo()
+              if (seen && !still && !heldRef.current) player?.playVideo()
             }
           },
         },
@@ -195,7 +213,7 @@ export default function FilmLoop({ film, cuts, label, ratio = 16 / 9, hero }: Pr
     const eye = new IntersectionObserver(
       ([entry]) => {
         seen = entry.isIntersecting
-        if (still) return
+        if (still || heldRef.current) return
         if (seen) player?.playVideo()
         else player?.pauseVideo()
       },
@@ -207,6 +225,7 @@ export default function FilmLoop({ film, cuts, label, ratio = 16 / 9, hero }: Pr
       gone = true
       eye.disconnect()
       window.clearInterval(watch)
+      playerRef.current = null
       player?.destroy()
     }
   }, [film, plan])
@@ -220,15 +239,53 @@ export default function FilmLoop({ film, cuts, label, ratio = 16 / 9, hero }: Pr
     '--clip-height': `${Math.round((UPLOAD + 2 * FURNITURE) * ratio * 100)}%`,
   } as CSSProperties
 
+  // The player is left click-through, so these are the only two things on it:
+  // a stop in the middle and the way out to YouTube. Both come up on the way
+  // in. No `role="img"` on the figure any more — it holds things to operate
+  // now, and that role would hide them.
   return (
     <figure
       className={`case-media case-clip${hero ? ' case-clip--hero' : ''}`}
       style={frame}
       ref={holderRef}
-      aria-label={label}
-      role="img"
     >
       <div className="case-clip-frame" ref={frameRef} />
+      <div className="case-clip-controls">
+        <button type="button" className="case-clip-stop" onClick={toggle}>
+          <ClipGlyph held={held} />
+          <span className="visually-hidden">
+            {held ? 'Play' : 'Pause'} {label}
+          </span>
+        </button>
+        <a
+          className="case-clip-open"
+          href={`https://www.youtube.com/watch?v=${encodeURIComponent(film)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span aria-hidden="true">Watch on YouTube</span>
+          <span className="visually-hidden">
+            Watch {label} on YouTube — opens in a new tab
+          </span>
+        </a>
+      </div>
     </figure>
   )
 }
+
+/** The two bars, or the triangle once it is stopped. */
+export function ClipGlyph({ held }: { held: boolean }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      {held ? (
+        <path d="M9 6.5 18 12 9 17.5Z" fill="currentColor" />
+      ) : (
+        <>
+          <rect x="8.5" y="6.5" width="2.6" height="11" rx="0.6" fill="currentColor" />
+          <rect x="12.9" y="6.5" width="2.6" height="11" rx="0.6" fill="currentColor" />
+        </>
+      )}
+    </svg>
+  )
+}
+

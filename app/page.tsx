@@ -52,7 +52,7 @@ const PROJECTS: Project[] = [
     title: 'Alpha Hunt',
     kind: 'Garmin • App',
     description:
-      'A set of in-field tools for hunters, including map-integrated weather data, map layers, compass and rangefinder.',
+      'A new compass, ranging, and weather tool for Garmin’s Alpha Hunt app. The work focused on helping hunters quickly understand distance, direction, and weather data, both in the field and while planning from saved locations.',
     meta: [
       { label: 'Role', values: ['Product Designer', 'UX research'] },
       { label: 'Launching', values: ['Q3 2027', 'Ongoing'] },
@@ -100,8 +100,8 @@ const PROJECTS: Project[] = [
       { label: 'Programs', values: ['Figma', 'Illustrator', 'After Effects'] },
     ],
     swatches: ['#2d288f', '#f98b5a', '#fff6dc', '#007b61'],
-    video: '/projects/project-four.mp4',
-    poster: '/projects/project-four-poster.jpg',
+    video: '/projects/solution.mp4',
+    poster: '/projects/solution-poster.jpg',
     // White rather than a tint: the clip is mastered on white, so a white frame
     // on a white page leaves nothing of the card's own edge to see. It still
     // counts as a background, which is what puts the clip on multiply blending.
@@ -118,7 +118,7 @@ const PROJECTS: Project[] = [
     title: 'Outdoor Rangefinder',
     kind: 'Garmin • Handheld Device',
     description:
-      'A recall feature for Garmin’s L60i rangefinder, helping users quickly revisit previously measured distances.',
+      'A recall feature for Garmin’s L60i rangefinder, helping users quickly align with previously measured distances.',
     meta: [
       { label: 'Role', values: ['Product Designer'] },
       { label: 'Timeline', values: ['Ongoing'] },
