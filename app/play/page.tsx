@@ -121,7 +121,8 @@ const groups: Group[] = [
   {
     id: 'sb-loop',
     title: 'THE HIDDEN CITY OF SALT',
-    description: 'Add a short description of this piece.',
+    description:
+      'A hand-crafted, 30-page French-fold zine exploring the scale and history of Poland’s Wieliczka Salt Mine.',
     x: 993, y: 516, w: 350, h: 232, d: 0.9,
     loop: SALT_LOOP,
     loopMs: 900,
@@ -130,7 +131,8 @@ const groups: Group[] = [
   {
     id: 'sb-open',
     title: 'THE HIDDEN CITY OF SALT',
-    description: 'Add a short description of this piece.',
+    description:
+      'A hand-crafted, 30-page French-fold zine exploring the scale and history of Poland’s Wieliczka Salt Mine.',
     x: 1305, y: 702, w: 350, h: 232, d: 1.2, z: 3,
     image: '/play/saltbook/open.jpg',
     shots: SALT_SHOTS,
@@ -139,7 +141,8 @@ const groups: Group[] = [
   {
     id: 'sx-loop',
     title: 'SOUNDBOX',
-    description: 'Add a short description of this piece.',
+    description:
+      'An exploration in laser cutting, acrylics, woodworking, RFID/Raspberry Pi prototyping, and branding. The project lets parents preserve a child’s photos, artwork, and keepsakes, then pair them with recorded conversations or music to revisit over time.',
     x: 924, y: 21, w: 350, h: 234, d: 1.1,
     loop: SOUNDBOX_LOOP,
     // a slower cycle than the Salt Book's
@@ -150,7 +153,8 @@ const groups: Group[] = [
   {
     id: 'sx-reel',
     title: 'SOUNDBOX — FINAL REEL',
-    description: 'Add a short description of this piece.',
+    description:
+      'An exploration in laser cutting, acrylics, woodworking, RFID/Raspberry Pi prototyping, and branding. The project lets parents preserve a child’s photos, artwork, and keepsakes, then pair them with recorded conversations or music to revisit over time.',
     x: 1403, y: 1220, w: 350, h: 197, d: 0.7,
     video: '/play/soundbox/reel-preview.mp4',
     shots: SOUNDBOX_SHOTS,
@@ -159,7 +163,8 @@ const groups: Group[] = [
   {
     id: 'pub-a',
     title: 'ILLUSTRATION',
-    description: 'Add a short description of this piece.',
+    description:
+      'For a piece about navigating cultural identity.',
     x: 494, y: 149, w: 350, h: 219, d: 1.3,
     image: '/play/publications/publications.jpg',
     shots: PUB_SHOTS,
@@ -167,7 +172,8 @@ const groups: Group[] = [
   {
     id: 'pub-b',
     title: 'ILLUSTRATION',
-    description: 'Add a short description of this piece.',
+    description:
+      'For a piece about navigating cultural identity.',
     x: 1851, y: 1060, w: 350, h: 259, d: 0.6,
     image: '/play/publications/mockup2.jpg',
     shots: PUB_SHOTS,
@@ -176,7 +182,8 @@ const groups: Group[] = [
   {
     id: 'dh-booklet',
     title: 'MITSUO KATSUI: DESIGN HERO',
-    description: 'Add a short description of this piece.',
+    description:
+      'A series of artifacts created to celebrate the legacy of Mitsuo Katsui (勝井三雄), an internationally renowned designer.',
     x: 2299, y: 70, w: 350, h: 206, d: 1,
     image: '/play/designhero/booklet.jpg',
     shots: HERO_SHOTS,
@@ -184,7 +191,8 @@ const groups: Group[] = [
   {
     id: 'dh-poster',
     title: 'MITSUO KATSUI: DESIGN HERO',
-    description: 'Add a short description of this piece.',
+    description:
+      'A series of artifacts created to celebrate the legacy of Mitsuo Katsui (勝井三雄), an internationally renowned designer.',
     x: 2269, y: 1582, w: 350, h: 261, d: 1.4,
     image: '/play/designhero/poster.jpg',
     shots: HERO_SHOTS,
@@ -193,7 +201,8 @@ const groups: Group[] = [
   ...HERO_CLIPS.map((clip) => ({
     id: clip.id,
     title: 'MITSUO KATSUI: DESIGN HERO',
-    description: 'Add a short description of this piece.',
+    description:
+      'A series of artifacts created to celebrate the legacy of Mitsuo Katsui (勝井三雄), an internationally renowned designer.',
     x: clip.x, y: clip.y, w: 350, h: 197, d: clip.d,
     video: `/play/designhero/${clip.file}-preview.mp4`,
     shots: HERO_SHOTS,
@@ -202,7 +211,8 @@ const groups: Group[] = [
   {
     id: 'diner',
     title: 'DINER TYPEFACE',
-    description: 'Add a short description of this piece.',
+    description:
+      'Exploring typeface design in Glyphs.',
     x: 80, y: 1079, w: 350, h: 197, d: 1.1,
     video: '/play/type/diner-preview.mp4',
     shots: [{ src: '/play/type/diner.mp4', w: 1280, h: 920, video: true }],
@@ -210,7 +220,8 @@ const groups: Group[] = [
   {
     id: 'porcelain',
     title: 'PORCELAIN TYPEFACE',
-    description: 'Add a short description of this piece.',
+    description:
+      'Exploring typeface design in Glyphs.',
     x: 47, y: 637, w: 350, h: 197, d: 0.5,
     video: '/play/type/porcelain-preview.mp4',
     shots: [{ src: '/play/type/porcelain.mp4', w: 1280, h: 920, video: true }],
@@ -218,7 +229,8 @@ const groups: Group[] = [
   {
     id: 's3-package',
     title: 'PACKAGE AND CARD DESIGN',
-    description: 'Add a short description of this piece.',
+    description:
+      'Package design for a hand-crafted card set documenting household memorabilia.',
     x: 138, y: 1525, w: 350, h: 232, d: 1.2,
     loop: S3_LOOP,
     // the same cadence as the Soundbox cycle
@@ -229,7 +241,8 @@ const groups: Group[] = [
   {
     id: 's3-anim',
     title: 'INTERNET CONNECTIVITY CAMPAIGN',
-    description: 'Add a short description of this piece.',
+    description:
+      'Brand campaign for internet access, using animation and marketing assets to advocate for equitable connectivity.',
     x: 450, y: 1711, w: 350, h: 197, d: 1.5, z: 3,
     video: '/play/s3/animation-preview.mp4',
     // the box previews the animation; opening it plays the film

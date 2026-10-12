@@ -11,6 +11,7 @@ import ScrollReveal from '../../scroll-reveal'
 import RangeDemo from './range-demo'
 import RangingDemo from './ranging-demo'
 import AccessDemo from './access-demo'
+import WeatherDemo from './weather-demo'
 import LoopClip from '../loop-clip'
 import DeviceFlow from './device-flow'
 import NavigateDemo from './navigate-demo'
@@ -314,6 +315,37 @@ export default function AlphaHuntCaseStudy() {
                     while planning their route or hunt.
                   </p>
                   <AccessDemo />
+                </div>
+              </div>
+
+              <div className="case-insight">
+                <span className="case-insight-number">05</span>
+                <div>
+                  <p className="case-insight-kicker">ACCESS WEATHER DATA</p>
+                  <h3 className="case-insight-title">
+                    Get weather data from the map
+                  </h3>
+                  <p className="case-text">
+                    Weather data from across Garmin’s ecosystem was
+                    restructured around hunting-specific needs. We prioritized
+                    wind because scent direction is critical in the field, while
+                    visualizing wind, barometric pressure, precipitation, moon
+                    and sun phases, and other conditions to make trends easier
+                    to scan and interpret.
+                  </p>
+                  <WeatherDemo />
+                  {/* The pieces the sheet is built from, on the same ground as
+                      the panel above and set close to it so the two read as
+                      one block. */}
+                  <figure className="ranging-demo wx-board">
+                    <Image
+                      src="/projects/alpha-wx-panels.jpg"
+                      alt="The weather sheet's parts laid out: the insight banner, current conditions, the hourly strip with wind, the ten-day forecast and the moon phase."
+                      width={1560}
+                      height={1140}
+                      sizes="(max-width: 768px) 88vw, 45vw"
+                    />
+                  </figure>
                 </div>
               </div>
             </section>
