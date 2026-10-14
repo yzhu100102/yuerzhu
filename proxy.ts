@@ -1,7 +1,7 @@
-// Gate for the client work. The Yara case study at /projects/yara is open;
-// every Garmin study is held behind one shared password on one cookie, so
-// unlocking any of them unlocks them all. Explore is still sitting on
-// /projects/template, which is why that is the path listed for it.
+// Gate for the client work. Yara and the Approach S72 are open; the rest are
+// held behind one shared password on one cookie, so unlocking any of them
+// unlocks them all. Explore is still sitting on /projects/template, which is
+// why that is the path listed for it.
 //
 // `middleware` is deprecated in Next 16 and renamed to `proxy`
 // (node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/proxy.md).
@@ -12,7 +12,6 @@ import type { NextRequest } from 'next/server'
 export const config = {
   matcher: [
     '/projects/alpha-hunt/:path*',
-    '/projects/s72/:path*',
     '/projects/l60/:path*',
     '/projects/c3/:path*',
     '/projects/template/:path*',
